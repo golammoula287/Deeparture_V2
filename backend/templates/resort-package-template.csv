@@ -1,0 +1,2 @@
+resortName,packageName,roomType,description,numberOfDays,numberOfNights,numberOfDives,mealPlan,basePrice,basePriceUsd,currency,pricingBasis,active
+Example Dive Resort,7 Night Dive Package,Ocean Villa,7 nights with 12 dives,8,7,12,full_board,1850,1850,USD,per_person,true

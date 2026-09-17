@@ -1,0 +1,40 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - deeparture_v2_mongo:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DATABASE_URL: mongodb://mongo:27017/deeparture_v2
+      JWT_SECRET_KEY: local-docker-change-before-use
+      BCRYPT_SALT_ROUNDS: 10
+      FRONTEND_URL: http://localhost:3000
+      EMAIL_FROM: Deeparture V2 <no-reply@example.test>
+    depends_on:
+      - mongo
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://backend:5000/api
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  deeparture_v2_mongo:

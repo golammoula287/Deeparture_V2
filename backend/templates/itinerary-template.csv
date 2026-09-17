@@ -1,0 +1,3 @@
+vesselName,itineraryName,destinations,country,region,embarkation,disembarkation,description,routeSummary,numberOfDays,numberOfNights,numberOfDives,minimumCertification,minimumLoggedDives,cabinName,totalCabins,maxOccupancy,ensuite,accessible,basePrice,basePriceUsd,currency,pricingBasis
+Example Liveaboard,Raja Ampat 10 Nights,Raja Ampat,Indonesia,West Papua,Sorong,Sorong,Example itinerary,Central Raja Ampat and Misool,11,10,30,AOW,30,Deluxe,4,2,yes,no,5500,5500,USD,per_person
+Example Liveaboard,Raja Ampat 10 Nights,Raja Ampat,Indonesia,West Papua,Sorong,Sorong,Example itinerary,Central Raja Ampat and Misool,11,10,30,AOW,30,Master,2,2,yes,no,6250,6250,USD,per_person

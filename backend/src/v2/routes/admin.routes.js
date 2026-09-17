@@ -1,0 +1,15 @@
+const express = require("express");
+const multer = require("multer");
+const v2Auth = require("../middleware/v2Auth");
+const { importJson, importFile, templateFields } = require("../controllers/catalogImport.controller");
+const { createDefinition, updateDefinition } = require("../controllers/attribute.controller");
+const { inviteBulk } = require("../controllers/adminClaim.controller");
+const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
+router.get("/catalog/template-fields", v2Auth("admin"), templateFields);
+router.post("/catalog/import", v2Auth("admin"), importJson);
+router.post("/catalog/import-file", v2Auth("admin"), upload.single("file"), importFile);
+router.post("/attributes", v2Auth("admin"), createDefinition);
+router.patch("/attributes/:id", v2Auth("admin"), updateDefinition);
+router.post("/claim-invitations/bulk", v2Auth("admin"), inviteBulk);
+module.exports = router;

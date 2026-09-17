@@ -1,0 +1,3 @@
+resortName,roomType,date,roomsAvailable,status
+Example Dive Resort,Ocean Villa,2027-01-10,4,available
+Example Dive Resort,Ocean Villa,2027-01-11,0,stop_sell

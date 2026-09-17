@@ -1,0 +1,13 @@
+const express = require("express");
+const { vessels, vessel, resorts, resort } = require("../controllers/public.controller");
+const { create: createEnquiry } = require("../controllers/enquiry.controller");
+const { listDefinitions, getProductAttributes } = require("../controllers/attribute.controller");
+const router = express.Router();
+router.get("/liveaboards", vessels);
+router.get("/liveaboards/:slug", vessel);
+router.get("/resorts", resorts);
+router.get("/resorts/:slug", resort);
+router.post("/enquiries", createEnquiry);
+router.get("/attributes", listDefinitions);
+router.get("/product-attributes/:productId", getProductAttributes);
+module.exports = router;
