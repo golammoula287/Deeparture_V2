@@ -12,9 +12,12 @@ const v2Auth = (...requiredLegacyRoles) =>
     if (!raw) throw new AppError(httpStatus.UNAUTHORIZED, "Authentication required");
 
     const token = raw.startsWith("Bearer ") ? raw.slice(7) : raw;
-    const decoded = jwt.verify(token, config.jwt_secret);
+    let decoded;
+    try { decoded = jwt.verify(token, config.jwt_secret); }
+    catch (_) { throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired authentication token'); }
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) throw new AppError(httpStatus.UNAUTHORIZED, "User no longer exists");
+    if (!user.isValid) throw new AppError(httpStatus.FORBIDDEN, "Account is not verified");
     if (user.status === "restricted") throw new AppError(httpStatus.FORBIDDEN, "User account is restricted");
 
     if (requiredLegacyRoles.length && !requiredLegacyRoles.includes(user.role)) {

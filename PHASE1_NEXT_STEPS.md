@@ -2,9 +2,9 @@
 
 ## Current status
 
-The V2 database seed stage (Step 7) has been completed and the starter frontend is visible in Render.
+Local + configured Atlas verification completed on 2026-09-19: 22 API/browser check groups, 8 regression/compatibility tests, production build, and both dependency audits pass. See [PHASE1_VERIFICATION.md](PHASE1_VERIFICATION.md) for evidence, fixes, and repeatable commands.
 
-The current white page with filter boxes is expected at this stage. It is a functional Phase 1 interface, not the final design.
+Render deployment and private GitHub status are still unverified. Checked boxes below refer to the local application using Atlas, not the hosted deployment.
 
 ---
 
@@ -213,23 +213,23 @@ Small catalogue import
 Required checks:
 
 - [ ] Backend deploys successfully on Render
-- [ ] MongoDB Atlas connection works
-- [ ] `/health` works
-- [ ] `/api/v2/attributes` works
-- [ ] `/api/v2/liveaboards` works
-- [ ] `/api/v2/resorts` works
-- [ ] Attribute seed completes
-- [ ] Demo seed completes
-- [ ] Admin account can be created
-- [ ] Admin login works
-- [ ] Operator login works
-- [ ] Demo liveaboard page works
-- [ ] Demo resort page works
-- [ ] Search/explore pages return records
-- [ ] Effective price calculation is correct
-- [ ] Availability is stored/retrieved correctly
-- [ ] Small import succeeds
-- [ ] Imported records automatically create public pages
+- [x] MongoDB Atlas connection works
+- [x] `/health` works
+- [x] `/api/v2/attributes` works
+- [x] `/api/v2/liveaboards` works
+- [x] `/api/v2/resorts` works
+- [x] Attribute seed completes
+- [x] Demo seed completes
+- [x] Admin account can be created
+- [x] Admin login works
+- [x] Operator login works
+- [x] Demo liveaboard page works
+- [x] Demo resort page works
+- [x] Search/explore pages return records
+- [x] Effective price calculation is correct
+- [x] Availability is stored/retrieved correctly
+- [x] Small import succeeds
+- [x] Imported records automatically create public pages
 - [ ] No production database is used
 - [ ] No default/demo passwords remain publicly exposed
 

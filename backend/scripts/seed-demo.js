@@ -54,7 +54,7 @@ const { materializeDeparturePricing } = require('../src/v2/services/pricing.serv
   await ResortPackage.findOneAndUpdate({ resort: resort._id, name: '7 Night Dive Package' }, { organisation: org._id, resort: resort._id, roomType: room._id, name: '7 Night Dive Package', numberOfNights: 7, numberOfDays: 8, numberOfDives: 12, mealPlan: 'full_board', basePrice: { amount: 1950, amountUsd: 1950, currency: 'USD', pricingBasis: 'per_person' }, active: true }, { upsert: true, new: true, runValidators: true });
 
   console.log('Demo data ready.');
-  console.log(`Operator login: ${email} / ${password}`);
+  console.log('Demo operator ready; credentials are configured in backend/.env.');
   console.log('Liveaboard: /liveaboards/demo-explorer');
   console.log('Resort: /resorts/demo-dive-resort');
   await mongoose.disconnect();

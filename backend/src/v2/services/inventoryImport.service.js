@@ -8,7 +8,7 @@ const Resort = require("../models/resort.model");
 const RoomType = require("../models/roomType.model");
 const ResortPackage = require("../models/resortPackage.model");
 const ResortAvailability = require("../models/resortAvailability.model");
-const { materializeDeparturePricing } = require("./pricing.service");
+const { materializeDeparturePricing, repriceDeparturesForItinerary } = require("./pricing.service");
 const slugify = require("../utilities/slugify");
 
 const findVessel = async (organisationId, name) => {
@@ -77,6 +77,7 @@ const importItineraryRows = async ({ organisationId, rows }) => {
       await itinerary.save();
     } else itinerary = await Itinerary.create(payload);
     if (payload.destinationSlugs.length) await Vessel.findByIdAndUpdate(vessel._id, { $addToSet: { destinationSlugs: { $each: payload.destinationSlugs } } });
+    await repriceDeparturesForItinerary(itinerary._id);
     results.push(itinerary);
   }
   return results;

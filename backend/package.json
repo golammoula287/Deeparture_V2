@@ -11,12 +11,15 @@
     "seed:attributes": "node scripts/seed-v2-attributes.js",
     "seed:demo": "node scripts/seed-demo.js",
     "create:admin": "node scripts/create-admin.js",
-    "refresh:pricing": "node scripts/refresh-v2-pricing.js"
+    "refresh:pricing": "node scripts/refresh-v2-pricing.js",
+    "test": "node --test tests/*.test.js",
+    "verify:phase1": "node scripts/verify-phase1.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
@@ -25,10 +28,14 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
     "multer": "^2.0.0",
-    "nodemailer": "^6.9.16",
-    "bcryptjs": "^2.4.3"
+    "nodemailer": "^10.0.10"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
   }
 }

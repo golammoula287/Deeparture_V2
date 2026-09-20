@@ -8,8 +8,8 @@ const isOfferActive = (offer, at = new Date()) => {
   return true;
 };
 
-const applyOffer = ({ amount, amountUsd, currency }, offer) => {
-  if (!isOfferActive(offer)) return { amount, amountUsd, currency, offerName: undefined };
+const applyOffer = ({ amount, amountUsd, currency }, offer, at = new Date()) => {
+  if (!isOfferActive(offer, at)) return { amount, amountUsd, currency, offerName: undefined };
   if (offer.type === "percent" && Number.isFinite(offer.percent)) {
     const factor = 1 - offer.percent / 100;
     return { amount: Math.max(0, amount * factor), amountUsd: Number.isFinite(amountUsd) ? Math.max(0, amountUsd * factor) : undefined, currency, offerName: offer.name };
@@ -37,17 +37,18 @@ const calculateEffectivePrices = (itinerary, departure, at = new Date()) => {
     const override = overrides.get(cabinId);
     const rackAmount = override?.amount ?? base.amount;
     const currency = override?.currency || base.currency;
-    const rackAmountUsd = Number.isFinite(override?.amountUsd)
-      ? override.amountUsd
-      : Number.isFinite(base.amountUsd)
-        ? base.amountUsd
-        : currency === "USD" ? rackAmount : undefined;
+    // Never reuse the base USD value after a departure override changes the price.
+    const rackAmountUsd = override
+      ? (Number.isFinite(override.amountUsd) ? override.amountUsd : currency === "USD" ? rackAmount : undefined)
+      : (Number.isFinite(base.amountUsd) ? base.amountUsd : currency === "USD" ? rackAmount : undefined);
     const offers = (departure.offers || []).filter((offer) => (!offer.cabinType || String(offer.cabinType) === cabinId) && isOfferActive(offer, at));
     let effective = { amount: rackAmount, amountUsd: rackAmountUsd, currency, offerName: undefined };
     for (const offer of offers) {
-      const candidate = applyOffer({ amount: rackAmount, amountUsd: rackAmountUsd, currency }, offer);
-      const candidateComparable = Number.isFinite(candidate.amountUsd) ? candidate.amountUsd : candidate.currency === currency ? candidate.amount : Infinity;
-      const currentComparable = Number.isFinite(effective.amountUsd) ? effective.amountUsd : effective.currency === currency ? effective.amount : Infinity;
+      const candidate = applyOffer({ amount: rackAmount, amountUsd: rackAmountUsd, currency }, offer, at);
+      const useUsd = Number.isFinite(candidate.amountUsd) && Number.isFinite(effective.amountUsd);
+      const sameCurrency = candidate.currency === effective.currency;
+      const candidateComparable = useUsd ? candidate.amountUsd : sameCurrency ? candidate.amount : Infinity;
+      const currentComparable = useUsd ? effective.amountUsd : effective.amount;
       if (candidateComparable < currentComparable) effective = candidate;
     }
     prices.push({ cabinType: base.cabinType, rackAmount, rackAmountUsd, effectiveAmount: Number(effective.amount.toFixed(2)), effectiveAmountUsd: Number.isFinite(effective.amountUsd) ? Number(effective.amountUsd.toFixed(2)) : undefined, currency: effective.currency, offerName: effective.offerName });
