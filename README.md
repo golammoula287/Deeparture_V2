@@ -42,6 +42,8 @@ curl http://localhost:5000/health
 
 Seed shared attributes and demo content:
 
+Set `DEMO_OPERATOR_PASSWORD` in your shell before starting Compose so the backend receives a private password of at least 12 characters. Recreate the backend if you set it after startup.
+
 ```bash
 docker compose exec backend npm run seed:attributes
 docker compose exec backend npm run seed:demo
@@ -54,10 +56,10 @@ Open:
 - Resort demo: http://localhost:3000/resorts/demo-dive-resort
 - Operator login: http://localhost:3000/login
 
-Default demo operator (development only):
+Configure a private demo operator before running the demo seed:
 
 - `operator@example.test`
-- `ChangeMe123!`
+- Set `DEMO_OPERATOR_PASSWORD` to a private password of at least 12 characters.
 
 Do not use those credentials outside a local development database.
 
@@ -105,7 +107,7 @@ Login through `/login`. Admin users can call the `/api/v2/admin/*` Phase 1 APIs.
 
 ## Safe email behavior
 
-If SMTP is not configured, the standalone backend uses Nodemailer's JSON transport. Emails are generated for testing but are **not delivered to real recipients**.
+The backend defaults to Nodemailer's JSON transport, even with SMTP credentials configured. Emails are generated for testing but are **not delivered to real recipients**. Keep `EMAIL_DELIVERY_MODE=test` on staging; real SMTP requires `EMAIL_DELIVERY_MODE=live`.
 
 Configure real SMTP only in a controlled staging/production environment.
 

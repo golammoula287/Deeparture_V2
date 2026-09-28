@@ -1,5 +1,7 @@
 # Phase 1 verification ? 2026-09-19
 
+> Historical report, superseded by [the 29 September review](docs/phase1-review.md) and [current test results](docs/phase1-test-results.json). Claims below describe an earlier environment and are not current acceptance evidence.
+
 The local application using the configured MongoDB Atlas deeparture_v2 database passes the checks below. Hosted Render deployment and private GitHub repository status remain unverified; their URLs/access were not supplied. This is not a production security audit or a statement that every possible application path has been tested.
 
 ## Results

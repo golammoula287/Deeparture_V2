@@ -18,6 +18,8 @@ services:
       BCRYPT_SALT_ROUNDS: 10
       FRONTEND_URL: http://localhost:3000
       EMAIL_FROM: Deeparture V2 <no-reply@example.test>
+      EMAIL_DELIVERY_MODE: test
+      DEMO_OPERATOR_PASSWORD: ${DEMO_OPERATOR_PASSWORD:-}
     depends_on:
       - mongo
     ports:

@@ -15,6 +15,15 @@ const { materializeDeparturePricing, repriceDeparturesForItinerary } = require("
 const { logAudit } = require("../services/audit.service");
 const slugify = require("../utilities/slugify");
 
+const assertEditorialPermission = (req) => {
+  if (req.user.role === 'admin') return;
+  for (const field of ['veganRating', 'environmentalRating', 'verificationStatus', 'listingStatus']) {
+    if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+      throw new AppError(httpStatus.FORBIDDEN, field + ' is controlled by Deeparture');
+    }
+  }
+};
+
 const assertOwned = async (Model, id, organisationId) => {
   const item = await Model.findOne({ _id: id, organisation: organisationId });
   if (!item) throw new AppError(httpStatus.NOT_FOUND, "Record not found for this organisation");
@@ -40,6 +49,7 @@ const applyUpdate = (item, body) => {
 };
 
 const createVessel = catchAsync(async (req, res) => {
+  assertEditorialPermission(req);
   const payload = { ...req.body, organisation: req.params.organisationId };
   if (!payload.slug && payload.name) payload.slug = slugify(payload.name);
   const item = await Vessel.create(payload);
@@ -48,6 +58,7 @@ const createVessel = catchAsync(async (req, res) => {
 });
 
 const updateVessel = catchAsync(async (req, res) => {
+  assertEditorialPermission(req);
   const item = await assertOwned(Vessel, req.params.id, req.params.organisationId);
   const before = item.toObject();
   applyUpdate(item, req.body);
@@ -97,6 +108,7 @@ const updateDeparture = catchAsync(async (req, res) => {
 });
 
 const createResort = catchAsync(async (req, res) => {
+  assertEditorialPermission(req);
   const payload = { ...req.body, organisation: req.params.organisationId };
   if (!payload.slug && payload.name) payload.slug = slugify(payload.name);
   const item = await Resort.create(payload);
@@ -104,6 +116,7 @@ const createResort = catchAsync(async (req, res) => {
 });
 
 const updateResort = catchAsync(async (req, res) => {
+  assertEditorialPermission(req);
   const item = await assertOwned(Resort, req.params.id, req.params.organisationId);
   applyUpdate(item, req.body);
   await item.save();

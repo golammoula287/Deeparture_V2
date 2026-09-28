@@ -13,7 +13,8 @@
     "create:admin": "node scripts/create-admin.js",
     "refresh:pricing": "node scripts/refresh-v2-pricing.js",
     "test": "node --test tests/*.test.js",
-    "verify:phase1": "node scripts/verify-phase1.js"
+    "verify:phase1": "node scripts/verify-phase1.js",
+    "verify:phase1:local": "node scripts/verify-phase1-local.js"
   },
   "engines": {
     "node": ">=20"

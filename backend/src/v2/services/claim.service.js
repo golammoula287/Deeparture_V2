@@ -2,7 +2,6 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const httpStatus = require("http-status");
 const User = require("../../models/user.model");
-const config = require("../../config");
 const AppError = require("../../error/appError");
 const Organisation = require("../models/organisation.model");
 const OrganisationMembership = require("../models/organisationMembership.model");
@@ -30,7 +29,7 @@ const createClaimInvitation = async ({ organisationId, email, createdBy }) => {
     createdBy,
   });
 
-  organisation.status = "invited";
+  if (organisation.status === 'unclaimed') organisation.status = "invited";
   organisation.primaryEmail = normalizedEmail;
   await organisation.save();
 
@@ -47,7 +46,23 @@ const acceptClaim = async ({ token, fullName, password, phone, whatsapp }) => {
   const organisation = await Organisation.findById(claim.organisation);
   if (!organisation) throw new AppError(httpStatus.NOT_FOUND, "Organisation not found");
 
-  let user = await User.findOne({ email: claim.email });
+  let user = await User.findOne({ email: claim.email }).select('+password');
+  if (user) {
+    if (!['operator', 'admin'].includes(user.role) || user.status !== 'active' || !user.isValid) {
+      throw new AppError(httpStatus.FORBIDDEN, 'Existing account is not eligible to claim');
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'Use your existing account password to accept this invitation');
+    }
+  } else if (password.length < 12) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Use a password of at least 12 characters');
+  }
+  // Atomically consume before granting membership; concurrent requests cannot reuse it.
+  const consumed = await ClaimToken.findOneAndUpdate(
+    { _id: claim._id, usedAt: { $exists: false }, expiresAt: { $gt: new Date() } },
+    { $set: { usedAt: new Date() } }, { new: true }
+  );
+  if (!consumed) throw new AppError(httpStatus.BAD_REQUEST, 'Claim link is invalid or expired');
   if (!user) {
     user = new User({
       fullName: fullName || organisation.name,
@@ -60,13 +75,6 @@ const acceptClaim = async ({ token, fullName, password, phone, whatsapp }) => {
       status: "active",
     });
     await user.save();
-  } else {
-    if (user.role !== "operator" && user.role !== "admin") {
-      throw new AppError(httpStatus.CONFLICT, "This email is already used by a non-operator account");
-    }
-    if (!user.isValid) user.isValid = true;
-    if (password) user.password = await bcrypt.hash(password, Number(config.bcrypt_salt_rounds || 10));
-    await User.updateOne({ _id: user._id }, { $set: { isValid: true, password: user.password } });
   }
 
   await OrganisationMembership.findOneAndUpdate(
@@ -79,8 +87,6 @@ const acceptClaim = async ({ token, fullName, password, phone, whatsapp }) => {
   organisation.claimedAt = new Date();
   await organisation.save();
 
-  claim.usedAt = new Date();
-  await claim.save();
   return { user: await User.findById(user._id).select("-password"), organisation };
 };
 

@@ -13,9 +13,12 @@ const ResortPackage = require('../src/v2/models/resortPackage.model');
 const { materializeDeparturePricing } = require('../src/v2/services/pricing.service');
 
 (async () => {
-  await mongoose.connect(config.database_url);
   const email = process.env.DEMO_OPERATOR_EMAIL || 'operator@example.test';
-  const password = process.env.DEMO_OPERATOR_PASSWORD || 'ChangeMe123!';
+  const password = process.env.DEMO_OPERATOR_PASSWORD;
+  if (!password || password === 'ChangeMe123!' || password.length < 12) {
+    throw new Error('Set DEMO_OPERATOR_PASSWORD to a private password of at least 12 characters before seeding.');
+  }
+  await mongoose.connect(config.database_url);
   let user = await User.findOne({ email });
   if (!user) user = await User.create({ fullName: 'Demo Operator', email, password, role: 'operator', isValid: true });
   const org = await Organisation.findOneAndUpdate(
