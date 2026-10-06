@@ -19,11 +19,18 @@ const enquirySchema = new Schema(
     message: String,
     status: {
       type: String,
-      enum: ["new", "sent_to_operator", "operator_replied", "quoted", "closed", "spam"],
+      enum: ["new", "admin_approved", "sent_to_operator", "operator_accepted", "operator_replied", "quoted", "confirmed", "rejected", "closed", "spam"],
       default: "new",
       index: true,
     },
     source: { type: String, default: "website" },
+    notificationInFlight: { type: Boolean, default: false },
+    statusHistory: [{
+      status: String,
+      at: { type: Date, default: Date.now },
+      actorUser: { type: Schema.Types.ObjectId, ref: "User" },
+      note: String,
+    }],
   },
   { timestamps: true }
 );

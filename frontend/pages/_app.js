@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
-import SiteHeader from '@/src/components/layout/SiteHeader';
+import AuthProvider from '@/src/components/auth/AuthProvider';
 
 export default function App({ Component, pageProps }) {
-  return <><SiteHeader /><Component {...pageProps} /></>;
+  return <AuthProvider><Component {...pageProps} /></AuthProvider>;
 }

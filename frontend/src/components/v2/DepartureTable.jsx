@@ -20,7 +20,7 @@ export default function DepartureTable({ departures = [] }) {
                 <td className="p-3">{formatDate(d.startDate)} – {formatDate(d.endDate)}</td>
                 <td className="p-3">{d.itinerary?.name || ""}</td>
                 <td className="p-3 font-semibold">{money(d.effectiveMinPrice, d.effectiveCurrency)}</td>
-                <td className="p-3">{d.status === "sold_out" ? "Sold out" : available ? `${available} spaces` : "On request"}</td>
+                <td className="p-3">{d.status === "sold_out" ? "Sold out" : available ? `${available} spaces` : "On request"}{d.availabilityUpdatedAt ? <div className="text-xs text-gray-500 mt-1">Availability updated {formatDate(d.availabilityUpdatedAt)}</div> : null}</td>
                 <td className="p-3">{offer || "—"}</td>
               </tr>
             );

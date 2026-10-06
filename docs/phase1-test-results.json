@@ -1,7 +1,7 @@
 {
-  "testedAt": "2026-09-28T21:28:58.057Z",
+  "testedAt": "2026-10-06T17:56:54.611Z",
   "scope": "local; no hosted deployment sign-off",
-  "passed": 30,
+  "passed": 34,
   "results": [
     {
       "label": "API health",
@@ -60,6 +60,10 @@
       "status": "passed"
     },
     {
+      "label": "pricing close-out: USD 6000 itinerary base -> USD 7000 departure override -> 10 percent offer -> USD 6300 public API price",
+      "status": "passed"
+    },
+    {
       "label": "cross-organisation cabin references rejected",
       "status": "passed"
     },
@@ -92,11 +96,23 @@
       "status": "passed"
     },
     {
+      "label": "anonymous Operator link and direct dashboard access require login; invalid sessions cleared",
+      "status": "passed"
+    },
+    {
       "label": "admin browser login and populated dashboard",
       "status": "passed"
     },
     {
+      "label": "admin logout clears credentials and blocks dashboard re-entry",
+      "status": "passed"
+    },
+    {
       "label": "operator browser login and populated dashboard",
+      "status": "passed"
+    },
+    {
+      "label": "operator logout clears credentials and blocks dashboard re-entry",
       "status": "passed"
     },
     {

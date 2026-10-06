@@ -3,6 +3,7 @@ const catchAsync = require("../../utilities/catchAsync");
 const sendResponse = require("../../utilities/sendResponse");
 const AttributeDefinition = require("../models/attributeDefinition.model");
 const ProductAttribute = require("../models/productAttribute.model");
+const AppError = require('../../error/appError');
 const { setProductAttributes, normalizeKey } = require("../services/attribute.service");
 
 const listDefinitions = catchAsync(async (req, res) => {
@@ -20,6 +21,10 @@ const createDefinition = catchAsync(async (req, res) => {
 });
 
 const updateDefinition = catchAsync(async (req, res) => {
+  const existing = await AttributeDefinition.findById(req.params.id);
+  if (!existing) throw new AppError(404, 'Attribute not found');
+  if (req.body.key !== undefined && normalizeKey(req.body.key) !== existing.key) throw new AppError(400, 'Attribute key is stable; edit its label instead');
+  delete req.body.key;
   const data = await AttributeDefinition.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Attribute updated", data });
 });

@@ -1,4 +1,6 @@
-# Deeparture V2 — Standalone Phase 1
+# Deeparture V2 — Standalone Phase 1 + Phase 2A
+
+Phase 2A Admin V2 is now integrated. Start with [the Phase 2A implementation and deployment notes](docs/phase2a/IMPLEMENTATION_AND_DEPLOYMENT.md) and [handover guide](HANDOVER_START_HERE.md). Admins sign in at `/login` and use `/admin/v2`; operators use `/dashboard/v2`.
 
 This repository is a **standalone extraction of Deeparture V2 Phase 1**. It does not require the legacy Deeparture V1 application to start or to create its own V2 database.
 
@@ -22,7 +24,7 @@ It contains:
 
 ## Important scope
 
-This is the **standalone Phase 1 foundation**, not the finished Deeparture V2 product. Admin V2, the complete Operator Portal V2, the redesigned mobile-first customer frontend/PWA, automated website ingestion and the future Agent platform remain later phases.
+This includes the **standalone Phase 1 foundation and Phase 2A Admin V2**. The complete Operator Portal V2, customer frontend/PWA redesign, Phase 2B automation and the future Agent platform remain later phases. Catalogue imports now require preview and explicit commit and create drafts; enquiries go to Admin review before operator delivery.
 
 The legacy migration script is intentionally **not included** in this repository because this standalone build is designed to run without V1. Migration from the existing production application should remain a separate controlled staging task.
 
@@ -141,8 +143,9 @@ Operator organisations:
 Admin catalogue:
 
 - `GET /api/v2/admin/catalog/template-fields`
-- `POST /api/v2/admin/catalog/import`
-- `POST /api/v2/admin/catalog/import-file`
+- `POST /api/v2/admin/catalog/import/preview`
+- `POST /api/v2/admin/catalog/import-file/preview`
+- `POST /api/v2/admin/catalog/import-batches/:batchId/commit`
 - `POST /api/v2/admin/attributes`
 - `POST /api/v2/admin/claim-invitations/bulk`
 

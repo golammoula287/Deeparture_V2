@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { v2BaseUrl } from "@/src/config/serverConfig";
+import { useAuth } from '@/src/components/auth/AuthProvider';
 
 const IMPORTS = [
   ["itineraries", "Itineraries + base cabin pricing"],
@@ -11,6 +12,13 @@ const IMPORTS = [
 const authHeaders = () => ({ Authorization: typeof window !== "undefined" ? (localStorage.getItem("access-token") || "") : "" });
 
 export default function V2Dashboard() {
+  const { logout } = useAuth();
+  const readResponse = async (response) => {
+    if (response.status === 401) { logout(); throw new Error('Your session expired. Please sign in again.'); }
+    const json = await response.json();
+    if (!response.ok || !json.success) throw new Error(json.message || 'Request failed');
+    return json;
+  };
   const [organisations, setOrganisations] = useState([]);
   const [organisationId, setOrganisationId] = useState("");
   const [dashboard, setDashboard] = useState(null);
@@ -20,19 +28,20 @@ export default function V2Dashboard() {
 
   useEffect(() => {
     fetch(`${v2BaseUrl}/organisations/mine`, { headers: authHeaders() })
-      .then((r) => r.json())
+      .then(readResponse)
       .then((j) => {
         const values = (j.data || []).map((entry) => entry.organisation || entry);
         setOrganisations(values);
         if (values[0]?._id) setOrganisationId(values[0]._id);
-      });
+      }).catch(error => setMessage(error.message));
   }, []);
 
   useEffect(() => {
     if (!organisationId) return;
     fetch(`${v2BaseUrl}/organisations/${organisationId}/dashboard`, { headers: authHeaders() })
-      .then((r) => r.json())
-      .then((j) => setDashboard(j.data));
+      .then(readResponse)
+      .then((j) => setDashboard(j.data))
+      .catch(error => setMessage(error.message));
   }, [organisationId]);
 
   const selected = useMemo(() => organisations.find((o) => o._id === organisationId), [organisations, organisationId]);
@@ -43,9 +52,11 @@ export default function V2Dashboard() {
     setMessage("Uploading…");
     const form = new FormData();
     form.append("file", file);
-    const response = await fetch(`${v2BaseUrl}/organisations/${organisationId}/import/${importType}`, { method: "POST", headers: authHeaders(), body: form });
-    const json = await response.json();
-    setMessage(response.ok ? `${json.data?.imported || 0} records imported.` : json.message || "Import failed");
+    try {
+      const response = await fetch(`${v2BaseUrl}/organisations/${organisationId}/import/${importType}`, { method: "POST", headers: authHeaders(), body: form });
+      const json = await readResponse(response);
+      setMessage(`${json.data?.imported || 0} records imported.`);
+    } catch (error) { setMessage(error.message); }
   };
 
   return (

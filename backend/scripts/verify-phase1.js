@@ -21,7 +21,16 @@ async function api(path, token, body, method) {
  const r = await fetch(origin + path, { method: method || (body ? 'POST' : 'GET'), headers: { ...(body && !(body instanceof FormData) ? {'Content-Type':'application/json'} : {}), ...(token ? {Authorization:'Bearer '+token}: {}) }, ...(body ? {body:body instanceof FormData ? body : JSON.stringify(body)}:{}), signal:AbortSignal.timeout(30000) });
  const j = await r.json(); return { status:r.status, ...j };
 }
-async function ok(path, token, body, method) { const r=await api(path,token,body,method); assert.ok(r.status<300 && r.success!==false, path+' failed: '+r.status+' '+(r.message||'')); return r.data; }
+// Phase 2A intentionally replaces immediate imports with preview, confirmation and moderation.
+async function ok(path, token, body, method) {
+ if(path==='/api/v2/admin/catalog/import-file') {
+  const preview=await ok(path+'/preview',token,body);
+  const result=await ok('/api/v2/admin/catalog/import-batches/'+preview.batchId+'/commit',token,{});
+  const kind=body.get('productType')==='resort'?'resorts':'liveaboards';
+  for(const item of result.successes)await ok('/api/v2/admin/catalog/'+kind+'/'+item.productId+'/status',token,{listingStatus:'published'},'PATCH');
+  return {...result,imported:result.summary.committed,failed:result.summary.commitErrors};
+ }
+ const r=await api(path,token,body,method); assert.ok(r.status<300 && r.success!==false, path+' failed: '+r.status+' '+(r.message||'')); return r.data; }
 async function login(email,password) { const data=await ok('/api/auth/login',null,{email,password}); return data.token; }
 function csv(rows) { const keys=Object.keys(rows[0]); return [keys,...rows.map(r=>keys.map(k=>r[k]??''))].map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n'); }
 function form(text, productType) { const f=new FormData();f.set('file',new Blob([text],{type:'text/csv'}),'verify.csv'); if(productType)f.set('productType',productType);return f; }
@@ -85,6 +94,12 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
  const rep=await ok(route+'/import/itineraries',owner,{rows:[{...itineraries[0],basePrice:6000}]});assert.equal(rep.imported,1);
  const refreshed=await ok('/api/v2/liveaboards/'+imported.successes[0].slug);assert.equal(refreshed.departures.find(d=>d.externalCode===run+'-0').effectiveMinPriceUsd,5400);pass('itinerary reimport refreshes existing departure pricing');
  const depId=deps.items[0]._id;
+ const priced=await ok(route+'/departures/'+depId,owner,{priceOverrides:[{cabinType:deps.items[0].availability[0].cabinType,amount:7000,currency:'USD'}]},'PATCH');
+ assert.equal(priced.effectiveMinPriceUsd,6300);
+ const priceDetail=await ok('/api/v2/liveaboards/'+imported.successes[0].slug);
+ assert.equal(priceDetail.departures.find(d=>d._id===depId).effectiveMinPriceUsd,6300);
+ await ok(route+'/departures/'+depId,owner,{priceOverrides:[]},'PATCH');
+ pass('pricing close-out: USD 6000 itinerary base -> USD 7000 departure override -> 10 percent offer -> USD 6300 public API price');
  const foreignCabin=vessel.itineraries[0].basePrices[0].cabinType._id;
  assert.equal((await api(route+'/departures/'+depId,owner,{availability:[{cabinType:foreignCabin,spacesAvailable:1}]},'PATCH')).status,400);
  pass('cross-organisation cabin references rejected');
@@ -101,7 +116,7 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
  transport.sendMail=async mail=>{const result=await send(mail);messages.push(JSON.parse(result.message));return result;};
  try {
   const enquiry=await ok('/api/v2/enquiries',null,{productType:'resort',product:resort._id,customer:{name:'Verification Customer',email:'customer@example.test',guests:2},message:'Test enquiry'});
-  assert.equal(enquiry.organisation,String(fixtureOrg));assert.equal(enquiry.status,'sent_to_operator');
+  assert.equal(enquiry.organisation,String(fixtureOrg));assert.equal(enquiry.status,'new');assert.equal(messages.some(m=>m.to.some(t=>t.address===email)),false);await ok('/api/v2/admin/enquiries/'+enquiry._id+'/approve',admin,{});
   for(const recipient of ['customer@example.test',email,process.env.ADMIN_EMAIL])assert.ok(messages.some(m=>m.to.some(t=>t.address===recipient)));
   assert.ok(await require('../src/v2/models/enquiry.model').exists({_id:enquiry._id}));
   pass('enquiry persisted and customer, operator, admin notifications generated in test transport');
@@ -111,10 +126,21 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
  const defaultLogin=await api('/api/auth/login',null,{email:'operator@example.test',password:'ChangeMe123!'});assert.equal(defaultLogin.status,401);pass('documented default demo login rejected');
  if(process.argv.includes('--browser')){
   const {chromium}=require('../../frontend/node_modules/@playwright/test');browser=await chromium.launch({headless:true,...(process.env.VERIFY_BROWSER_CHANNEL?{channel:process.env.VERIFY_BROWSER_CHANNEL}:{})});
-  const page=await browser.newPage();let errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext();const page=await context.newPage();let errors=[];page.on('pageerror',e=>errors.push(e.message));
   const frontend=process.env.VERIFY_FRONTEND_URL||'http://localhost:3000';
+  await page.goto(frontend+'/');await page.getByRole('link',{name:'Operator',exact:true}).click();await page.waitForURL('**/login');
+  await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');assert.equal(await page.getByText('Bulk upload',{exact:true}).count(),0);
+  await page.evaluate(()=>localStorage.setItem('access-token','Bearer invalid-token'));await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');assert.equal(await page.evaluate(()=>localStorage.getItem('access-token')),null);
+  pass('anonymous Operator link and direct dashboard access require login; invalid sessions cleared');
   for(const [kind,label] of [['ADMIN','admin'],['DEMO_OPERATOR','operator']]){
-   await page.goto(frontend+'/login');await page.getByPlaceholder('Email',{exact:true}).fill(process.env[kind+'_EMAIL']);await page.getByPlaceholder('Password',{exact:true}).fill(process.env[kind+'_PASSWORD']);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL('**/dashboard/v2');await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();pass(label+' browser login and populated dashboard');await page.evaluate(()=>localStorage.clear());
+   await page.goto(frontend+'/login');await page.getByPlaceholder('Email',{exact:true}).fill(process.env[kind+'_EMAIL']);await page.getByPlaceholder('Password',{exact:true}).fill(process.env[kind+'_PASSWORD']);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL(kind==='ADMIN'?'**/admin/v2':'**/dashboard/v2');if(kind==='ADMIN')await page.goto(frontend+'/dashboard/v2');await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();pass(label+' browser login and populated dashboard');
+   await page.reload();await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();
+   const otherTab=await page.context().newPage();await otherTab.goto(frontend+'/dashboard/v2');await otherTab.getByText('Demo Dive Company',{exact:true}).last().waitFor();
+   await page.getByRole('button',{name:'Logout',exact:true}).click();await page.waitForURL('**/login');
+   await otherTab.waitForURL('**/login');await otherTab.close();
+   assert.equal(await page.evaluate(()=>localStorage.getItem('access-token')),null);assert.equal(await page.evaluate(()=>localStorage.getItem('deeparture-user')),null);
+   await page.goBack();await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');
+   assert.equal(await page.getByText('Bulk upload',{exact:true}).count(),0);pass(label+' logout clears credentials and blocks dashboard re-entry');
   }
   for(const [path,needle] of [['/liveaboards/demo-explorer','Demo Explorer'],['/resorts/demo-dive-resort','Demo Dive Resort'],...imported.successes.map((x,i)=>['/liveaboards/'+x.slug,boats[i].vesselName]),['/resorts/'+resorts.successes[0].slug,prefix+' Resort']]){const response=await page.goto(frontend+path);assert.equal(response.status(),200);await page.getByRole('heading',{name:needle,exact:true}).waitFor();}pass('demo and imported public pages render in browser');
   for(const [path,needle] of [['/explore/liveaboards','Demo Explorer'],['/explore/resorts','Demo Dive Resort']]){await page.goto(frontend+path);await page.getByText(needle,{exact:true}).first().waitFor();}pass('search pages load database records in browser');

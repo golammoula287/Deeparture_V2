@@ -17,6 +17,7 @@ const organisationSchema = new Schema(
       default: "unclaimed",
       index: true,
     },
+    accountStatus: { type: String, enum: ["active", "suspended"], default: "active", index: true },
     primaryEmail: { type: String, lowercase: true, trim: true, index: true },
     phone: String,
     whatsapp: String,

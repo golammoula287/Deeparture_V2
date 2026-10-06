@@ -6,7 +6,7 @@ const resortSchema = new Schema(
     organisation: { type: Schema.Types.ObjectId, ref: "OrganisationV2", required: true, index: true },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true },
-    listingStatus: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
+    listingStatus: { type: String, enum: ["draft", "pending_review", "published", "restricted", "archived"], default: "draft", index: true },
     verificationStatus: {
       type: String,
       enum: ["unverified", "operator_verified", "deeparture_verified"],
@@ -25,6 +25,7 @@ const resortSchema = new Schema(
     region: String,
     district: String,
     destinationSlugs: [{ type: String, index: true }],
+    destinationLocations: [{ type: Schema.Types.ObjectId, ref: "LocationV2", index: true }],
     facilities: [{ type: String, lowercase: true }],
     dietary: [{ type: String, lowercase: true }],
     accessibility: [{ type: String, lowercase: true }],

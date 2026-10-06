@@ -14,6 +14,7 @@ const ResortAvailability = require("../models/resortAvailability.model");
 const { materializeDeparturePricing, repriceDeparturesForItinerary } = require("../services/pricing.service");
 const { logAudit } = require("../services/audit.service");
 const slugify = require("../utilities/slugify");
+const { replaceDepartureAvailability, upsertResortAvailability } = require("../services/availability.service");
 
 const assertEditorialPermission = (req) => {
   if (req.user.role === 'admin') return;
@@ -89,22 +90,30 @@ const updateItinerary = catchAsync(async (req, res) => {
 
 const createDeparture = catchAsync(async (req, res) => {
   const itinerary = await assertOwned(Itinerary, req.body.itinerary, req.params.organisationId);
+  const availability = req.body.availability || [];
   const payload = { ...req.body, organisation: req.params.organisationId, vessel: itinerary.vessel };
-  await assertCabins([...(payload.availability || []), ...(payload.priceOverrides || []), ...(payload.offers || [])], payload.vessel, payload.organisation);
+  delete payload.availability;
+  await assertCabins([...(availability || []), ...(payload.priceOverrides || []), ...(payload.offers || [])], payload.vessel, payload.organisation);
   const item = new Departure(payload);
   await materializeDeparturePricing(item);
   await item.save();
-  sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Departure created", data: item });
+  if (availability.length) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt });
+  const refreshed = await Departure.findById(item._id);
+  sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Departure created", data: refreshed });
 });
 
 const updateDeparture = catchAsync(async (req, res) => {
   const item = await assertOwned(Departure, req.params.id, req.params.organisationId);
-  await assertCabins([...(req.body.availability || []), ...(req.body.priceOverrides || []), ...(req.body.offers || [])], item.vessel, item.organisation);
-  applyUpdate(item, req.body);
-  if (req.body.availability) item.availabilityUpdatedAt = new Date();
+  const availability = req.body.availability;
+  const body = { ...req.body };
+  delete body.availability;
+  await assertCabins([...(availability || []), ...(body.priceOverrides || []), ...(body.offers || [])], item.vessel, item.organisation);
+  applyUpdate(item, body);
   await materializeDeparturePricing(item);
   await item.save();
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Departure updated", data: item });
+  if (availability) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt });
+  const refreshed = await Departure.findById(item._id);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Departure updated", data: refreshed });
 });
 
 const createResort = catchAsync(async (req, res) => {
@@ -150,12 +159,16 @@ const createRatePeriod = catchAsync(async (req, res) => {
 });
 
 const upsertAvailability = catchAsync(async (req, res) => {
-  const room = await assertOwned(RoomType, req.body.roomType, req.params.organisationId);
-  const item = await ResortAvailability.findOneAndUpdate(
-    { roomType: req.body.roomType, date: new Date(req.body.date) },
-    { ...req.body, organisation: req.params.organisationId, resort: room.resort, sourceUpdatedAt: new Date() },
-    { new: true, upsert: true, runValidators: true }
-  );
+  const item = await upsertResortAvailability({
+    organisationId: req.params.organisationId,
+    roomTypeId: req.body.roomType,
+    date: req.body.date,
+    roomsAvailable: req.body.roomsAvailable,
+    status: req.body.status,
+    sourceType: req.body.sourceType || "operator",
+    sourceReference: req.body.sourceReference,
+    sourceUpdatedAt: req.body.sourceUpdatedAt,
+  });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Availability updated", data: item });
 });
 

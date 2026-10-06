@@ -55,6 +55,7 @@ const getVesselBySlug = async (slug) => {
     .sort({ startDate: 1 })
     .populate("itinerary", "name slug numberOfNights embarkation disembarkation destinationSlugs")
     .populate("effectivePrices.cabinType", "name")
+    .populate("availability.cabinType", "name")
     .lean();
   return { ...vessel, itineraries, departures };
 };

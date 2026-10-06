@@ -8,7 +8,7 @@ const vesselSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     listingStatus: {
       type: String,
-      enum: ["draft", "published", "archived"],
+      enum: ["draft", "pending_review", "published", "restricted", "archived"],
       default: "draft",
       index: true,
     },
@@ -39,6 +39,7 @@ const vesselSchema = new Schema(
     cabinCount: Number,
     homePort: { type: Schema.Types.ObjectId, ref: "LocationV2" },
     destinationSlugs: [{ type: String, index: true }],
+    destinationLocations: [{ type: Schema.Types.ObjectId, ref: "LocationV2", index: true }],
     facilities: [{ type: String, lowercase: true }],
     dietary: [{ type: String, lowercase: true }],
     accessibility: [{ type: String, lowercase: true }],

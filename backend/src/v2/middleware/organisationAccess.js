@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
 const OrganisationMembership = require("../models/organisationMembership.model");
+const Organisation = require("../models/organisation.model");
 const AppError = require("../../error/appError");
 const catchAsync = require("../../utilities/catchAsync");
 
@@ -16,6 +17,11 @@ const organisationAccess = (minimumRole = "viewer") =>
       organisation: organisationId,
       status: "active",
     });
+    const organisation = await Organisation.findById(organisationId).select("status accountStatus");
+    if (!organisation) throw new AppError(httpStatus.NOT_FOUND, "Organisation not found");
+    if (organisation.accountStatus === "suspended" || organisation.status === "suspended") {
+      throw new AppError(httpStatus.FORBIDDEN, "Organisation is suspended");
+    }
     if (!membership || ROLE_WEIGHT[membership.role] < ROLE_WEIGHT[minimumRole]) {
       throw new AppError(httpStatus.FORBIDDEN, "You do not have access to this organisation");
     }

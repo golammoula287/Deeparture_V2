@@ -6,6 +6,7 @@ const { mine, dashboard } = require("../controllers/organisation.controller");
 const inventory = require("../controllers/inventory.controller");
 const { runImport } = require("../controllers/inventoryImport.controller");
 const { setAttributes } = require("../controllers/attribute.controller");
+const operatorEnquiry = require("../controllers/operatorEnquiry.controller");
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
 
@@ -25,5 +26,6 @@ router.post("/:organisationId/rate-periods", v2Auth(), organisationAccess("edito
 router.put("/:organisationId/resort-availability", v2Auth(), organisationAccess("editor"), inventory.upsertAvailability);
 router.post("/:organisationId/import/:importType", v2Auth(), organisationAccess("editor"), upload.single("file"), runImport);
 router.put("/:organisationId/product-attributes", v2Auth(), organisationAccess("editor"), setAttributes);
+router.patch("/:organisationId/enquiries/:id/status", v2Auth(), organisationAccess("reservations"), operatorEnquiry.updateStatus);
 
 module.exports = router;

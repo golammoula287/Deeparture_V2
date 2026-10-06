@@ -45,11 +45,12 @@ async function ready(url) {
     await run('scripts/create-admin.js');
     await run('scripts/seed-v2-attributes.js');
     await run('scripts/seed-demo.js');
-    await run('node_modules/next/dist/bin/next', frontend, ['build', '--webpack'], { NODE_ENV: 'production' });
+    if (!process.argv.includes('--skip-build')) await run('node_modules/next/dist/bin/next', frontend, ['build', '--webpack'], { NODE_ENV: 'production' });
     start(process.execPath, ['src/server.js'], backend);
     start(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3019'], frontend, { NODE_ENV: 'production' });
     await ready('http://localhost:5019/health'); await ready('http://localhost:3019');
-    await run('scripts/verify-phase1.js', backend, ['--browser']);
+    if (!process.argv.includes('--phase2-only')) await run('scripts/verify-phase1.js', backend, ['--browser']);
+    await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(root, 'docs/phase2a-test-results.json') });
   } finally {
     for (const child of children.reverse()) if (child.exitCode === null) child.kill();
     console.log('Local verification services stopped; isolated temporary database: ' + dbPath);
