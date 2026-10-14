@@ -7,9 +7,11 @@ const v2AdminRoutes = require('./v2/routes/admin.routes');
 const v2OrganisationRoutes = require('./v2/routes/organisation.routes');
 const globalErrorHandler = require('./utilities/globalErrorHandler');
 const notFound = require('./utilities/notFound');
+const operationId = require('./middleware/operationId');
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
+app.use(operationId);
 app.use(express.json({ limit: '30mb' }));
 app.get('/health', (req, res) => res.json({ ok: true, service: 'deeparture-v2-api' }));
 app.use('/api/auth', authRoutes);

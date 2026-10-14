@@ -4,6 +4,7 @@ const sendResponse = require("../../utilities/sendResponse");
 const AppError = require("../../error/appError");
 const Enquiry = require("../models/enquiry.model");
 const { logAudit } = require("../services/audit.service");
+const { publishDomainEvent } = require("../services/domainEvent.service");
 
 const updateStatus = catchAsync(async (req, res) => {
   const allowed = ["operator_accepted", "operator_replied", "quoted"];
@@ -15,6 +16,7 @@ const updateStatus = catchAsync(async (req, res) => {
   enquiry.statusHistory.push({ status: req.body.status, actorUser: req.v2User._id, note: req.body.note });
   await enquiry.save();
   await logAudit({ req, organisation: enquiry.organisation, action: "enquiry.operator_status", entityType: "enquiry", entityId: enquiry._id, after: { status: enquiry.status }, source: "operator" });
+  await publishDomainEvent({ name: "enquiry.operator_status", aggregateType: "enquiry", aggregateId: enquiry._id, organisation: enquiry.organisation, actorUser: req.v2User._id, operationId: req.operationId, payload: { status: enquiry.status }, retentionClass: "business" });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Enquiry status updated", data: enquiry });
 });
 module.exports = { updateStatus };

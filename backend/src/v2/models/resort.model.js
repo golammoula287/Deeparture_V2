@@ -17,6 +17,14 @@ const resortSchema = new Schema(
     sourceUrl: String,
     lastCheckedAt: Date,
     verifiedAt: Date,
+    verifiedByUser: { type: Schema.Types.ObjectId, ref: "User" },
+    verificationSourceType: String,
+    verificationSourceRef: String,
+    verificationScope: String,
+    verificationNotes: String,
+    completenessScore: { type: Number, min: 0, max: 100, default: 0, index: true },
+    completenessMissing: { type: [String], default: [] },
+    completenessUpdatedAt: Date,
     summary: String,
     description: String,
     featuredImage: String,
@@ -43,5 +51,7 @@ resortSchema.pre("validate", function (next) {
 });
 
 resortSchema.index({ listingStatus: 1, destinationSlugs: 1, veganRating: 1 });
+resortSchema.index({ listingStatus: 1, completenessScore: 1, updatedAt: -1 });
+resortSchema.index({ organisation: 1, updatedAt: -1 });
 resortSchema.index({ name: "text", summary: "text", description: "text" });
 module.exports = model("ResortV2", resortSchema);

@@ -1,6 +1,6 @@
-# Deeparture V2 — Standalone Phase 1 + Phase 2A
+# Deeparture V2 — Standalone Phase 1 + Phase 2A + Phase 2B
 
-Phase 2A Admin V2 is now integrated. Start with [the Phase 2A implementation and deployment notes](docs/phase2a/IMPLEMENTATION_AND_DEPLOYMENT.md) and [handover guide](HANDOVER_START_HERE.md). Admins sign in at `/login` and use `/admin/v2`; operators use `/dashboard/v2`.
+Phase 2B Rev 1.3 is integrated on the Phase 2A baseline. Start with [the integration record](docs/phase2b/INTEGRATION_RECORD_2026-10-15.md) and [handover guide](HANDOVER_START_HERE.md). Admins sign in at `/login` and use `/admin/v2`; operators use `/dashboard/v2`.
 
 This repository is a **standalone extraction of Deeparture V2 Phase 1**. It does not require the legacy Deeparture V1 application to start or to create its own V2 database.
 
@@ -24,7 +24,7 @@ It contains:
 
 ## Important scope
 
-This includes the **standalone Phase 1 foundation and Phase 2A Admin V2**. The complete Operator Portal V2, customer frontend/PWA redesign, Phase 2B automation and the future Agent platform remain later phases. Catalogue imports now require preview and explicit commit and create drafts; enquiries go to Admin review before operator delivery.
+This includes the **standalone Phase 1 foundation, Phase 2A Admin V2, and Phase 2B Admin automation**. The complete Operator Portal V2, customer frontend/PWA redesign, provider connectors and future Agent platform remain later phases. Catalogue imports require preview and explicit commit and create drafts; enquiries go to Admin review before operator delivery.
 
 The legacy migration script is intentionally **not included** in this repository because this standalone build is designed to run without V1. Migration from the existing production application should remain a separate controlled staging task.
 

@@ -38,7 +38,12 @@ async function ready(url) {
     const mongo = start(process.env.MONGOD_PATH || 'mongod', ['--dbpath', dbPath, '--port', '27029', '--bind_ip', '127.0.0.1', '--logpath', path.join(dbPath, 'mongo.log')], backend);
     mongo.once('error', error => console.error(error.message));
     const mongoose = require('mongoose');
-    await mongoose.connect(env.DATABASE_URL, { serverSelectionTimeoutMS: 15000 }); await mongoose.disconnect();
+    await mongoose.connect(env.DATABASE_URL, { serverSelectionTimeoutMS: 15000 });
+    // The fresh test database must have the text indexes before search assertions.
+    const Vessel = require('../src/v2/models/vessel.model');
+    const Resort = require('../src/v2/models/resort.model');
+    await Promise.all([Vessel.init(), Resort.init()]);
+    await mongoose.disconnect();
     await run('scripts/check-v2-syntax.js');
     await run('scripts/seed-v2-attributes.js');
     await run('scripts/seed-demo.js');
@@ -49,8 +54,9 @@ async function ready(url) {
     start(process.execPath, ['src/server.js'], backend);
     start(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3019'], frontend, { NODE_ENV: 'production' });
     await ready('http://localhost:5019/health'); await ready('http://localhost:3019');
-    if (!process.argv.includes('--phase2-only')) await run('scripts/verify-phase1.js', backend, ['--browser']);
-    await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(root, 'docs/phase2a-test-results.json') });
+    if (!process.argv.includes('--phase2-only') && !process.argv.includes('--phase2b-only')) await run('scripts/verify-phase1.js', backend, ['--browser']);
+    if (!process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(root, 'docs/phase2a-test-results.json') });
+    if (process.argv.includes('--phase2b') || process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2b.js');
   } finally {
     for (const child of children.reverse()) if (child.exitCode === null) child.kill();
     console.log('Local verification services stopped; isolated temporary database: ' + dbPath);

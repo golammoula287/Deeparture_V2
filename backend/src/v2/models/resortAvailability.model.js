@@ -12,6 +12,12 @@ const resortAvailabilitySchema = new Schema(
     sourceUpdatedAt: Date,
     sourceReference: String,
     receivedAt: { type: Date, default: Date.now },
+    freshnessState: { type: String, enum: ["fresh", "aging", "stale", "unknown"], default: "unknown", index: true },
+    conflictState: { type: Boolean, default: false, index: true },
+    manualOverride: { type: Boolean, default: false, index: true },
+    overrideExpiresAt: { type: Date, index: true },
+    effectiveSourceName: String,
+    resolvedAt: Date,
   },
   { timestamps: true }
 );

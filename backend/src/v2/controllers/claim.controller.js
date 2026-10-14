@@ -13,7 +13,7 @@ const invite = catchAsync(async (req, res) => {
 });
 
 const accept = catchAsync(async (req, res) => {
-  const data = await acceptClaim(req.body);
+  const data = await acceptClaim({ ...req.body, operationId: req.operationId });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Operator account claimed", data });
 });
 

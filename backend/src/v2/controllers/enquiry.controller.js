@@ -6,6 +6,7 @@ const Enquiry = require("../models/enquiry.model");
 const Vessel = require("../models/vessel.model");
 const Resort = require("../models/resort.model");
 const { sendEnquiryReceivedNotifications } = require("../services/notification.service");
+const { publishDomainEvent } = require("../services/domainEvent.service");
 
 const create = catchAsync(async (req, res) => {
   if (!['resort','vessel'].includes(req.body.productType)) throw new AppError(400, 'Invalid product type');
@@ -32,8 +33,9 @@ const create = catchAsync(async (req, res) => {
     status: "new",
     statusHistory: [{ status: "new", note: "Customer enquiry received; awaiting Deeparture review" }],
   });
-  try { await sendEnquiryReceivedNotifications({ enquiry, product }); }
+  try { await sendEnquiryReceivedNotifications({ enquiry, product, operationId: req.operationId }); }
   catch (error) { console.error("V2 enquiry receipt email failed:", error.message); }
+  await publishDomainEvent({ name: "enquiry.created", aggregateType: "enquiry", aggregateId: enquiry._id, organisation: enquiry.organisation, operationId: req.operationId, payload: { productType: enquiry.productType, product: enquiry.product }, retentionClass: "business" });
   sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Enquiry received and awaiting Deeparture review", data: enquiry });
 });
 module.exports = { create };

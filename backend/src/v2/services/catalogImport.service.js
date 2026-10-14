@@ -4,6 +4,9 @@ const Resort = require("../models/resort.model");
 const ImportBatch = require("../models/importBatch.model");
 const slugify = require("../utilities/slugify");
 const { normalizeCatalogRows } = require("./catalogImportAdapter.service");
+const { refreshProductCompleteness } = require("./completeness.service");
+const { notifyAdminsInApp } = require("./notification.service");
+const { publishDomainEvent } = require("./domainEvent.service");
 const AppError = require('../../error/appError');
 
 const escapeRegex = (value) => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -52,8 +55,8 @@ const classifyNormalizedRow = async (normalized) => {
   const organisation = orgMatches[0];
   const productMatches = organisation ? await productCandidates({ productType: normalized.productType, organisationId: organisation._id, product: normalized.product }) : [];
   if (productMatches.length > 1) return { ...normalized, action: "DUPLICATE_REVIEW", reason: "Listing matches more than one existing record", organisationMatchId: organisation?._id, productMatches: productMatches.map((p) => ({ _id: p._id, name: p.name, slug: p.slug })) };
-  if (productMatches.length === 1) return { ...normalized, action: "UPDATE", organisationMatchId: organisation._id, productMatchId: productMatches[0]._id };
-  return { ...normalized, action: "CREATE", organisationMatchId: organisation?._id };
+  if (productMatches.length === 1) return { ...normalized, action: "UPDATE", organisationMatchId: organisation._id, organisationMatchedUpdatedAt: organisation.updatedAt, productMatchId: productMatches[0]._id, productMatchedUpdatedAt: productMatches[0].updatedAt };
+  return { ...normalized, action: "CREATE", organisationMatchId: organisation?._id, organisationMatchedUpdatedAt: organisation?.updatedAt };
 };
 
 const summarizeRows = (rows) => rows.reduce((summary, row) => {
@@ -66,10 +69,10 @@ const summarizeRows = (rows) => rows.reduce((summary, row) => {
   return summary;
 }, { total: 0, create: 0, update: 0, duplicateReview: 0, error: 0, skip: 0, committed: 0, commitErrors: 0 });
 
-const createPreview = async ({ productType, rows, sourceType = "json", sourceFilename, createdBy }) => {
+const createPreview = async ({ productType, rows, sourceType = "json", sourceFilename, createdBy, adapterType, schemaVersion = 1, operationId, retryOfBatch }) => {
   if (!Array.isArray(rows)) throw new Error("rows must be an array");
   if (rows.length > 2000) throw new Error("Phase 2A preview is limited to 2,000 rows per batch");
-  const normalized = normalizeCatalogRows({ rows, productType, sourceType });
+  const normalized = normalizeCatalogRows({ rows, productType, sourceType, schemaVersion });
   const classified = [];
   const incomingKeys = new Set();
   for (const item of normalized) {
@@ -82,19 +85,24 @@ const createPreview = async ({ productType, rows, sourceType = "json", sourceFil
     classified.push(await classifyNormalizedRow(item));
   }
   const summary = summarizeRows(classified);
-  const batch = await ImportBatch.create({ productType, sourceType, sourceFilename, rows: classified, summary, createdBy });
+  const batch = await ImportBatch.create({ productType, sourceType, sourceFilename, adapterType: adapterType || `catalog_${sourceType}_v1`, schemaVersion, operationId, retryOfBatch, rows: classified, summary, createdBy });
   return { batchId: batch._id, status: batch.status, summary, rows: classified };
 };
 
-const applyOrganisation = async (row) => {
+const applyOrganisation = async (row, batchOrganisationVersions) => {
   if (row.organisationMatchId) {
     const org = await Organisation.findById(row.organisationMatchId);
     if (!org) throw new Error("Matched organisation no longer exists");
+    const expectedUpdatedAt = batchOrganisationVersions.get(String(org._id)) || row.organisationMatchedUpdatedAt;
+    if (expectedUpdatedAt && new Date(expectedUpdatedAt).getTime() !== new Date(org.updatedAt).getTime()) {
+      throw new AppError(409, "Matched organisation changed after preview; create a new preview before committing", { code: "conflict", details: { organisationId: org._id, currentUpdatedAt: org.updatedAt, previewUpdatedAt: row.organisationMatchedUpdatedAt } });
+    }
     if (!org.primaryEmail && row.organisation.primaryEmail) org.primaryEmail = row.organisation.primaryEmail;
     if (!org.website && row.organisation.website) org.website = row.organisation.website;
     if (!org.country && row.organisation.country) org.country = row.organisation.country;
     org.lastCheckedAt = new Date();
     await org.save();
+    batchOrganisationVersions.set(String(org._id), org.updatedAt);
     return org;
   }
   // Re-match at commit time so multiple rows for a newly-created operator reuse the first organisation.
@@ -127,44 +135,52 @@ const productPayload = (row, organisationId) => {
     summary: p.summary,
     description: p.description,
     featuredImage: p.featuredImage,
-    gallery: p.gallery || [],
-    destinationSlugs: p.destinationSlugs || [],
-    facilities: p.facilities || [],
-    dietary: p.dietary || [],
-    accessibility: p.accessibility || [],
-    divingFeatures: p.divingFeatures || [],
+    gallery: p.gallery,
+    destinationSlugs: p.destinationSlugs,
+    facilities: p.facilities,
+    dietary: p.dietary,
+    accessibility: p.accessibility,
+    divingFeatures: p.divingFeatures,
     veganRating: p.veganRating,
     environmentalRating: p.environmentalRating,
     metadata: { normalizedImportSchemaVersion: row.schemaVersion, importSourceType: row.sourceType },
   };
   if (row.productType === "resort") Object.assign(payload, { country: p.country, region: p.region, district: p.district });
   else Object.assign(payload, { vesselType: p.vesselType, yearBuilt: p.yearBuilt, yearRefit: p.yearRefit, lengthMeters: p.lengthMeters, beamMeters: p.beamMeters, maxGuests: p.maxGuests, cabinCount: p.cabinCount });
-  return payload;
+  return Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== undefined));
 };
 
-const commitBatch = async ({ batchId, committedBy, allowPartial = false }) => {
+const commitBatch = async ({ batchId, committedBy, allowPartial = false, operationId }) => {
   let batch = await ImportBatch.findById(batchId);
   if (!batch) throw new AppError(404, "Import preview batch not found");
-  if (batch.status !== "preview") throw new AppError(409, `Import batch cannot be committed from status ${batch.status}`);
+  if (!["preview","awaiting_confirmation"].includes(batch.status)) throw new AppError(409, `Import batch cannot be committed from status ${batch.status}`);
   if (!allowPartial && ((batch.summary?.duplicateReview || 0) > 0 || (batch.summary?.error || 0) > 0)) {
     throw new AppError(400, "Import batch has unresolved duplicate-review or error rows; correct the source or explicitly allow a partial commit");
   }
-  batch = await ImportBatch.findOneAndUpdate({ _id: batchId, status: 'preview' }, { $set: { status: 'committing' } }, { new: true });
+  batch = await ImportBatch.findOneAndUpdate({ _id: batchId, status: { $in: ['preview','awaiting_confirmation'] } }, { $set: { status: 'committing', operationId: operationId || batch.operationId } }, { new: true });
   if (!batch) throw new AppError(409, 'Import batch is already being committed');
   const successes = [];
   const errors = [];
+  // Rows in one batch may update the same organisation. Keep the concurrency
+  // precondition current for writes made by this batch, while detecting external edits.
+  const batchOrganisationVersions = new Map();
   const Model = batch.productType === "resort" ? Resort : Vessel;
   for (const row of batch.rows) {
     if (!["CREATE", "UPDATE"].includes(row.action)) continue;
     try {
-      const organisation = await applyOrganisation(row);
+      const organisation = await applyOrganisation(row, batchOrganisationVersions);
       const payload = productPayload(row, organisation._id);
       let product;
       if (row.action === "UPDATE") {
         product = await Model.findById(row.productMatchId);
         if (!product) throw new Error("Matched listing no longer exists");
-        // Never let a file transfer a product to another organisation or silently publish it.
+        if (row.productMatchedUpdatedAt && new Date(row.productMatchedUpdatedAt).getTime() !== new Date(product.updatedAt).getTime()) {
+          throw new AppError(409, "Matched listing changed after preview; create a new preview before committing", { code: "conflict", details: { productId: product._id, currentUpdatedAt: product.updatedAt, previewUpdatedAt: row.productMatchedUpdatedAt } });
+        }
+        // Never let a file transfer a product, reset editorial verification/origin, or silently publish it.
         delete payload.organisation;
+        delete payload.verificationStatus;
+        delete payload.source;
         payload.metadata = { ...(product.metadata || {}), ...(payload.metadata || {}) };
         Object.assign(product, payload);
         await product.save();
@@ -174,15 +190,20 @@ const commitBatch = async ({ batchId, committedBy, allowPartial = false }) => {
         if (freshProducts.length === 1) {
           product = freshProducts[0];
           delete payload.organisation;
+          delete payload.verificationStatus;
+          delete payload.source;
           payload.metadata = { ...(product.metadata || {}), ...(payload.metadata || {}) };
           Object.assign(product, payload);
           await product.save();
         } else {
           payload.slug = await uniqueSlug(Model, row.product.requestedSlug || row.product.name);
           payload.listingStatus = "draft";
+          payload.verificationStatus = "unverified";
+          payload.source = "deeparture_import";
           product = await Model.create(payload);
         }
       }
+      await refreshProductCompleteness({ productType: row.productType, productId: product._id });
       successes.push({ row: row.rowNumber, action: row.action, organisationId: organisation._id, productId: product._id, slug: product.slug });
     } catch (error) {
       errors.push({ row: row.rowNumber, action: row.action, message: error.message });
@@ -195,8 +216,12 @@ const commitBatch = async ({ batchId, committedBy, allowPartial = false }) => {
   batch.committedAt = new Date();
   batch.results = successes;
   batch.rowErrors = errors;
+  batch.operationId = operationId || batch.operationId;
   await batch.save();
-  return { batchId: batch._id, status: batch.status, summary: batch.summary, successes, errors };
+  const eventName = errors.length ? 'import.completed_with_errors' : 'import.completed';
+  await publishDomainEvent({ name: eventName, aggregateType: 'importBatch', aggregateId: batch._id, actorUser: committedBy, operationId: batch.operationId, payload: { summary: batch.summary, productType: batch.productType, sourceType: batch.sourceType }, retentionClass: 'business' });
+  await notifyAdminsInApp({ type: eventName, title: errors.length ? 'Import completed with errors' : 'Import completed', message: `${batch.productType} import committed ${successes.length} row(s) with ${errors.length} error(s).`, relatedRecordType: 'importBatch', relatedRecordId: batch._id, actionTarget: `/admin/v2/imports/history?batch=${batch._id}`, operationId: batch.operationId, retentionClass: 'business' });
+  return { batchId: batch._id, status: batch.status, summary: batch.summary, successes, errors, operationId: batch.operationId };
 };
 
 const getBatch = async (batchId) => ImportBatch.findById(batchId).lean();

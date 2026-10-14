@@ -13,6 +13,12 @@ const availabilitySchema = new Schema(
     sourceReference: String,
     sourceUpdatedAt: Date,
     receivedAt: { type: Date, default: Date.now },
+    freshnessState: { type: String, enum: ["fresh", "aging", "stale", "unknown"], default: "unknown" },
+    conflictState: { type: Boolean, default: false },
+    manualOverride: { type: Boolean, default: false },
+    overrideExpiresAt: Date,
+    effectiveSourceName: String,
+    resolvedAt: Date,
   },
   { _id: true }
 );

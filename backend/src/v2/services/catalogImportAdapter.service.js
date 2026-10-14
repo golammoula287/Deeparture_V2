@@ -6,6 +6,10 @@ const asList = (value) => {
   return String(value).split(/[|;,]/).map((v) => v.trim()).filter(Boolean);
 };
 const lowerList = (value) => asList(value).map((v) => v.toLowerCase());
+const optionalList = (value, mapper = (v) => v) => {
+  if (value === undefined || value === null || value === '') return undefined;
+  return asList(value).map(mapper);
+};
 const normalizeFacet = (value) => String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const numberOrUndefined = (value) => value === undefined || value === null || value === "" ? undefined : Number(value);
 const bool = (value) => [true, 1, "1", "true", "yes", "y"].includes(typeof value === "string" ? value.trim().toLowerCase() : value);
@@ -33,15 +37,15 @@ const normalizeProduct = (row, productType) => {
   const common = {
     name,
     requestedSlug: String(row.slug || "").trim() || (name ? slugify(name) : undefined),
-    summary: row.summary === undefined ? undefined : String(row.summary),
-    description: row.description === undefined ? undefined : String(row.description),
-    featuredImage: String(row.featuredImage || "").trim() || undefined,
-    gallery: asList(row.gallery),
-    destinationSlugs: lowerList(row.destinations).map(slugify),
-    facilities: lowerList(row.facilities).map(normalizeFacet),
-    dietary: lowerList(row.dietary).map(normalizeFacet),
-    accessibility: lowerList(row.accessibility).map(normalizeFacet),
-    divingFeatures: lowerList(row.divingFeatures).map(normalizeFacet),
+    summary: row.summary === undefined || row.summary === null || row.summary === '' ? undefined : String(row.summary),
+    description: row.description === undefined || row.description === null || row.description === '' ? undefined : String(row.description),
+    featuredImage: row.featuredImage === undefined || row.featuredImage === null || row.featuredImage === '' ? undefined : String(row.featuredImage).trim(),
+    gallery: optionalList(row.gallery),
+    destinationSlugs: optionalList(row.destinations, (v) => slugify(String(v).toLowerCase())),
+    facilities: optionalList(row.facilities, (v) => normalizeFacet(String(v).toLowerCase())),
+    dietary: optionalList(row.dietary, (v) => normalizeFacet(String(v).toLowerCase())),
+    accessibility: optionalList(row.accessibility, (v) => normalizeFacet(String(v).toLowerCase())),
+    divingFeatures: optionalList(row.divingFeatures, (v) => normalizeFacet(String(v).toLowerCase())),
     veganRating: numberOrUndefined(row.veganRating),
     environmentalRating: numberOrUndefined(row.environmentalRating),
     sourceUrl: String(row.sourceUrl || row.vesselWebsite || row.resortWebsite || "").trim() || undefined,
@@ -65,7 +69,7 @@ const normalizeProduct = (row, productType) => {
   };
 };
 
-const normalizeCatalogRow = ({ row, rowNumber, productType, sourceType = "json" }) => {
+const normalizeCatalogRow = ({ row, rowNumber, productType, sourceType = "json", schemaVersion = 1 }) => {
   const organisation = normalizeOrganisation(row || {});
   const product = normalizeProduct(row || {}, productType);
   const errors = [];
@@ -79,7 +83,7 @@ const normalizeCatalogRow = ({ row, rowNumber, productType, sourceType = "json" 
     if (product[field] !== undefined && (!Number.isFinite(product[field]) || product[field] < 0)) errors.push(`${field} must be a non-negative number`);
   }
   return {
-    schemaVersion: 1,
+    schemaVersion,
     rowNumber,
     sourceType,
     organisation,
@@ -90,6 +94,6 @@ const normalizeCatalogRow = ({ row, rowNumber, productType, sourceType = "json" 
   };
 };
 
-const normalizeCatalogRows = ({ rows, productType, sourceType }) => rows.map((row, index) => normalizeCatalogRow({ row, rowNumber: index + 1, productType, sourceType }));
+const normalizeCatalogRows = ({ rows, productType, sourceType, schemaVersion = 1 }) => rows.map((row, index) => normalizeCatalogRow({ row, rowNumber: index + 1, productType, sourceType, schemaVersion }));
 
 module.exports = { asList, normalizeFacet, normalizeWebsite, normalizeOrganisation, normalizeProduct, normalizeCatalogRow, normalizeCatalogRows };

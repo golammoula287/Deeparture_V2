@@ -97,7 +97,7 @@ const createDeparture = catchAsync(async (req, res) => {
   const item = new Departure(payload);
   await materializeDeparturePricing(item);
   await item.save();
-  if (availability.length) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt });
+  if (availability.length) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt, actorUserId: req.v2User?._id || req.user?._id, operationId: req.operationId });
   const refreshed = await Departure.findById(item._id);
   sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Departure created", data: refreshed });
 });
@@ -111,7 +111,7 @@ const updateDeparture = catchAsync(async (req, res) => {
   applyUpdate(item, body);
   await materializeDeparturePricing(item);
   await item.save();
-  if (availability) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt });
+  if (availability) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: req.body.source || "operator", sourceUpdatedAt: req.body.sourceUpdatedAt, actorUserId: req.v2User?._id || req.user?._id, operationId: req.operationId });
   const refreshed = await Departure.findById(item._id);
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Departure updated", data: refreshed });
 });
@@ -168,6 +168,8 @@ const upsertAvailability = catchAsync(async (req, res) => {
     sourceType: req.body.sourceType || "operator",
     sourceReference: req.body.sourceReference,
     sourceUpdatedAt: req.body.sourceUpdatedAt,
+    actorUserId: req.v2User?._id || req.user?._id,
+    operationId: req.operationId,
   });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Availability updated", data: item });
 });

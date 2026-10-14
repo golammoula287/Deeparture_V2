@@ -16,7 +16,10 @@
     "verify:phase1": "node scripts/verify-phase1.js",
     "verify:phase1:local": "node scripts/verify-phase1-local.js",
     "verify:phase2a": "node scripts/verify-phase2a.js",
-    "verify:phase2a:local": "node scripts/verify-phase1-local.js"
+    "verify:phase2a:local": "node scripts/verify-phase1-local.js",
+    "verify:phase2b:static": "node scripts/verify-phase2b-static.js",
+    "verify:phase2b": "npm run check && npm run verify:phase2b:static && npm test",
+    "verify:phase2b:local": "node scripts/verify-phase1-local.js --phase2b-only"
   },
   "engines": {
     "node": ">=20"

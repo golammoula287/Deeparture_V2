@@ -4,12 +4,14 @@ const importBatchSchema = new Schema(
   {
     kind: { type: String, enum: ["catalog"], default: "catalog", index: true },
     productType: { type: String, enum: ["vessel", "resort"], required: true, index: true },
-    sourceType: { type: String, enum: ["csv", "xlsx", "json", "admin"], required: true },
+    sourceType: { type: String, enum: ["csv", "xlsx", "json", "admin", "api", "feed", "website"], required: true, index: true },
     sourceFilename: String,
-    schemaVersion: { type: Number, default: 1 },
+    adapterType: { type: String, default: "catalog_normalized_v1", index: true },
+    schemaVersion: { type: Number, default: 1, index: true },
+    operationId: { type: String, index: true },
     status: {
       type: String,
-      enum: ["preview", "committing", "completed", "completed_with_errors", "cancelled"],
+      enum: ["uploaded", "validated", "preview", "awaiting_confirmation", "committing", "processing", "completed", "completed_with_errors", "failed", "cancelled"],
       default: "preview",
       index: true,
     },
@@ -29,8 +31,12 @@ const importBatchSchema = new Schema(
     committedAt: Date,
     results: { type: [Schema.Types.Mixed], default: [] },
     rowErrors: { type: [Schema.Types.Mixed], default: [] },
+    retryOfBatch: { type: Schema.Types.ObjectId, ref: "ImportBatchV2" },
+    retentionClass: { type: String, enum: ["business", "operational"], default: "business" },
   },
   { timestamps: true }
 );
 
+importBatchSchema.index({ status: 1, createdAt: -1 });
+importBatchSchema.index({ sourceType: 1, adapterType: 1, createdAt: -1 });
 module.exports = model("ImportBatchV2", importBatchSchema);

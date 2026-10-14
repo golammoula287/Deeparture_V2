@@ -9,7 +9,7 @@ const { logAudit } = require('../services/audit.service');
 const previewJson = catchAsync(async (req, res) => {
   const { productType = "vessel", rows } = req.body;
   if (!Array.isArray(rows)) throw new AppError(httpStatus.BAD_REQUEST, "rows must be an array");
-  const data = await createPreview({ productType: productType === "resort" ? "resort" : "vessel", rows, sourceType: "json", createdBy: req.v2User._id });
+  const data = await createPreview({ productType: productType === "resort" ? "resort" : "vessel", rows, sourceType: "json", adapterType: "catalog_json_v1", schemaVersion: Number(req.body.schemaVersion || 1), createdBy: req.v2User._id, operationId: req.operationId });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Catalog preview created; no database changes have been committed", data });
 });
 
@@ -17,12 +17,12 @@ const previewFile = catchAsync(async (req, res) => {
   if (!req.file) throw new AppError(httpStatus.BAD_REQUEST, "CSV/XLSX file is required");
   const productType = req.body.productType === "resort" ? "resort" : "vessel";
   const parsed = await parseCatalogSpreadsheet(req.file, productType);
-  const data = await createPreview({ productType, rows: parsed.rows, sourceType: parsed.sourceType, sourceFilename: req.file.originalname, createdBy: req.v2User._id });
+  const data = await createPreview({ productType, rows: parsed.rows, sourceType: parsed.sourceType, sourceFilename: req.file.originalname, adapterType: `catalog_${parsed.sourceType}_v1`, schemaVersion: Number(req.body.schemaVersion || 1), createdBy: req.v2User._id, operationId: req.operationId });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Catalog file preview created; confirm the batch before writing", data });
 });
 
 const commit = catchAsync(async (req, res) => {
-  const data = await commitBatch({ batchId: req.params.batchId, committedBy: req.v2User._id, allowPartial: req.body?.allowPartial === true });
+  const data = await commitBatch({ batchId: req.params.batchId, committedBy: req.v2User._id, allowPartial: req.body?.allowPartial === true, operationId: req.operationId });
   await logAudit({ req, action: 'catalog.import.commit', entityType: 'importBatch', entityId: data.batchId, after: { summary: data.summary, status: data.status }, source: 'admin' });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: data.errors.length ? "Catalog import completed with row errors" : "Catalog import committed", data });
 });

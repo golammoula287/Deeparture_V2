@@ -19,6 +19,11 @@ const slugify = require("../utilities/slugify");
 const { logAudit } = require("../services/audit.service");
 const { createClaimInvitation } = require("../services/claim.service");
 const { sendEnquiryToOperator } = require("../services/notification.service");
+const { searchAdminProducts } = require("../services/search.service");
+const { refreshProductCompleteness } = require("../services/completeness.service");
+const { publishDomainEvent } = require("../services/domainEvent.service");
+const { parsePagination, pagedResult } = require("../services/pagination.service");
+const { setListingStatus } = require("../services/catalogueAdmin.service");
 
 const escapeRegex = (value) => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const LISTING_STATUSES = ["draft", "pending_review", "published", "restricted", "archived"];
@@ -46,23 +51,9 @@ const dashboard = catchAsync(async (req, res) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Admin dashboard", data: { counts: { liveaboards, resorts, drafts, pending, unclaimed, invited, claimed, enquiries }, recent } });
 });
 
-const listProducts = (Model) => catchAsync(async (req, res) => {
-  const filter = {};
-  if (req.query.status) filter.listingStatus = req.query.status;
-  if (req.query.organisation) filter.organisation = req.query.organisation;
-  if (req.query.claimStatus) {
-    const ids = await Organisation.distinct('_id', { status: req.query.claimStatus });
-    filter.organisation = { $in: ids.filter(id => !req.query.organisation || String(id) === req.query.organisation) };
-  }
-  if (req.query.destination) filter.destinationSlugs = slugify(req.query.destination);
-  if (req.query.q) filter.name = new RegExp(escapeRegex(req.query.q), "i");
-  const page = Math.max(1, Number(req.query.page || 1));
-  const limit = Math.min(100, Math.max(1, Number(req.query.limit || 50)));
-  const [items, total] = await Promise.all([
-    Model.find(filter).populate("organisation", "name status primaryEmail").sort({ updatedAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
-    Model.countDocuments(filter),
-  ]);
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Catalogue retrieved", data: { items, total, page, limit } });
+const listProducts = (productType) => catchAsync(async (req, res) => {
+  const data = await searchAdminProducts(productType, req.query);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Catalogue retrieved", data });
 });
 
 const getProduct = (Model) => catchAsync(async (req, res) => {
@@ -88,13 +79,16 @@ const createProduct = (Model, type) => catchAsync(async (req, res) => {
   const payload = { ...req.body, slug: await uniqueSlug(Model, req.body.slug || req.body.name), listingStatus: req.body.listingStatus || "draft", source: req.body.source || "admin", lastCheckedAt: new Date() };
   await syncDestinationLocations(payload);
   const item = await Model.create(payload);
+  await refreshProductCompleteness({ productType: type === "resort" ? "resort" : "vessel", productId: item._id });
   await logAudit({ req, organisation: item.organisation, action: `${type}.create`, entityType: type, entityId: item._id, after: item.toObject(), source: "admin" });
+  await publishDomainEvent({ name: "listing.created", aggregateType: type, aggregateId: item._id, organisation: item.organisation, actorUser: req.v2User._id, operationId: req.operationId, payload: { listingStatus: item.listingStatus } });
   sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Listing created", data: item });
 });
 
 const updateProduct = (Model, type) => catchAsync(async (req, res) => {
   const item = await Model.findById(req.params.id);
   if (!item) throw new AppError(httpStatus.NOT_FOUND, "Listing not found");
+  if (req.body.expectedUpdatedAt && new Date(req.body.expectedUpdatedAt).getTime() !== new Date(item.updatedAt).getTime()) throw new AppError(409, "Listing changed since it was loaded", { code: "conflict", details: { currentUpdatedAt: item.updatedAt } });
   if (req.body.organisation && String(req.body.organisation) !== String(item.organisation)) throw new AppError(httpStatus.BAD_REQUEST, "Organisation cannot be transferred through this endpoint");
   const before = item.toObject();
   const payload = {};
@@ -104,18 +98,14 @@ const updateProduct = (Model, type) => catchAsync(async (req, res) => {
   Object.assign(item, payload);
   item.lastCheckedAt = new Date();
   await item.save();
+  await refreshProductCompleteness({ productType: type === "resort" ? "resort" : "vessel", productId: item._id });
   await logAudit({ req, organisation: item.organisation, action: `${type}.update`, entityType: type, entityId: item._id, before, after: item.toObject(), source: "admin" });
+  await publishDomainEvent({ name: "listing.updated", aggregateType: type, aggregateId: item._id, organisation: item.organisation, actorUser: req.v2User._id, operationId: req.operationId, payload: { changedFields: Object.keys(payload) } });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Listing updated", data: item });
 });
 
 const setProductStatus = (Model, type) => catchAsync(async (req, res) => {
-  if (!LISTING_STATUSES.includes(req.body.listingStatus)) throw new AppError(httpStatus.BAD_REQUEST, "Invalid listing status");
-  const item = await Model.findById(req.params.id);
-  if (!item) throw new AppError(httpStatus.NOT_FOUND, "Listing not found");
-  const before = item.listingStatus;
-  item.listingStatus = req.body.listingStatus;
-  await item.save();
-  await logAudit({ req, organisation: item.organisation, action: `${type}.status`, entityType: type, entityId: item._id, before: { listingStatus: before }, after: { listingStatus: item.listingStatus }, source: "admin" });
+  const item = await setListingStatus({ productType: type, id: req.params.id, listingStatus: req.body.listingStatus, expectedUpdatedAt: req.body.expectedUpdatedAt, req, operationId: req.operationId });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Listing status updated", data: item });
 });
 
@@ -138,14 +128,30 @@ const previewResort = catchAsync(async (req, res) => {
 
 const listOrganisations = catchAsync(async (req, res) => {
   const filter = { type: "operator" };
-  if (req.query.status) filter.status = req.query.status;
-  if (req.query.q) filter.name = new RegExp(escapeRegex(req.query.q), "i");
-  const items = await Organisation.find(filter).sort({ name: 1 }).lean();
-  const vesselCounts = await Vessel.aggregate([{ $match: { organisation: { $in: items.map((i) => i._id) } } }, { $group: { _id: "$organisation", count: { $sum: 1 } } }]);
-  const resortCounts = await Resort.aggregate([{ $match: { organisation: { $in: items.map((i) => i._id) } } }, { $group: { _id: "$organisation", count: { $sum: 1 } } }]);
+  if (req.query.status) {
+    // Admin UI historically offered suspended alongside claim states; account suspension is stored separately.
+    if (req.query.status === 'suspended') filter.accountStatus = 'suspended';
+    else filter.status = req.query.status;
+  }
+  if (req.query.q) filter.$or = [
+    { name: new RegExp(escapeRegex(req.query.q), "i") },
+    { primaryEmail: new RegExp(escapeRegex(req.query.q), "i") },
+  ];
+
+  const paged = req.query.paged === 'true';
+  const pagination = parsePagination(req.query, { defaultLimit: 25, maxLimit: 100, allowedSort: ['name','updatedAt','createdAt','status'], defaultSort: 'name' });
+  const query = Organisation.find(filter).sort(pagination.sort);
+  if (paged) query.skip(pagination.skip).limit(pagination.limit);
+  const [items,total] = await Promise.all([query.lean(), paged ? Organisation.countDocuments(filter) : Promise.resolve(0)]);
+  const ids = items.map((i) => i._id);
+  const [vesselCounts,resortCounts] = await Promise.all([
+    Vessel.aggregate([{ $match: { organisation: { $in: ids } } }, { $group: { _id: "$organisation", count: { $sum: 1 } } }]),
+    Resort.aggregate([{ $match: { organisation: { $in: ids } } }, { $group: { _id: "$organisation", count: { $sum: 1 } } }]),
+  ]);
   const vc = new Map(vesselCounts.map((x) => [String(x._id), x.count]));
   const rc = new Map(resortCounts.map((x) => [String(x._id), x.count]));
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Organisations retrieved", data: items.map((item) => ({ ...item, vesselCount: vc.get(String(item._id)) || 0, resortCount: rc.get(String(item._id)) || 0 })) });
+  const enriched = items.map((item) => ({ ...item, vesselCount: vc.get(String(item._id)) || 0, resortCount: rc.get(String(item._id)) || 0 }));
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Organisations retrieved", data: paged ? pagedResult({ items: enriched, total, page: pagination.page, limit: pagination.limit }) : enriched });
 });
 
 const createOrganisation = catchAsync(async (req, res) => {
@@ -158,6 +164,7 @@ const createOrganisation = catchAsync(async (req, res) => {
 const updateOrganisation = catchAsync(async (req, res) => {
   const item = await Organisation.findById(req.params.id);
   if (!item) throw new AppError(httpStatus.NOT_FOUND, "Organisation not found");
+  if (req.body.expectedUpdatedAt && new Date(req.body.expectedUpdatedAt).getTime() !== new Date(item.updatedAt).getTime()) throw new AppError(409, 'Organisation changed since it was loaded', { code: 'conflict', details: { currentUpdatedAt: item.updatedAt } });
   const before = item.toObject();
   const allowed = ["name", "primaryEmail", "phone", "whatsapp", "website", "address", "country", "status", "accountStatus", "verifiedAt", "lastCheckedAt"];
   for (const key of allowed) if (Object.prototype.hasOwnProperty.call(req.body, key)) item[key] = req.body[key];
@@ -170,7 +177,7 @@ const updateOrganisation = catchAsync(async (req, res) => {
 const inviteOrganisation = catchAsync(async (req, res) => {
   const organisation = await Organisation.findById(req.params.id);
   if (!organisation) throw new AppError(httpStatus.NOT_FOUND, "Organisation not found");
-  const result = await createClaimInvitation({ organisationId: organisation._id, email: req.body.email || organisation.primaryEmail, createdBy: req.v2User._id });
+  const result = await createClaimInvitation({ organisationId: organisation._id, email: req.body.email || organisation.primaryEmail, createdBy: req.v2User._id, operationId: req.operationId });
   await logAudit({ req, organisation: organisation._id, action: "organisation.claim.invited", entityType: "organisation", entityId: organisation._id, after: { email: req.body.email || organisation.primaryEmail, expiresAt: result.expiresAt }, source: "admin" });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Claim invitation sent", data: { organisation: result.organisation, expiresAt: result.expiresAt } });
 });
@@ -191,6 +198,7 @@ const createLocation = catchAsync(async (req, res) => {
 const updateLocation = catchAsync(async (req, res) => {
   const item = await Location.findById(req.params.id);
   if (!item) throw new AppError(httpStatus.NOT_FOUND, "Location not found");
+  if (req.body.expectedUpdatedAt && new Date(req.body.expectedUpdatedAt).getTime() !== new Date(item.updatedAt).getTime()) throw new AppError(409, 'Location changed since it was loaded', { code: 'conflict', details: { currentUpdatedAt: item.updatedAt } });
   const before = item.toObject();
   const payload = Object.fromEntries(['name','type','countryCode','country','parent','aliases','active'].filter(key => req.body[key] !== undefined).map(key => [key, req.body[key]]));
   await validateLocation({ ...before, ...payload }, item._id);
@@ -224,8 +232,12 @@ const listAttributes = catchAsync(async (req, res) => {
 const listEnquiries = catchAsync(async (req, res) => {
   const filter = {};
   if (req.query.status) filter.status = req.query.status;
-  const items = await Enquiry.find(filter).populate("organisation", "name primaryEmail").populate("product", "name slug").sort({ createdAt: -1 }).limit(250).lean();
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Enquiries retrieved", data: items });
+  const { page, limit, skip, sort } = parsePagination(req.query, { defaultLimit: 25, maxLimit: 100, allowedSort: ["createdAt","updatedAt","status"], defaultSort: "-createdAt" });
+  const [items,total] = await Promise.all([
+    Enquiry.find(filter).populate("organisation", "name primaryEmail").populate("product", "name slug").sort(sort).skip(skip).limit(limit).lean(),
+    Enquiry.countDocuments(filter),
+  ]);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Enquiries retrieved", data: pagedResult({ items,total,page,limit }) });
 });
 
 const approveEnquiry = catchAsync(async (req, res) => {
@@ -237,7 +249,7 @@ const approveEnquiry = catchAsync(async (req, res) => {
   enquiry.status = "admin_approved";
   enquiry.statusHistory.push({ status: "admin_approved", actorUser: req.v2User._id, note: req.body.note });
   await enquiry.save();
-  try { await sendEnquiryToOperator({ enquiry, product: enquiry.product, organisation: enquiry.organisation }); }
+  try { await sendEnquiryToOperator({ enquiry, product: enquiry.product, organisation: enquiry.organisation, operationId: req.operationId }); }
   catch (error) {
     await Enquiry.updateOne({ _id: enquiry._id }, { $set: { notificationInFlight: false } });
     await logAudit({ req, organisation: enquiry.organisation._id, action: 'enquiry.delivery_failed', entityType: 'enquiry', entityId: enquiry._id, after: { status: 'admin_approved' }, source: 'admin' });
@@ -249,6 +261,7 @@ const approveEnquiry = catchAsync(async (req, res) => {
   enquiry.statusHistory.push({ status: "sent_to_operator", actorUser: req.v2User._id });
   await enquiry.save();
   await logAudit({ req, organisation: enquiry.organisation._id, action: "enquiry.approved", entityType: "enquiry", entityId: enquiry._id, after: { status: enquiry.status }, source: "admin" });
+  await publishDomainEvent({ name: "enquiry.approved", aggregateType: "enquiry", aggregateId: enquiry._id, organisation: enquiry.organisation._id, actorUser: req.v2User._id, operationId: req.operationId, payload: { status: enquiry.status }, retentionClass: "business" });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Enquiry approved and sent to operator", data: enquiry });
 });
 
@@ -274,8 +287,8 @@ const updateEnquiryStatus = catchAsync(async (req, res) => {
 
 module.exports = {
   dashboard,
-  listVessels: listProducts(Vessel), getVessel: getProduct(Vessel), previewVessel, createVessel: createProduct(Vessel, "vessel"), updateVessel: updateProduct(Vessel, "vessel"), setVesselStatus: setProductStatus(Vessel, "vessel"),
-  listResorts: listProducts(Resort), getResort: getProduct(Resort), previewResort, createResort: createProduct(Resort, "resort"), updateResort: updateProduct(Resort, "resort"), setResortStatus: setProductStatus(Resort, "resort"),
+  listVessels: listProducts("vessel"), getVessel: getProduct(Vessel), previewVessel, createVessel: createProduct(Vessel, "vessel"), updateVessel: updateProduct(Vessel, "vessel"), setVesselStatus: setProductStatus(Vessel, "vessel"),
+  listResorts: listProducts("resort"), getResort: getProduct(Resort), previewResort, createResort: createProduct(Resort, "resort"), updateResort: updateProduct(Resort, "resort"), setResortStatus: setProductStatus(Resort, "resort"),
   listOrganisations, createOrganisation, updateOrganisation, inviteOrganisation,
   listLocations, createLocation, updateLocation,
   listAttributes,

@@ -1,0 +1,967 @@
+{
+  "package": "Deeparture V2 Phase 2B Rev 1.3 implementation",
+  "createdAt": "2026-10-10T23:18:21.388967+00:00",
+  "baseline": {
+    "branch": "phase2a-integration",
+    "commit": "68e30d61f969aa59d450b8b7038ca39475b624b1",
+    "sourceArchive": "Deeparture_V2-phase2a-integration-68e30d6(1).zip"
+  },
+  "phase2bSpecification": "Rev 1.3",
+  "delta": {
+    "added": [
+      "PHASE2B_IMPLEMENTATION_HANDOVER_REV1.3.md",
+      "PHASE2B_PATCH_APPLY_README.md",
+      "backend/scripts/verify-phase2b-static.js",
+      "backend/src/middleware/operationId.js",
+      "backend/src/v2/controllers/phase2b.controller.js",
+      "backend/src/v2/models/availabilityEffective.model.js",
+      "backend/src/v2/models/availabilityHistory.model.js",
+      "backend/src/v2/models/availabilityOverride.model.js",
+      "backend/src/v2/models/availabilitySnapshot.model.js",
+      "backend/src/v2/models/claimInvitationHistory.model.js",
+      "backend/src/v2/models/domainEvent.model.js",
+      "backend/src/v2/models/duplicateResolution.model.js",
+      "backend/src/v2/models/externalSourceMapping.model.js",
+      "backend/src/v2/models/notification.model.js",
+      "backend/src/v2/models/sourceConfig.model.js",
+      "backend/src/v2/models/verificationRecord.model.js",
+      "backend/src/v2/models/websiteSource.model.js",
+      "backend/src/v2/services/catalogueAdmin.service.js",
+      "backend/src/v2/services/completeness.service.js",
+      "backend/src/v2/services/domainEvent.service.js",
+      "backend/src/v2/services/pagination.service.js",
+      "backend/src/v2/services/source.service.js",
+      "backend/src/v2/services/verification.service.js",
+      "backend/tests/phase2b-foundations.test.js",
+      "docs/phase2b/IMPLEMENTATION_AND_DEPLOYMENT.md",
+      "docs/phase2b/INDEX_PLAN.md",
+      "docs/phase2b/LOCAL_ACCEPTANCE.md",
+      "docs/phase2b/MIGRATIONS_AND_ROLLBACK.md",
+      "docs/phase2b/RETENTION_AND_OPERATIONS.md",
+      "docs/phase2b/specifications/DEEPARTURE_V2_FUTURE_PROOF_ARCHITECTURE_PRINCIPLES.md",
+      "docs/phase2b/specifications/Deeparture_V2_Complete_Platform_Architecture_README.md",
+      "docs/phase2b/specifications/Deeparture_V2_Complete_Platform_Architecture_Rev1.0.pdf",
+      "docs/phase2b/specifications/Deeparture_V2_Future_Proof_Architecture_Principles.pdf",
+      "docs/phase2b/specifications/Deeparture_V2_Phase2B_Admin_Automation_Developer_Specification_Rev1.3.pdf",
+      "docs/phase2b/specifications/Deeparture_V2_Phase2B_Admin_Automation_Test_Checklist_Rev1.3.pdf",
+      "docs/phase2b/specifications/Deeparture_V2_Six_Phase_Roadmap.pdf",
+      "docs/phase2b/specifications/Deeparture_V2_Six_Phase_Roadmap_README.md",
+      "docs/phase2b/specifications/PHASE2B_ADMIN_AUTOMATION_README_REV1.3.md",
+      "docs/phase2b/specifications/PHASE2B_ADMIN_AUTOMATION_TEST_CHECKLIST_REV1.3.md",
+      "docs/phase2b/specifications/PHASE2B_REV1.3_CHANGE_SUMMARY.md",
+      "docs/phase2b/specifications/PHASE2B_REV1.3_START_HERE.md",
+      "frontend/pages/admin/v2/audit.jsx",
+      "frontend/pages/admin/v2/availability.jsx",
+      "frontend/pages/admin/v2/duplicates.jsx",
+      "frontend/pages/admin/v2/imports/history.jsx",
+      "frontend/pages/admin/v2/notifications.jsx",
+      "frontend/pages/admin/v2/operators/[id].jsx",
+      "frontend/pages/admin/v2/reports.jsx",
+      "frontend/pages/admin/v2/sources.jsx",
+      "frontend/pages/admin/v2/website-sources.jsx",
+      "frontend/src/components/admin/ProductQualityPanel.jsx"
+    ],
+    "changed": [
+      "backend/package.json",
+      "backend/src/app.js",
+      "backend/src/error/appError.js",
+      "backend/src/utilities/globalErrorHandler.js",
+      "backend/src/utilities/sendResponse.js",
+      "backend/src/v2/controllers/admin.controller.js",
+      "backend/src/v2/controllers/attribute.controller.js",
+      "backend/src/v2/controllers/catalogImport.controller.js",
+      "backend/src/v2/controllers/claim.controller.js",
+      "backend/src/v2/controllers/enquiry.controller.js",
+      "backend/src/v2/controllers/inventory.controller.js",
+      "backend/src/v2/controllers/inventoryImport.controller.js",
+      "backend/src/v2/controllers/operatorEnquiry.controller.js",
+      "backend/src/v2/models/auditLog.model.js",
+      "backend/src/v2/models/claimToken.model.js",
+      "backend/src/v2/models/departure.model.js",
+      "backend/src/v2/models/importBatch.model.js",
+      "backend/src/v2/models/organisation.model.js",
+      "backend/src/v2/models/productAttribute.model.js",
+      "backend/src/v2/models/resort.model.js",
+      "backend/src/v2/models/resortAvailability.model.js",
+      "backend/src/v2/models/vessel.model.js",
+      "backend/src/v2/routes/admin.routes.js",
+      "backend/src/v2/services/audit.service.js",
+      "backend/src/v2/services/availability.service.js",
+      "backend/src/v2/services/catalogImport.service.js",
+      "backend/src/v2/services/catalogImportAdapter.service.js",
+      "backend/src/v2/services/claim.service.js",
+      "backend/src/v2/services/inventoryImport.service.js",
+      "backend/src/v2/services/notification.service.js",
+      "backend/src/v2/services/search.service.js",
+      "frontend/pages/admin/v2/enquiries.jsx",
+      "frontend/pages/admin/v2/index.jsx",
+      "frontend/pages/admin/v2/liveaboards/[id].jsx",
+      "frontend/pages/admin/v2/operators.jsx",
+      "frontend/pages/admin/v2/resorts/[id].jsx",
+      "frontend/src/components/admin/AdminLayout.jsx",
+      "frontend/src/components/admin/CatalogueList.jsx",
+      "frontend/src/components/admin/ReferenceEditor.jsx"
+    ],
+    "removed": []
+  },
+  "verification": {
+    "backendSyntaxFiles": 90,
+    "phase2bStaticVerifier": "passed",
+    "dependencyLightFoundationTests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "frontendSyntaxTranspileFiles": 46,
+    "relativeSourceImportFiles": 125,
+    "sourcePackageSecretScan": "no real .env/private key/Atlas credential detected",
+    "patchDryRun": "passed against exact Phase 2A baseline using patch -p1",
+    "fullDependencyTests": "not executable: npm cache incomplete and external install unavailable in packaging environment",
+    "nextProductionBuild": "not executable for same dependency-install environment limitation"
+  },
+  "files": {
+    "GITHUB_SETUP.md": {
+      "sha256": "a2515712db39e9e9273dfee723d2d5e31a28f0ddc3eeae7e19996bcb4419d40b",
+      "bytes": 602
+    },
+    "README.md": {
+      "sha256": "c4b54a7f242266a5551878abca35d5dcf88f80147dca535e03e008b8d0791e59",
+      "bytes": 5306
+    },
+    "PHASE2B_IMPLEMENTATION_HANDOVER_REV1.3.md": {
+      "sha256": "0aa519b75161961470c9302ad024897134fe83b3a20979e9f378d8c493bbfb81",
+      "bytes": 3272
+    },
+    "PHASE1_VERIFICATION.md": {
+      "sha256": "44865ceb8bddac780d9ed397a9a0322b77f6816a73e0866850f9edb07174daca",
+      "bytes": 4955
+    },
+    ".gitattributes": {
+      "sha256": "235eadcfe371b03fadabb55aad26fafecdb5c4f93af04f41e586438a09e46d8c",
+      "bytes": 40
+    },
+    "PHASE2B_PATCH_APPLY_README.md": {
+      "sha256": "8fcf24c49c3c56958d2628fe912f5e7a000eec316eecfc9057da1abb7aca6fa3",
+      "bytes": 903
+    },
+    "PHASE1_NEXT_STEPS.md": {
+      "sha256": "534d6d635a1db5664de2b84751d9d9013a813ac31d608a05b3c5d5f42510a9c8",
+      "bytes": 5764
+    },
+    "STANDALONE_EXTRACTION_NOTES.md": {
+      "sha256": "cd65c77efcf17f8aff58003b1f66e6ca4e81104b64be45d8bdde73be16e0915a",
+      "bytes": 1394
+    },
+    ".gitignore": {
+      "sha256": "02ff579c1e1e5bf6636bcf156c2307800331d02e4c671b5a20be732b59c1c1ef",
+      "bytes": 83
+    },
+    "docker-compose.yml": {
+      "sha256": "773584c38c39e0d2fb0425c93f5f29d333a562557f51e12bd6b10d193f43c8c3",
+      "bytes": 975
+    },
+    "HANDOVER_START_HERE.md": {
+      "sha256": "56c5678c78c8a07b41579b8047aab22d9331a71d926bb35ff68af41b8f1761c6",
+      "bytes": 1956
+    },
+    "docs/phase1-test-results.json": {
+      "sha256": "310db9d45761b95f492a28141592f878dff7f461336d1f7f2be43995371c963b",
+      "bytes": 4006
+    },
+    "docs/update-phase1-checklist.py": {
+      "sha256": "dcda69f47a7ae1505540ad2de4cc6f04624efcb0ffddd65d5ee74d4385aa9db9",
+      "bytes": 5083
+    },
+    "docs/phase1-phase2a-handover-review.md": {
+      "sha256": "c016461966ce96c62d61a065bc7fc38c0158364b4018fdcd9818e201e3086da5",
+      "bytes": 4969
+    },
+    "docs/phase2a-test-results.json": {
+      "sha256": "54a2e42ef4bbe3801a154416ab4e37ae50044b312f4ef3869b4119a91c5fa276",
+      "bytes": 3644
+    },
+    "docs/phase1-review.md": {
+      "sha256": "213d5b035f4e9190d543f86cddbc01acae296f2522c0d3a033f42fa1eb496777",
+      "bytes": 4120
+    },
+    "docs/deployment-confirmation.md": {
+      "sha256": "f7a1d4544b0d38cb587f0c4990dfe586b08117b271297446ccb6e4fa2d70c3ba",
+      "bytes": 2241
+    },
+    "frontend/postcss.config.js": {
+      "sha256": "fe0d5cf3cb8c1922f71cca2da3796f3e63366623ad6164336655766efe330e6a",
+      "bytes": 69
+    },
+    "frontend/jsconfig.json": {
+      "sha256": "56288d1746f7dc8b9c08ec4436a77b95b11d7e6740ff3ec1d17eb5101555dea8",
+      "bytes": 71
+    },
+    "frontend/package.json": {
+      "sha256": "ad33031971d59cbf5059fb714bccf3e4e2e2fb2755b75abbcbe88c761ade3c6c",
+      "bytes": 486
+    },
+    "frontend/package-lock.json": {
+      "sha256": "6cd29fe6fddbfb2b3ce5d900aa2aa2ae5854e502868df2b87c04e3ef71d08238",
+      "bytes": 70037
+    },
+    "frontend/Dockerfile": {
+      "sha256": "36617e119ae5c992f46bed5c05ef1a2c09cd5e56ae805f883a0fbd16b05aa5ae",
+      "bytes": 533
+    },
+    "frontend/tailwind.config.js": {
+      "sha256": "3fb1b78c8b4b850a14371bc4000a77d8f9713862cf64b71ff9be29a5c099ec95",
+      "bytes": 167
+    },
+    "frontend/.dockerignore": {
+      "sha256": "fcf0924c43a9386f737361e0645da5c2c07111fbf75d8a81f571de1228ba7da2",
+      "bytes": 56
+    },
+    "frontend/next.config.mjs": {
+      "sha256": "c756de99cd5b24fe69b4f51a23a2529415eb5aed745fd66653928338a88a2349",
+      "bytes": 114
+    },
+    "frontend/.env.example": {
+      "sha256": "5311ec235b4b49d8796f09c26232f6ef0a5f9822c6801f15cd24f4d03a4e3288",
+      "bytes": 199
+    },
+    "frontend/.gitignore": {
+      "sha256": "5a9b25ef7a682acdad6530d98c7dd5fd5a4a89eef6f9fa42f7f7b30ce62cd6bb",
+      "bytes": 62
+    },
+    "backend/package.json": {
+      "sha256": "f2ef525f74da59e692b36db271fa2647a142dc686648722e497fa6ab7a61e4fa",
+      "bytes": 1400
+    },
+    "backend/package-lock.json": {
+      "sha256": "e8b1fdd28be4953d9935266ff2d2021070535992d40c3b381fbc74ccad1892e2",
+      "bytes": 97126
+    },
+    "backend/Dockerfile": {
+      "sha256": "80fd3f3af460340930fdfbf8776b41a2e0545941696aab5e1f97f55630c1293f",
+      "bytes": 108
+    },
+    "backend/.dockerignore": {
+      "sha256": "fcf0924c43a9386f737361e0645da5c2c07111fbf75d8a81f571de1228ba7da2",
+      "bytes": 56
+    },
+    "backend/.env.example": {
+      "sha256": "9369a916fdeabf7234d678d490fd9b9b9aac2db3249503347ef4652dcff825ce",
+      "bytes": 641
+    },
+    "backend/.gitignore": {
+      "sha256": "2e6fb09909b4c07fc373fa5b58323b2bf08ac94e6d072a0211124ce44a38da35",
+      "bytes": 53
+    },
+    "backend/tests/phase2b-foundations.test.js": {
+      "sha256": "2dfabab864f70878e8c85b5c6a2176e8702c1f5ebbca1e1b66bc0d1a8dc4dc03",
+      "bytes": 3604
+    },
+    "backend/tests/pricing.test.js": {
+      "sha256": "6a8ba4001033cc2a0d85368619fce7c1f40e805902d6fc2e3e422017586710a1",
+      "bytes": 2010
+    },
+    "backend/tests/email-safety.test.js": {
+      "sha256": "4df22908ff5c50714811c58479e4e634d5e5fbc76d776578a29fff12788f7979",
+      "bytes": 1403
+    },
+    "backend/tests/dependencies.test.js": {
+      "sha256": "082954223c2b397bbb55816268f1631fbc9e4b37ca93fbdff919d31ff3436a3b",
+      "bytes": 1052
+    },
+    "backend/tests/phase2a-normalization.test.js": {
+      "sha256": "2775d13dc874665da277954e5de245c9bb85d632f0f70609274fee25d4925cf4",
+      "bytes": 2306
+    },
+    "backend/scripts/seed-demo.js": {
+      "sha256": "08998e9d70c741b18ca8d6855d7c9b24a68e324c165ee2adb712861c50eca457",
+      "bytes": 5698
+    },
+    "backend/scripts/create-admin.js": {
+      "sha256": "40b197b3fed2a4cfaca47009b9e76b03e0f83e16da3de12bc4e5bafeb947b4ca",
+      "bytes": 1016
+    },
+    "backend/scripts/verify-phase2b-static.js": {
+      "sha256": "8935f84ae2a982910b11a04465d8af05762a756590e31ec2b1099ab7b7c2c3ac",
+      "bytes": 5225
+    },
+    "backend/scripts/check-v2-syntax.js": {
+      "sha256": "47278d6a851ab844f7e0b9c60dd22918203ef6c58fa1fd3ec77c2963a05f360b",
+      "bytes": 897
+    },
+    "backend/scripts/verify-phase1-local.js": {
+      "sha256": "1a9f11cdb2accc7c4091c72272511ac1ba860657a7ae3d73aee7e86e7d466ad2",
+      "bytes": 3612
+    },
+    "backend/scripts/refresh-v2-pricing.js": {
+      "sha256": "8f158e363f8098f94211771ed4d1c92c05b1d6e05a086555988c2583cfeaee73",
+      "bytes": 902
+    },
+    "backend/scripts/seed-v2-attributes.js": {
+      "sha256": "a141170d74e30dc97775080e4bcb8023810aef6df3f863d10f80362a38f1b263",
+      "bytes": 2619
+    },
+    "backend/scripts/verify-phase1.js": {
+      "sha256": "fefb0f027a194fcdcb36296ba82ead9ce67deee2d6f78116326c82e27019917f",
+      "bytes": 21005
+    },
+    "backend/scripts/verify-phase2a.js": {
+      "sha256": "e1b65fb0e4d2116f88b2f9d09ca365938fe76295b29ceedd2aae830a9bc8d3bf",
+      "bytes": 27156
+    },
+    "backend/src/app.js": {
+      "sha256": "0041bf307d3435b9c4b79c7802f8ddfe9747d2067bc28a455306d7d25ec09098",
+      "bytes": 1054
+    },
+    "backend/src/server.js": {
+      "sha256": "bcf3e980fe2f5310f9f72567a2558341bf59aedcf539654a5c6a8c5147972a4d",
+      "bytes": 467
+    },
+    "backend/templates/departure-template.csv": {
+      "sha256": "44064443097eefca8cf9fc12124bb03417ed129889528a811394c0ea0a93b58c",
+      "bytes": 530
+    },
+    "backend/templates/resort-catalog-template.csv": {
+      "sha256": "418f0f1b05f80e7edfcc7b4f6c920734186f0edaf53ec2d2abc4524f8c28e37c",
+      "bytes": 598
+    },
+    "backend/templates/resort-availability-template.csv": {
+      "sha256": "db933660bff1cfca177bf93eda824ee2671c62ed1e9e403d96c174e459c25788",
+      "bytes": 157
+    },
+    "backend/templates/itinerary-template.csv": {
+      "sha256": "934d88e9cf7f935bb7efc95db8118d421bda995d08364a44caf886fba665a4f0",
+      "bytes": 672
+    },
+    "backend/templates/resort-package-template.csv": {
+      "sha256": "b9225ddd98f3c9d1ededeec643e57ce3bff99800d82659b96f4d04f493f67a5e",
+      "bytes": 271
+    },
+    "backend/templates/vessel-catalog-template.csv": {
+      "sha256": "d72fe289a1bd618c69fb4e37c44162c5267b728d0a3a33e95b987142c6077f4b",
+      "bytes": 660
+    },
+    "backend/src/controllers/auth.controller.js": {
+      "sha256": "bf39c08f62bd829155b8fe371be7e54c2b373715d86f99b83f57cfda5536f1f8",
+      "bytes": 1237
+    },
+    "backend/src/routes/auth.routes.js": {
+      "sha256": "4584cbff1f1768043252af022b598b277efb17f955202fc5276e5c4b51cdaeca",
+      "bytes": 273
+    },
+    "backend/src/models/user.model.js": {
+      "sha256": "0d5dcb9a07df2f5c3588b53bd912c704d4be1a7fba255d56d32a847adef85e88",
+      "bytes": 1029
+    },
+    "backend/src/middleware/operationId.js": {
+      "sha256": "5a252b822d32a07f711d1c9a660ff2883b9a663fe75833b5eb9246c16faaef09",
+      "bytes": 325
+    },
+    "backend/src/error/appError.js": {
+      "sha256": "35d0319c758feb8b0a2467099f9db2a2316a6fd068fdcbf3b98e572a01923320",
+      "bytes": 334
+    },
+    "backend/src/config/index.js": {
+      "sha256": "bd163d56e9d9382f6b8a0d90b9059e977801025c5a959cf193dec66fca4a4209",
+      "bytes": 865
+    },
+    "backend/src/config/jwt.js": {
+      "sha256": "d60dcdd6a21ce0be8f51ff7ba7484fee1538900a0cbddef2d6cff6f503022030",
+      "bytes": 295
+    },
+    "backend/src/config/smtp.js": {
+      "sha256": "83a2f517a8b4c25c7141a01187ef4eabf87ec032b04671697fc48d8e84626401",
+      "bytes": 548
+    },
+    "backend/src/utilities/catchAsync.js": {
+      "sha256": "c31d1f1bff789939efeae5623e6648c35711b7ee848ed03d366a3f5e50a4d9c1",
+      "bytes": 125
+    },
+    "backend/src/utilities/globalErrorHandler.js": {
+      "sha256": "0d75bdf4ddb3a43c804e6c9f314e90662f56c44d5f9a283a58d91d8893f4ddce",
+      "bytes": 1233
+    },
+    "backend/src/utilities/sendResponse.js": {
+      "sha256": "958127ea4d652decfa5c86c9370f6d4206c2d282f2affe5788f229e56688d444",
+      "bytes": 232
+    },
+    "backend/src/utilities/notFound.js": {
+      "sha256": "2e692c5605bd6dd86fd498c21b248017e2c0b97da399cda7d97771322d832597",
+      "bytes": 132
+    },
+    "backend/src/v2/controllers/claim.controller.js": {
+      "sha256": "b56f1be02d742c4a802a600c5c47a8ce909004674b0a4bb88f55a006c5c83d12",
+      "bytes": 846
+    },
+    "backend/src/v2/controllers/catalogImport.controller.js": {
+      "sha256": "79246c974ffc3e8f8a09154d569c08109ba19b91f35ee36447498206a9abe513",
+      "bytes": 3588
+    },
+    "backend/src/v2/controllers/adminClaim.controller.js": {
+      "sha256": "872ae0e78dc092e71278d52f88b567bb9b7c641f1395a1e8749a8f69aa2203e3",
+      "bytes": 1498
+    },
+    "backend/src/v2/controllers/phase2b.controller.js": {
+      "sha256": "52f1cae88a3d372d55c65d3e91b11f5249b98a82f00a75996537aa31edbb17b2",
+      "bytes": 38572
+    },
+    "backend/src/v2/controllers/organisation.controller.js": {
+      "sha256": "56fa7050bb3cc1d22c269bd56e60bde63862d4a59b6731f1447a4f089f80c83f",
+      "bytes": 1832
+    },
+    "backend/src/v2/controllers/attribute.controller.js": {
+      "sha256": "7086407d426e596e7d6dfd21bfd545d34a344137663d6f8b4ba33e4d8808df3c",
+      "bytes": 3335
+    },
+    "backend/src/v2/controllers/operatorEnquiry.controller.js": {
+      "sha256": "b9beb380c17d085e67864cffc11d838657922f0fa745d906c309cbe3753054af",
+      "bytes": 1855
+    },
+    "backend/src/v2/controllers/inventory.controller.js": {
+      "sha256": "51a97dcc18d8479773ead0c79c421b14dc2c8c1f1a72e236916bc91c7675520b",
+      "bytes": 10096
+    },
+    "backend/src/v2/controllers/admin.controller.js": {
+      "sha256": "b83a7b3159ab35d26be449f8399d356c335e7c632ff021fa7d677f6e95165a33",
+      "bytes": 22941
+    },
+    "backend/src/v2/controllers/enquiry.controller.js": {
+      "sha256": "c7114b83667fc68d61632e96ea578d891da6150ebf528b80c0ea117cff81b11e",
+      "bytes": 2664
+    },
+    "backend/src/v2/controllers/inventoryImport.controller.js": {
+      "sha256": "0a7493ea4634cdd32a568baef49fd004a198cbbdfe134d9beec7a22380ee36ed",
+      "bytes": 1206
+    },
+    "backend/src/v2/controllers/public.controller.js": {
+      "sha256": "8c3b17cacca42017dcc088eb5027b229ed8c71cf8ea51d38eccbed53b4be2fc0",
+      "bytes": 2066
+    },
+    "backend/src/v2/routes/claim.routes.js": {
+      "sha256": "814aeb9a10de31eeae9dbc444ff600574c1af0cc7a1700ef129c5756d4fa39d3",
+      "bytes": 324
+    },
+    "backend/src/v2/routes/admin.routes.js": {
+      "sha256": "1b05711d7f9e72bc34bfefd655192a186dff63b60d5adf44979e6893a152d083",
+      "bytes": 5614
+    },
+    "backend/src/v2/routes/public.routes.js": {
+      "sha256": "1ae2ec3efbf427e83dc3c6462190c35321ec2ce26afe4273bf1747373a8d9954",
+      "bytes": 666
+    },
+    "backend/src/v2/routes/organisation.routes.js": {
+      "sha256": "358a3098d9c6765e791dccfec5c95dc09ff8f5b9aadb868fe0718084093f8b1e",
+      "bytes": 2562
+    },
+    "backend/src/v2/models/resortAvailability.model.js": {
+      "sha256": "2ae60a8f7ba8c4c9bab010e3a049ef545a4b70a12e5e716dc786e3567ee820ac",
+      "bytes": 1303
+    },
+    "backend/src/v2/models/itinerary.model.js": {
+      "sha256": "b6711f73e13f5d684dd908b9bd54b2b0aa32aedee5510cdbbe59a6e81a6baf54",
+      "bytes": 2342
+    },
+    "backend/src/v2/models/resortPackage.model.js": {
+      "sha256": "10fb1ebb5cdb7d7302a997793c7add7faf9c431d5f368e0b6cb2763428f4dc13",
+      "bytes": 1160
+    },
+    "backend/src/v2/models/location.model.js": {
+      "sha256": "2c3cf1cf20ceba4f656a3400d523acf5aa818161672a558853bcff92d8ffaa91",
+      "bytes": 759
+    },
+    "backend/src/v2/models/resort.model.js": {
+      "sha256": "f38e4801418ca5ab4f6a07a8c24351fabd93e3fe3014a100d71294851ff4a290",
+      "bytes": 2383
+    },
+    "backend/src/v2/models/roomType.model.js": {
+      "sha256": "8a15cc43976bf75eadc7c190cd5d4b4273ef5a49617a68dd6211ce7f868f21ae",
+      "bytes": 744
+    },
+    "backend/src/v2/models/cabinType.model.js": {
+      "sha256": "eba2fdaab1dc391e3361d3c189e029a04c7f7726f7236f41ef3ad492067ac8ad",
+      "bytes": 759
+    },
+    "backend/src/v2/models/enquiry.model.js": {
+      "sha256": "929cb471f1d1863628ff8846a7c54b7a53b2e7431f70d9c92a135173ebd09a19",
+      "bytes": 1501
+    },
+    "backend/src/v2/models/claimToken.model.js": {
+      "sha256": "d626927d31b0c863f7ef7481aa8589effffb39de67d74ce03b20e09d39b6a0d3",
+      "bytes": 615
+    },
+    "backend/src/v2/models/vessel.model.js": {
+      "sha256": "78882be027f7942e98c833630c012c1e4a02135dc4f7d89b471983f2fb1398a3",
+      "bytes": 2683
+    },
+    "backend/src/v2/models/verificationRecord.model.js": {
+      "sha256": "cd9bf763208b965c25a662f458b6db214285c770f0e329005946d24317f9e3ca",
+      "bytes": 927
+    },
+    "backend/src/v2/models/resortRatePeriod.model.js": {
+      "sha256": "31072e41f10004c9fe4f4b380905358c479cc2acf8eec629a47ca35a09ec0625",
+      "bytes": 1201
+    },
+    "backend/src/v2/models/productAttribute.model.js": {
+      "sha256": "277ffd10e2d4d4dac4bbd4212f0a11d56f9dd299ffa3d929f17c8c408f66175c",
+      "bytes": 1093
+    },
+    "backend/src/v2/models/departure.model.js": {
+      "sha256": "32c15a5fcf100a158028b88cc35908dfea6ff8b27f393b556d103ea4257e90bb",
+      "bytes": 3485
+    },
+    "backend/src/v2/models/sourceConfig.model.js": {
+      "sha256": "a781c45a19e7d9c66bd7d0ea735b3160fcda9a44c4219921303a1c7ced718567",
+      "bytes": 1102
+    },
+    "backend/src/v2/models/availabilityOverride.model.js": {
+      "sha256": "d596193a32e937199aa08ca57588e57a6f3b8651e5fa04bb68d470d078253577",
+      "bytes": 1236
+    },
+    "backend/src/v2/models/availabilityHistory.model.js": {
+      "sha256": "dfc19bdd2aff079cbc627d4f989c1e0c7d88ca9fb6b7ee78b2049e36f3cec4cb",
+      "bytes": 1104
+    },
+    "backend/src/v2/models/organisation.model.js": {
+      "sha256": "ae955dd9eab9105147c14225ff712d96a14d9ea7494673a1a94a44c39bf789d1",
+      "bytes": 1624
+    },
+    "backend/src/v2/models/domainEvent.model.js": {
+      "sha256": "6f04a26f6f016b26a548dacaa10b72bafd1425c935d6fe5480c41d1c351d2c6f",
+      "bytes": 843
+    },
+    "backend/src/v2/models/organisationMembership.model.js": {
+      "sha256": "9a9364819237bb823e2f1c3f1f5bee5a86f8849de3891eb72911a26776ccee2e",
+      "bytes": 738
+    },
+    "backend/src/v2/models/mediaAsset.model.js": {
+      "sha256": "05423014d547ad65b6841d1b7eaf5583bc0049847e169742ad7db486f67cf3f8",
+      "bytes": 649
+    },
+    "backend/src/v2/models/claimInvitationHistory.model.js": {
+      "sha256": "225052df3d1a4a5e1068fb5ae1c0cbef802176905884f23c6c2a5ec894bfb71b",
+      "bytes": 922
+    },
+    "backend/src/v2/models/externalSourceMapping.model.js": {
+      "sha256": "803acbe79592ccbc3beb4fb40f79f909cdbce1ae106e535986dd0ecf0974ef49",
+      "bytes": 1028
+    },
+    "backend/src/v2/models/auditLog.model.js": {
+      "sha256": "2ab3d6f17d24edbe16f397eef081cc59757e21ba896bdd7f841200632de9a08c",
+      "bytes": 1065
+    },
+    "backend/src/v2/models/attributeDefinition.model.js": {
+      "sha256": "f98853b3ccdac5b0e8948daee41a8fd26627ca43ee4bfcbb4157fd38cc1e67ad",
+      "bytes": 957
+    },
+    "backend/src/v2/models/notification.model.js": {
+      "sha256": "f605922a4575ebf81b613510ce01a2992db56809bc38b08d5141c36208b7a2b1",
+      "bytes": 1126
+    },
+    "backend/src/v2/models/duplicateResolution.model.js": {
+      "sha256": "28d61f4e10edc61fe34755ae9b12668b185b130b9e721a50f231966231b90723",
+      "bytes": 899
+    },
+    "backend/src/v2/models/importBatch.model.js": {
+      "sha256": "a54fbf92715343ae17b894fc34121a0392375faa36dd3c8c9759a805b3f63bb9",
+      "bytes": 1971
+    },
+    "backend/src/v2/models/websiteSource.model.js": {
+      "sha256": "7c674eeebf60a58e4c3e476ac67878f8d3eb184702596c314089e6ebba563a0c",
+      "bytes": 972
+    },
+    "backend/src/v2/models/availabilitySnapshot.model.js": {
+      "sha256": "34ad7de4b06ccaf2602ffc6697fbc955938606b44523f3b569fed652ab2c66ae",
+      "bytes": 1716
+    },
+    "backend/src/v2/models/availabilityEffective.model.js": {
+      "sha256": "5bb60f932ccfa64c25107c569c671989763841ccfb096037ac9835405f64a780",
+      "bytes": 1803
+    },
+    "backend/src/v2/middleware/v2Auth.js": {
+      "sha256": "7e702b0df0f77bd2bdef9fa9cc23baedffe3aedfbe0391e3314608d5b68b1308",
+      "bytes": 1600
+    },
+    "backend/src/v2/middleware/organisationAccess.js": {
+      "sha256": "da9613737817a76ba12e2edb35abb7e6b6fd27381dfd844b0310dc936bfb35c7",
+      "bytes": 1542
+    },
+    "backend/src/v2/utilities/slugify.js": {
+      "sha256": "9eee7a9a2a94659d72b0e6f1256600bbffab08c7cb32bce842b065ee06d387b2",
+      "bytes": 285
+    },
+    "backend/src/v2/services/verification.service.js": {
+      "sha256": "8bb0033363f6745e121837711a633d44241084093ceef1510e1a7337d23f32e5",
+      "bytes": 1874
+    },
+    "backend/src/v2/services/catalogImportAdapter.service.js": {
+      "sha256": "d0ef21ce1afe86a12ede2393f12ed8fd48b119175579863795df7ee3da630b6e",
+      "bytes": 5458
+    },
+    "backend/src/v2/services/search.service.js": {
+      "sha256": "41d4b8138ab23faec4d4b411f7c73a96387cfe1aad462333ed94f1b13eeef9e6",
+      "bytes": 13387
+    },
+    "backend/src/v2/services/attribute.service.js": {
+      "sha256": "1ef6fd0f20134ccacb79d419823d00a4e6f970817a9ccc38bcf8a2677dd1c8a2",
+      "bytes": 4885
+    },
+    "backend/src/v2/services/inventoryImport.service.js": {
+      "sha256": "4f38cf12483efea4dd0700050aad7354a14087091c364264c24984e42f144311",
+      "bytes": 11892
+    },
+    "backend/src/v2/services/domainEvent.service.js": {
+      "sha256": "7859f7e3b7aa96b884e7affa2cb7597b128c9beb4d4d3b1935b09b41b9fedf2a",
+      "bytes": 1526
+    },
+    "backend/src/v2/services/notification.service.js": {
+      "sha256": "7825c5bae46ff85e70f803055dbd4b0a52d4f91b70060406fdba2915e8d662b0",
+      "bytes": 5945
+    },
+    "backend/src/v2/services/source.service.js": {
+      "sha256": "c7aef82841c660ef2d7e549d7d14237dc6930427ca65e029f38c48e0b4af7dc7",
+      "bytes": 5467
+    },
+    "backend/src/v2/services/catalogueAdmin.service.js": {
+      "sha256": "746e6a75c64f1cfad39bd2af84439c947e7f6381fd0a59ceb5d92ae2e65e0655",
+      "bytes": 3393
+    },
+    "backend/src/v2/services/availability.service.js": {
+      "sha256": "f6c868c5f50bf09f28779df2690b1da54283a8e085a3f69a70c77a69c642f33d",
+      "bytes": 30578
+    },
+    "backend/src/v2/services/pagination.service.js": {
+      "sha256": "aaa7615b723880b767bef45c64d6624625a5e419066c09fa1024d6430965e2f0",
+      "bytes": 1048
+    },
+    "backend/src/v2/services/audit.service.js": {
+      "sha256": "dffdc82b30bef611f7c548d86b82591a7bb16d5bfae0754dbae6f5e94b6f0302",
+      "bytes": 1112
+    },
+    "backend/src/v2/services/bulkFile.service.js": {
+      "sha256": "a1628e74d9145067667479055d1aa3e5052c6225d6bf078b3345b4056271d238",
+      "bytes": 4614
+    },
+    "backend/src/v2/services/claim.service.js": {
+      "sha256": "09de6acd4b13a4ffd0476164032a2560e99d1040568a9163b093653b8c4a2337",
+      "bytes": 7912
+    },
+    "backend/src/v2/services/completeness.service.js": {
+      "sha256": "bff48fbc6dab4d12773ca40b2b19414c6afde4d093dc9954c512f54aad33cd46",
+      "bytes": 2782
+    },
+    "backend/src/v2/services/pricing.service.js": {
+      "sha256": "be99f6e668052289c6fb2b7abf06a0764eb74cdf84de467eacd7da08e5db3f24",
+      "bytes": 5294
+    },
+    "backend/src/v2/services/catalogImport.service.js": {
+      "sha256": "d41caf1d0308d16b740c8eb3c869197905afacfcf3645afd2c230429976ad9c8",
+      "bytes": 14193
+    },
+    "frontend/styles/globals.css": {
+      "sha256": "b39d7a6c2db2ba2ef5a734c048ea48cd50a8ed76e0273a4ed29215cd9dcd1d66",
+      "bytes": 207
+    },
+    "frontend/pages/index.js": {
+      "sha256": "2ddac750a93867d6ab236d4351b1d8e27a61b5cc523b3960f4db17a7a8793669",
+      "bytes": 1173
+    },
+    "frontend/pages/_app.js": {
+      "sha256": "b847146a3e99a2d6fde3d51534cefa09176e59fa3c19afb49e8f4372497a8a37",
+      "bytes": 221
+    },
+    "frontend/public/.gitkeep": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "frontend/pages/claim-operator/index.jsx": {
+      "sha256": "0cede5e78febab170a38a57e643a28dc4866407f1b4f3667b54194db50c9f4d4",
+      "bytes": 2473
+    },
+    "frontend/pages/liveaboards/[slug].jsx": {
+      "sha256": "ebedeedbfdfe062c30aa1906aa97ce5dbd1bb38426f266548f95f350167003f7",
+      "bytes": 2771
+    },
+    "frontend/pages/login/index.jsx": {
+      "sha256": "2af3348c40276f41d829936def9f3151261f24bc2e5b9dcc443cab174b04cff8",
+      "bytes": 1873
+    },
+    "frontend/pages/resorts/[slug].jsx": {
+      "sha256": "b2b203caa07562e2e67e90e70a1c49d782c1cc5863bfc31a9da75fb3a05c6197",
+      "bytes": 3264
+    },
+    "frontend/pages/dashboard/v2/index.jsx": {
+      "sha256": "bb1c905b0b4afea91d3954200b73d9ddb3b49ee24167bbc12433e8a77318e8b6",
+      "bytes": 5801
+    },
+    "frontend/pages/explore/liveaboards/index.jsx": {
+      "sha256": "771259032c0623381b78a663dc571989e152704ea0e3da2085779451ef006b7a",
+      "bytes": 1991
+    },
+    "frontend/pages/explore/resorts/index.jsx": {
+      "sha256": "42a95a39630ce6b930d5b069cc9efdc60213ef0583ef6dd3d2ad6ee836e7e518",
+      "bytes": 1825
+    },
+    "frontend/pages/admin/v2/operators.jsx": {
+      "sha256": "7796c544b36caac0e6a433c67bc449ff6246845736718061d640d2dae49a1d49",
+      "bytes": 1960
+    },
+    "frontend/pages/admin/v2/audit.jsx": {
+      "sha256": "2a6c4bb293ce9c5560d041220a47a6081b134ab1e36d221826400fadd887ca4f",
+      "bytes": 2002
+    },
+    "frontend/pages/admin/v2/availability.jsx": {
+      "sha256": "2cf8d3a3bfadae697c83bd14122c5b4af1aa4d93ea9c88c5c3894b83bafcb8e7",
+      "bytes": 9113
+    },
+    "frontend/pages/admin/v2/notifications.jsx": {
+      "sha256": "3d73bb9af1d94b343710a1afd2d501dcdd0f1ff965283b8a85fe5367046d86d6",
+      "bytes": 1728
+    },
+    "frontend/pages/admin/v2/index.jsx": {
+      "sha256": "d641512ea1aa9203ab8d63b724b28b6d8c953e5e403c6b5b2215754380c62b08",
+      "bytes": 2910
+    },
+    "frontend/pages/admin/v2/enquiries.jsx": {
+      "sha256": "a4c9ec69216ea3d2b6742591dc6cd45d50e5fc141e13ca86f6dba2673f364b59",
+      "bytes": 3226
+    },
+    "frontend/pages/admin/v2/import.jsx": {
+      "sha256": "cbbc4c982a8b84c50460be11351c6ff17683b2ebbb9003899a1f70202bdad568",
+      "bytes": 3587
+    },
+    "frontend/pages/admin/v2/locations.jsx": {
+      "sha256": "ab7b1042d6972ad2416984001d0228493966c6e8297fabbaf16186ace1e0bf34",
+      "bytes": 657
+    },
+    "frontend/pages/admin/v2/reports.jsx": {
+      "sha256": "bbc5a92361f58f3af7a60c965d3549e04e4eb6f9673a31561f8a02b6cac78b8e",
+      "bytes": 2288
+    },
+    "frontend/pages/admin/v2/website-sources.jsx": {
+      "sha256": "78a4e5759c1d07b027605dd5ba5f827267b6d94b9d6c341e8b7ccafb65e4a37f",
+      "bytes": 4574
+    },
+    "frontend/pages/admin/v2/sources.jsx": {
+      "sha256": "1b80722831ccf0821274c0e24940b80e5bf5b4f2aa8ab1426ea1e71dd6f0bf04",
+      "bytes": 9963
+    },
+    "frontend/pages/admin/v2/attributes.jsx": {
+      "sha256": "3036e50a68c058f08573ca47e3725d00647268bd5dafe69328127bfd3f6edc14",
+      "bytes": 1095
+    },
+    "frontend/pages/admin/v2/duplicates.jsx": {
+      "sha256": "e08b5ba979a797df70f53424a119d7c41c8d6cf2403d1aaadfb32a377c0d8bb0",
+      "bytes": 4986
+    },
+    "frontend/pages/admin/v2/operators/[id].jsx": {
+      "sha256": "6f9229cd7a18ebf7ccd314aab9c72842652907e2a65376760fc9224713d81ec0",
+      "bytes": 6198
+    },
+    "frontend/pages/admin/v2/liveaboards/index.jsx": {
+      "sha256": "441adb4bf22ecaa7e34745dfc25095f48d9b86e0d4b38a2adf33b463adda8057",
+      "bytes": 167
+    },
+    "frontend/pages/admin/v2/liveaboards/[id].jsx": {
+      "sha256": "924edcfb37cfe2ffec3f3f848152ea439b2798a8cd62aaa90d2e7e25e084815c",
+      "bytes": 4799
+    },
+    "frontend/pages/admin/v2/imports/history.jsx": {
+      "sha256": "3ad378ff282d43b395fc687ec63e9fe08000c7026b1f8e4f2ad8bcf0317bf086",
+      "bytes": 4314
+    },
+    "frontend/pages/admin/v2/resorts/index.jsx": {
+      "sha256": "258889472b4b7bc0d6b5cc1fdff4a48db6e61d310af3bebf108a6b1b87eb368b",
+      "bytes": 159
+    },
+    "frontend/pages/admin/v2/resorts/[id].jsx": {
+      "sha256": "46875c8f476308f543b6121080220a155a096ca5608aa6b979734586ec00fc1b",
+      "bytes": 4787
+    },
+    "frontend/pages/admin/v2/preview/resort/[id].jsx": {
+      "sha256": "8d219445c948218b3a30d7671a63ed51e0e6e17f6e843c9fe243268365cb6633",
+      "bytes": 1395
+    },
+    "frontend/pages/admin/v2/preview/liveaboard/[id].jsx": {
+      "sha256": "dc3893bf51c6f45a7f80badb5883f72630dcd653ea3d3146143aab6ab55b464b",
+      "bytes": 1401
+    },
+    "frontend/src/lib/v2Api.js": {
+      "sha256": "d6ad08d7d8610be75ea34bef23454e16939fd3d185b83d85719c31e5c325aae5",
+      "bytes": 1084
+    },
+    "frontend/src/config/serverConfig.js": {
+      "sha256": "fab8e58c755820029bbad70ac95ad70995d55f6547516b48c7f396b9471515f8",
+      "bytes": 201
+    },
+    "frontend/src/components/layout/SiteHeader.jsx": {
+      "sha256": "cf11f25f10825d9c0869bad6738ce3d40a4c6becbebe871cd391b3ad8d6b02a7",
+      "bytes": 876
+    },
+    "frontend/src/components/auth/AuthProvider.jsx": {
+      "sha256": "759a1fed848384eacf72c459b6a1a7fe0522966f70691247253e31f9dfd015b6",
+      "bytes": 3489
+    },
+    "frontend/src/components/admin/StatusBadge.jsx": {
+      "sha256": "60d06f9e95e98736da2aa8f870d56bf69a1a839bc3ecada9f4bbe243d20be633",
+      "bytes": 219
+    },
+    "frontend/src/components/admin/CatalogueList.jsx": {
+      "sha256": "a6f906b83d72e65069b93ce89b186007cc8366f09c504a4c9d72244c6097c53b",
+      "bytes": 13275
+    },
+    "frontend/src/components/admin/AdminLayout.jsx": {
+      "sha256": "624ebdfbb699b8f87a51f72ac35c3d3c6287ee1008dbb9a7fd6e99f9b8d86fdd",
+      "bytes": 2238
+    },
+    "frontend/src/components/admin/ReferenceEditor.jsx": {
+      "sha256": "dcd861e8ae6890660854f24cfe2cb8843ba2211a74aa96b29361ede402031e45",
+      "bytes": 6186
+    },
+    "frontend/src/components/admin/ProductQualityPanel.jsx": {
+      "sha256": "3ef5ec4ae6dd7961527192dfcb8a43a40ad4f2e0fed2d2c595a93cd46b89e5dc",
+      "bytes": 3263
+    },
+    "frontend/src/components/v2/DepartureTable.jsx": {
+      "sha256": "49683ca1488c158bbf1e59b70f30d4947a11941dab0bc6f71f9b49f52972d756",
+      "bytes": 2099
+    },
+    "frontend/src/components/v2/ListingCard.jsx": {
+      "sha256": "8feccdbd8332e69b4335b8669748d1601795b0b7c195028135ab5bc4500cc7e8",
+      "bytes": 988
+    },
+    "frontend/src/components/v2/VeganRating.jsx": {
+      "sha256": "47a32c246ad1fd9bf5294c174698f2d68f792f7af10eda28a54965e7ca214998",
+      "bytes": 373
+    },
+    "frontend/src/components/v2/EnquiryForm.jsx": {
+      "sha256": "22b7882a390587efd5258a9894d36062df116057d9b40ede64c4365a4a8e94b2",
+      "bytes": 2620
+    },
+    "frontend/src/components/v2/FeaturePills.jsx": {
+      "sha256": "6b78ffbfc5549b17acf897f66541cdb27752d51730370d6fc2312a34f7c7cd26",
+      "bytes": 893
+    },
+    "docs/phase2a/LOCAL_ACCEPTANCE.md": {
+      "sha256": "fc367db1e2c34f0efb8baafd8d19b67ef68421e98063f40516ccea24718713e5",
+      "bytes": 3715
+    },
+    "docs/phase2a/Deeparture_V2_Phase2A_Code_Aware_Test_Checklist_Rev1.3.pdf": {
+      "sha256": "262b7ab821e1ab2e80bdcb78db283b335d2c74dac92b27b377ee314fac3fd3e6",
+      "bytes": 16318
+    },
+    "docs/phase2a/Deeparture_V2_Future_Proof_Architecture_Principles.pdf": {
+      "sha256": "392d21bf01117ff28939688577a0a789c5f2831c4b5f420001f13cc9e8477407",
+      "bytes": 29012
+    },
+    "docs/phase2a/PHASE2A_CORE_ADMIN_V2_TEST_CHECKLIST_REV1.3.md": {
+      "sha256": "7c5957bd9b4e809d3e8f80ec04e814e134215e91c49f0791abb8117b47a63bab",
+      "bytes": 11184
+    },
+    "docs/phase2a/Deeparture_V2_Phase2A_Code_Aware_Developer_Specification_Rev1.3.pdf": {
+      "sha256": "ad843cbb9af7e4861271db15ff65f7ddb9e3937982d38978cec743d4ecace6d2",
+      "bytes": 29444
+    },
+    "docs/phase2a/IMPLEMENTATION_AND_DEPLOYMENT.md": {
+      "sha256": "cf5181aaa089d015c780168f182c7e9db04f9ea5c3f68a385b2c27ab1cf8a098",
+      "bytes": 8388
+    },
+    "docs/phase2a/DEEPARTURE_V2_FUTURE_PROOF_ARCHITECTURE_PRINCIPLES.md": {
+      "sha256": "63681981e782a7916b62a2010b408a43fe6145712c2d042ed7f915e2d9bd224d",
+      "bytes": 22096
+    },
+    "docs/phase2a/PHASE2A_CORE_ADMIN_V2_README_REV1.3.md": {
+      "sha256": "36b1cebb0e8f56ce015525763a7b8d7003ebd1b0b9258d7c676b4870fcfb45b1",
+      "bytes": 24183
+    },
+    "docs/phase2a/PHASE2A_IMPLEMENTATION_DELTA_FROM_PHASE1_REV1.3.md": {
+      "sha256": "c147581bbb6e8d8a503a66e718233a9a3bd1e4bb56c2bf1a8339bbf80e18e5de",
+      "bytes": 3803
+    },
+    "docs/phase2b/RETENTION_AND_OPERATIONS.md": {
+      "sha256": "fc5f16e6a7870451b01723ea48c8a99678a36e290302eee7a6129232d90a6fd0",
+      "bytes": 1901
+    },
+    "docs/phase2b/INDEX_PLAN.md": {
+      "sha256": "80b586c04c54587e9dbc677860806225bdd96271ca86a2c3f7abd14d12eae91a",
+      "bytes": 2018
+    },
+    "docs/phase2b/LOCAL_ACCEPTANCE.md": {
+      "sha256": "82a7aa1cb1266d09385566db25d057646d068bbcd0d53f3231f46936bf17825b",
+      "bytes": 2443
+    },
+    "docs/phase2b/MIGRATIONS_AND_ROLLBACK.md": {
+      "sha256": "863f75f8543ddc29446cd2535f9fb20649be74ddbceb01f2c9dc5c1e7c1b2aa1",
+      "bytes": 3241
+    },
+    "docs/phase2b/IMPLEMENTATION_AND_DEPLOYMENT.md": {
+      "sha256": "75c1e18e1a4c9ae4f97b10de44500d00e93c5afb6d6dc6d8f401385836a96dc5",
+      "bytes": 4183
+    },
+    "docs/specifications/Deeparture_V2_Liveaboard_Technical_Specification_Rev1.1.docx": {
+      "sha256": "a3b7cb50f3114573573f6750dde866b849271d158b6d453a1eb76d93afc4125d",
+      "bytes": 59418
+    },
+    "docs/specifications/Deeparture_V2_Shared_Platform_Architecture_Specification_Rev1.1.docx": {
+      "sha256": "0592dba065cb67ed4afda43d7d74b6b0c78cc16ef122fe6e5b8056c619b143f2",
+      "bytes": 52881
+    },
+    "docs/specifications/Deeparture_V2_Phase1_Test_Checklist (1).docx": {
+      "sha256": "65a933ef1cf7ce86d2d58a519cf09805a0b2a30f5911786138fa3eb1c0ae6b6b",
+      "bytes": 18847
+    },
+    "docs/specifications/Deeparture_Resort_V2_Technical_Specification_Rev1.1.docx": {
+      "sha256": "d34bad139898f171eddb8c58246309ae80405e584a6c86eeb8084cfdcb4e7068",
+      "bytes": 54329
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Complete_Platform_Architecture_README.md": {
+      "sha256": "3b6c2ac9f755a57a245a975c294718a215200a17f273537ba8c93ae608a349c5",
+      "bytes": 21196
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Phase2B_Admin_Automation_Test_Checklist_Rev1.3.pdf": {
+      "sha256": "519b7cb996ca719dc76052e96be553bc3256fc104292f90e522982b73a2a1fd6",
+      "bytes": 21916
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Future_Proof_Architecture_Principles.pdf": {
+      "sha256": "392d21bf01117ff28939688577a0a789c5f2831c4b5f420001f13cc9e8477407",
+      "bytes": 29012
+    },
+    "docs/phase2b/specifications/PHASE2B_REV1.3_START_HERE.md": {
+      "sha256": "37c1c8d69a6360d2cdd911be085e70f63f0a615cae7363ef51f771070474a814",
+      "bytes": 1950
+    },
+    "docs/phase2b/specifications/PHASE2B_ADMIN_AUTOMATION_TEST_CHECKLIST_REV1.3.md": {
+      "sha256": "fb5e5660ffa25ca313a0351d8053f5d1063a4677602515973d5736748fb1cff2",
+      "bytes": 16049
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Six_Phase_Roadmap_README.md": {
+      "sha256": "249b4b63cb195671986b86f3723a4f20a05c1e5e177c71100a271fcc38f7d605",
+      "bytes": 12285
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Six_Phase_Roadmap.pdf": {
+      "sha256": "7a4bbce5ca612ed8379bed9a53b252fca2907f4e45df137c11271fdb2beec23c",
+      "bytes": 41114
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Phase2B_Admin_Automation_Developer_Specification_Rev1.3.pdf": {
+      "sha256": "94ac4b3011d1ce3ac7a01fc4b3816411868cafe54dc7821bac7a559bd8583784",
+      "bytes": 39296
+    },
+    "docs/phase2b/specifications/PHASE2B_ADMIN_AUTOMATION_README_REV1.3.md": {
+      "sha256": "b6a2dc19720c8ddccb622bdc48305f8148372b2df825d892f52eab937f679ce4",
+      "bytes": 30699
+    },
+    "docs/phase2b/specifications/DEEPARTURE_V2_FUTURE_PROOF_ARCHITECTURE_PRINCIPLES.md": {
+      "sha256": "63681981e782a7916b62a2010b408a43fe6145712c2d042ed7f915e2d9bd224d",
+      "bytes": 22096
+    },
+    "docs/phase2b/specifications/Deeparture_V2_Complete_Platform_Architecture_Rev1.0.pdf": {
+      "sha256": "72067f91aedcadace2541598681c8360ebd78dd23b64cd8570e47deb96044b66",
+      "bytes": 287168
+    },
+    "docs/phase2b/specifications/PHASE2B_REV1.3_CHANGE_SUMMARY.md": {
+      "sha256": "feb59b455debde1057b2574b0d2d6876becc6e4d81e973db8299673f4b4fc26e",
+      "bytes": 2001
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "d0b8c6a404d2d1f37be7badcd2f64a994ff0629c198ae2b2089e26020eac91c3",
+      "bytes": 739
+    }
+  }
+}
