@@ -24,7 +24,7 @@ const previewFile = catchAsync(async (req, res) => {
 const commit = catchAsync(async (req, res) => {
   const data = await commitBatch({ batchId: req.params.batchId, committedBy: req.v2User._id, allowPartial: req.body?.allowPartial === true, operationId: req.operationId });
   await logAudit({ req, action: 'catalog.import.commit', entityType: 'importBatch', entityId: data.batchId, after: { summary: data.summary, status: data.status }, source: 'admin' });
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: data.errors.length ? "Catalog import completed with row errors" : "Catalog import committed", data });
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: data.status === 'completed_with_errors' ? "Catalog import completed with skipped or failed rows; review batch outcomes" : "Catalog import committed", data });
 });
 
 const batch = catchAsync(async (req, res) => {

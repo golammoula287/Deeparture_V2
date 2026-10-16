@@ -57,6 +57,7 @@ async function ready(url) {
     if (!process.argv.includes('--phase2-only') && !process.argv.includes('--phase2b-only')) await run('scripts/verify-phase1.js', backend, ['--browser']);
     if (!process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(root, 'docs/phase2a-test-results.json') });
     if (process.argv.includes('--phase2b') || process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2b.js');
+    if (process.argv.includes('--phase2b') || process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2b-acceptance.js');
   } finally {
     for (const child of children.reverse()) if (child.exitCode === null) child.kill();
     console.log('Local verification services stopped; isolated temporary database: ' + dbPath);

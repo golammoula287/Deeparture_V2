@@ -8,6 +8,9 @@ const { refreshProductCompleteness } = require("./completeness.service");
 const { notifyAdminsInApp } = require("./notification.service");
 const { publishDomainEvent } = require("./domainEvent.service");
 const AppError = require('../../error/appError');
+const ExternalSourceMapping = require('../models/externalSourceMapping.model');
+const DuplicateResolution = require('../models/duplicateResolution.model');
+const { normalizeProviderKey } = require('./source.service');
 
 const escapeRegex = (value) => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const canonicalWebsite = (value) => {
@@ -50,6 +53,16 @@ const productCandidates = async ({ productType, organisationId, product }) => {
 const classifyNormalizedRow = async (normalized) => {
   if (normalized.skip) return { ...normalized, action: 'SKIP', reason: 'Empty row or explicitly skipped by source' };
   if (normalized.errors?.length) return { ...normalized, action: "ERROR", reason: normalized.errors.join("; ") };
+  if (normalized.providerKey && normalized.externalId) {
+    const mapping = await ExternalSourceMapping.findOne({ providerKey: normalizeProviderKey(normalized.providerKey), externalEntityType: normalized.productType, externalId: normalized.externalId, internalEntityType: normalized.productType, active: true }).lean();
+    if (mapping) {
+      const Model = normalized.productType === 'resort' ? Resort : Vessel;
+      const product = await Model.findById(mapping.internalEntityId).lean();
+      const organisation = product && await Organisation.findById(product.organisation).lean();
+      if (!product || !organisation) return { ...normalized, action: 'ERROR', reason: 'Mapped listing or organisation no longer exists; review the source mapping' };
+      return { ...normalized, action: 'UPDATE', organisationMatchId: organisation._id, organisationMatchedUpdatedAt: organisation.updatedAt, productMatchId: product._id, productMatchedUpdatedAt: product.updatedAt };
+    }
+  }
   const orgMatches = await organisationCandidates(normalized.organisation);
   if (orgMatches.length > 1) return { ...normalized, action: "DUPLICATE_REVIEW", reason: "Organisation matches more than one existing record", organisationMatches: orgMatches.map((o) => ({ _id: o._id, name: o.name, primaryEmail: o.primaryEmail, website: o.website })) };
   const organisation = orgMatches[0];
@@ -185,7 +198,7 @@ const commitBatch = async ({ batchId, committedBy, allowPartial = false, operati
         Object.assign(product, payload);
         await product.save();
       } else {
-        const freshProducts = await productCandidates({ productType: row.productType, organisationId: organisation._id, product: row.product });
+        const freshProducts = row.forceCreate ? [] : await productCandidates({ productType: row.productType, organisationId: organisation._id, product: row.product });
         if (freshProducts.length > 1) throw new Error("Listing became ambiguous before commit");
         if (freshProducts.length === 1) {
           product = freshProducts[0];
@@ -204,6 +217,7 @@ const commitBatch = async ({ batchId, committedBy, allowPartial = false, operati
         }
       }
       await refreshProductCompleteness({ productType: row.productType, productId: product._id });
+      await DuplicateResolution.updateOne({ importBatch: batch._id, rowNumber: row.rowNumber }, { $set: { productId: product._id, organisationId: organisation._id } });
       successes.push({ row: row.rowNumber, action: row.action, organisationId: organisation._id, productId: product._id, slug: product.slug });
     } catch (error) {
       errors.push({ row: row.rowNumber, action: row.action, message: error.message });
@@ -211,16 +225,17 @@ const commitBatch = async ({ batchId, committedBy, allowPartial = false, operati
   }
   batch.summary.committed = successes.length;
   batch.summary.commitErrors = errors.length;
-  batch.status = errors.length ? "completed_with_errors" : "completed";
+  const incomplete = errors.length + (batch.summary.error || 0) + (batch.summary.duplicateReview || 0);
+  batch.status = incomplete ? "completed_with_errors" : "completed";
   batch.committedBy = committedBy;
   batch.committedAt = new Date();
   batch.results = successes;
   batch.rowErrors = errors;
   batch.operationId = operationId || batch.operationId;
   await batch.save();
-  const eventName = errors.length ? 'import.completed_with_errors' : 'import.completed';
+  const eventName = incomplete ? 'import.completed_with_errors' : 'import.completed';
   await publishDomainEvent({ name: eventName, aggregateType: 'importBatch', aggregateId: batch._id, actorUser: committedBy, operationId: batch.operationId, payload: { summary: batch.summary, productType: batch.productType, sourceType: batch.sourceType }, retentionClass: 'business' });
-  await notifyAdminsInApp({ type: eventName, title: errors.length ? 'Import completed with errors' : 'Import completed', message: `${batch.productType} import committed ${successes.length} row(s) with ${errors.length} error(s).`, relatedRecordType: 'importBatch', relatedRecordId: batch._id, actionTarget: `/admin/v2/imports/history?batch=${batch._id}`, operationId: batch.operationId, retentionClass: 'business' });
+  await notifyAdminsInApp({ type: eventName, title: incomplete ? 'Import completed with errors' : 'Import completed', message: `${batch.productType} import committed ${successes.length} row(s); ${errors.length} commit error(s), ${batch.summary.error || 0} invalid row(s), ${batch.summary.duplicateReview || 0} unresolved duplicate(s).`, relatedRecordType: 'importBatch', relatedRecordId: batch._id, actionTarget: `/admin/v2/imports/history?batch=${batch._id}`, operationId: batch.operationId, retentionClass: 'business' });
   return { batchId: batch._id, status: batch.status, summary: batch.summary, successes, errors, operationId: batch.operationId };
 };
 

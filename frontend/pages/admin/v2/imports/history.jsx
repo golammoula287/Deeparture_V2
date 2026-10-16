@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect,useState } from 'react';
 import AdminLayout from '@/src/components/admin/AdminLayout';
 import { v2Api } from '@/src/lib/v2Api';
 
 export default function ImportHistory(){
+ const router=useRouter();
+ useEffect(()=>{if(router.isReady&&typeof router.query.batch==='string')v2Api(`/admin/catalog/import-batches/${router.query.batch}`).then(setBatch).catch(e=>setMessage(e.message));},[router.isReady,router.query.batch]);
  const [data,setData]=useState({items:[],page:1,limit:25,total:0}),[status,setStatus]=useState(''),[message,setMessage]=useState(''),[errors,setErrors]=useState(null),[batch,setBatch]=useState(null);
  const load=(page=1)=>v2Api(`/admin/imports/history?${new URLSearchParams({page,limit:25,status})}`).then(setData).catch(e=>setMessage(e.message));
  useEffect(()=>{load(1)},[status]);

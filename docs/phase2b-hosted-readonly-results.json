@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-16T10:06:07.492Z",
+  "results": [
+    {
+      "url": "https://deeparture-v2-1.onrender.com/",
+      "status": 200,
+      "buildId": "1YcY8N0IOtLm5PTV68puP"
+    },
+    {
+      "url": "https://deeparture-v2-1.onrender.com/admin/v2/notifications",
+      "status": 200,
+      "buildId": "1YcY8N0IOtLm5PTV68puP"
+    },
+    {
+      "url": "https://deeparture-v2-3hr6.onrender.com/health",
+      "status": 200,
+      "ok": true,
+      "service": "deeparture-v2-api"
+    },
+    {
+      "url": "https://deeparture-v2-3hr6.onrender.com/api/v2/admin/notifications",
+      "status": 401,
+      "success": false,
+      "code": "authentication_error"
+    },
+    {
+      "url": "https://deeparture-v2-3hr6.onrender.com/api/v2/liveaboards?limit=1",
+      "status": 200,
+      "success": true,
+      "total": 1
+    }
+  ]
+}

@@ -113,7 +113,7 @@ const resolveDuplicate = catchAsync(async(req,res)=>{
       for(const [key,choice] of Object.entries(req.body.fieldSelections)) if(choice==='existing'&&Object.prototype.hasOwnProperty.call(product,key)) row.product[key]=product[key];
     }
   } else { delete row.productMatchId; delete row.productMatchedUpdatedAt; if(req.body.organisationId) row.organisationMatchId=req.body.organisationId; }
-  row.action=nextAction;row.reason=`Resolved by Admin: ${decision}`;
+  row.forceCreate=['create_new','not_duplicate'].includes(decision);row.action=nextAction;row.reason=`Resolved by Admin: ${decision}`;
   batch.summary.duplicateReview=Math.max(0,(batch.summary.duplicateReview||0)-1);batch.summary[nextAction==='UPDATE'?'update':'create']=(batch.summary[nextAction==='UPDATE'?'update':'create']||0)+1;
   batch.markModified('rows');batch.markModified('summary');await batch.save();
   const resolution=await DuplicateResolution.findOneAndUpdate({importBatch:batch._id,rowNumber:Number(req.params.rowNumber)},{importBatch:batch._id,rowNumber:Number(req.params.rowNumber),productType:batch.productType,decision,organisationId:row.organisationMatchId,productId:row.productMatchId,fieldSelections:req.body.fieldSelections||{},decidedBy:req.v2User._id,operationId:req.operationId,notes:req.body.notes},{new:true,upsert:true,runValidators:true});

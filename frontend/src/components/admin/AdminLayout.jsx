@@ -26,10 +26,13 @@ export default function AdminLayout({ title, children }) {
   const router = useRouter();
   const [unread, setUnread] = useState(0);
   useEffect(() => {
-    v2Api('/admin/notifications?unread=true&limit=1').then(data => setUnread(data?.unread || 0)).catch(() => {});
+    const refreshUnread = () => v2Api('/admin/notifications?unread=true&limit=1').then(data => setUnread(data?.unread || 0)).catch(() => {});
+    refreshUnread();
+    window.addEventListener('notifications-changed', refreshUnread);
+    return () => window.removeEventListener('notifications-changed', refreshUnread);
   }, [router.pathname]);
   return (
-    <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
+    <main className="admin-v2 max-w-7xl mx-auto px-4 py-6 md:py-8">
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         <aside className="w-full lg:w-60 rounded-xl border bg-white p-3 lg:sticky lg:top-4">
           <div className="font-semibold px-2 py-2 flex justify-between"><span>Admin V2</span>{unread > 0 ? <Link href="/admin/v2/notifications" className="text-xs rounded-full bg-red-600 text-white px-2 py-1" aria-label={`${unread} unread notifications`}>{unread}</Link> : null}</div>
