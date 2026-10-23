@@ -1,5 +1,7 @@
 # Phase 2B Rev 1.3 - Final Packaging Verification
 
+> Updated 20 October 2026: the historical packaging results below are superseded by the [Rev 1.3 review corrections](REVIEW_CORRECTIONS_2026-10-20.md) and full 125-row evidence matrix. Current local unit, database, browser and production-build checks passed. Corrected-deployment Render/Atlas evidence remains pending.
+
 ## Authoritative baseline
 
 - Phase 2A branch: `phase2a-integration`

@@ -1,5 +1,7 @@
 # Deeparture V2 - Phase 2B Rev 1.3 Implementation Handover
 
+> Updated 20 October 2026: the historical packaging results below are superseded by the [Rev 1.3 review corrections](docs/phase2b/REVIEW_CORRECTIONS_2026-10-20.md) and full 125-row evidence matrix. Current local unit, database, browser and production-build checks passed. Corrected-deployment Render/Atlas evidence remains pending.
+
 ## START HERE
 
 This implementation is a code delta built directly on the accepted Phase 2A integration baseline:

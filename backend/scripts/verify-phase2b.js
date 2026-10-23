@@ -23,7 +23,8 @@ const ok = async (path, token, body, method) => {
   assert.equal(result.success, true, `${path}: ${result.status} ${result.message}`);
   return result.data;
 };
-const pass = (label) => console.log(`PASS Phase 2B ${label}`);
+const results = [];
+const pass = (label) => { results.push({ label, status: 'passed' }); console.log(`PASS Phase 2B ${label}`); };
 
 (async () => {
   const login = await ok('/api/auth/login', null, { email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD });
@@ -115,6 +116,28 @@ const pass = (label) => console.log(`PASS Phase 2B ${label}`);
   const typedNonmatches = await ok(`/api/v2/liveaboards?${typedQuery}`, admin);
   assert.ok(!typedNonmatches.items.some(item => item._id === vessel._id));
   pass('combined boolean, numeric, select, and multi-select search');
+  await mongoose.connect(process.env.DATABASE_URL, { serverSelectionTimeoutMS: 15000 });
+  try {
+    const Location = require('../src/v2/models/location.model');
+    const Itinerary = require('../src/v2/models/itinerary.model');
+    const Departure = require('../src/v2/models/departure.model');
+    const port = await Location.create({ name: `Combined Port ${run}`, type: 'port' });
+    const route = await Itinerary.create({ organisation: org._id, vessel: vessel._id, name: `Combined route ${run}`, embarkation: { location: port._id } });
+    await Departure.create({ organisation: org._id, vessel: vessel._id, itinerary: route._id,
+      startDate: new Date('2030-01-01'), endDate: new Date('2030-01-08'), effectiveMinPriceUsd: 1000,
+      availability: [{ status: 'available', spacesAvailable: 8 }] });
+    typedQuery.set(`attr_phase2b_rating_${run}_gte`, '3');
+    typedQuery.set('departurePort', port.slug);
+    typedQuery.set('maxPrice', '1500');
+    typedQuery.set('availableOnly', 'true');
+    assert.ok((await ok(`/api/v2/liveaboards?${typedQuery}`, admin)).items.some(item => item._id === vessel._id));
+    typedQuery.set('maxPrice', '500');
+    assert.ok(!(await ok(`/api/v2/liveaboards?${typedQuery}`, admin)).items.some(item => item._id === vessel._id));
+    typedQuery.set('maxPrice', '1500');
+    typedQuery.set('availability', 'sold_out');
+    assert.ok(!(await ok(`/api/v2/liveaboards?${typedQuery}`, admin)).items.some(item => item._id === vessel._id));
+  } finally { await mongoose.disconnect(); }
+  pass('canonical port plus price, availability and four typed attributes combine with negative controls');
   const report = await ok('/api/v2/admin/reports/operational', admin);
   assert.ok(report.catalogue.total >= 1);
   const audit = await ok(`/api/v2/admin/audit?operationId=${operationId}`, admin);
@@ -122,5 +145,7 @@ const pass = (label) => console.log(`PASS Phase 2B ${label}`);
   const notifications = await ok('/api/v2/admin/notifications', admin);
   assert.ok(notifications.total >= 1);
   pass('shared search, reporting, audit, and notifications');
-  console.log('VERIFIED 9 Phase 2B API groups');
-})().catch(error => { console.error('FAIL Phase 2B', error); process.exitCode = 1; });
+  console.log(`VERIFIED ${results.length} Phase 2B API groups`);
+})().catch(error => { console.error('FAIL Phase 2B', error); results.push({ label: error.message, status: 'failed' }); process.exitCode = 1; }).finally(() => {
+  require('node:fs').writeFileSync(require('node:path').join(__dirname, '../../docs/phase2b-api-results.json'), JSON.stringify({ testedAt: new Date().toISOString(), scope: 'isolated local; not Render staging', results }, null, 2) + '\n');
+});

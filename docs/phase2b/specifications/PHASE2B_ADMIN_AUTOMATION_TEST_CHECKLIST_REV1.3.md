@@ -2,18 +2,20 @@
 
 **Revision 1.3 - Architecture-aligned + implementation guardrails after Phase 2A completion.**
 
+**Evidence for all 125 rows:** [Rev 1.3 row-by-row evidence](../REV1.3_ACCEPTANCE_EVIDENCE.md). Checkboxes below represent final staging acceptance and remain unchecked until corrected-deployment evidence is attached. The owner reports existing Render checks passed; local results are recorded separately.
+
 Use this checklist to confirm **Phase 2B - Admin Automation & Management Enhancements** is complete before Phase 3.
 
 ## Test environment
 
-- Admin V2 URL: __________________________________________
-- Frontend Render staging URL: ____________________________
-- Backend/API Render URL: _________________________________
-- MongoDB Atlas staging DB/environment: ___________________
-- Git branch: ____________________________________________
-- Exact deployed commit: _________________________________
-- Test date: _____________________________________________
-- Tested by: _____________________________________________
+- Admin V2 URL: https://deeparture-v2-1.onrender.com/admin/v2 (from project records)
+- Frontend Render staging URL: https://deeparture-v2-1.onrender.com (from project records)
+- Backend/API Render URL: https://deeparture-v2-3hr6.onrender.com (from project records)
+- MongoDB Atlas staging DB/environment: PENDING — dedicated V2 database/index evidence not supplied
+- Git branch: phase2b-rev1.3-review-fixes (local); deployed branch pending verification
+- Exact deployed commit: PENDING — corrected working tree is not committed/deployed
+- Test date: 20 October 2026 local verification; final-revision staging date pending
+- Tested by: Codex (local automated checks); owner reports existing staging passed; staging tester name pending
 
 ## 1. Import History & Versioning
 
@@ -293,10 +295,10 @@ Use this checklist to confirm **Phase 2B - Admin Automation & Management Enhance
 
 ### Outstanding issues
 
-1. _________________________________________________
-2. _________________________________________________
-3. _________________________________________________
-4. _________________________________________________
+1. Exact corrected frontend/backend deployed commit identities and authenticated staging workflow evidence.
+2. Dedicated V2 Atlas database/environment and index verification.
+3. Record staging administrator maintenance execution after deployment/source changes.
+4. Owner-reported existing deployment pass is recorded; final corrected-revision sign-off remains pending.
 
 ## Next phase
 

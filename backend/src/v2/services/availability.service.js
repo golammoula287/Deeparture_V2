@@ -9,7 +9,7 @@ const AvailabilityOverride = require('../models/availabilityOverride.model');
 const AvailabilityHistory = require('../models/availabilityHistory.model');
 const AvailabilityEffective = require('../models/availabilityEffective.model');
 const SourceConfig = require('../models/sourceConfig.model');
-const { findSourceConfig, normalizeProviderKey } = require('./source.service');
+const { findSourceConfig, selectSourceConfig, normalizeProviderKey } = require('./source.service');
 const { publishDomainEvent } = require('./domainEvent.service');
 const { notifyAdminsInApp } = require('./notification.service');
 
@@ -82,18 +82,14 @@ const validateCabin = async ({ organisationId, vesselId, cabinType }) => {
 };
 
 const configsFor = async (snapshots, organisationId) => {
-  const ids = [...new Set(snapshots.map(s => s.sourceConfig).filter(Boolean).map(String))];
-  const direct = ids.length ? await SourceConfig.find({ _id: { $in: ids } }).lean() : [];
-  const byId = new Map(direct.map(c => [String(c._id), c]));
-  const missing = snapshots.filter(s => !s.sourceConfig || !byId.has(String(s.sourceConfig)));
-  const sourceTypes = [...new Set(missing.map(s => s.sourceType))];
-  const fallbacks = sourceTypes.length ? await SourceConfig.find({ sourceType: { $in: sourceTypes }, $or: [{ organisation: organisationId }, { organisation: null }] }).sort({ organisation: -1, priority: 1 }).lean() : [];
-  const byType = new Map();
-  for (const config of fallbacks) {
-    const key = `${config.sourceType}:${String(config.organisation || 'global')}`;
-    if (!byType.has(key)) byType.set(key, config);
-  }
-  return (snapshot) => byId.get(String(snapshot.sourceConfig)) || byType.get(`${snapshot.sourceType}:${organisationId}`) || byType.get(`${snapshot.sourceType}:global`) || null;
+  // Re-evaluate provider identity even for snapshots linked by older buggy lookups.
+  // Fetch once for all snapshots; avoid a per-snapshot query.
+  const sourceTypes = [...new Set(snapshots.map(s => s.sourceType))];
+  const configs = sourceTypes.length ? await SourceConfig.find({
+    sourceType: { $in: sourceTypes },
+    $or: [{ organisation: organisationId }, { organisation: null }],
+  }).lean() : [];
+  return snapshot => selectSourceConfig(configs, { ...snapshot, organisationId });
 };
 
 const currentMirror = async ({ productType, departureId, cabinType, roomTypeId, date }) => {
@@ -104,6 +100,16 @@ const currentMirror = async ({ productType, departureId, cabinType, roomTypeId, 
     return item || null;
   }
   return ResortAvailability.findOne({ roomType: roomTypeId, date: cleanDate(date) }).lean();
+};
+
+const persistenceUpdate = (values) => {
+  const $set = {};
+  const $unset = {};
+  for (const [key, value] of Object.entries(values)) {
+    if (value === undefined) $unset[key] = 1;
+    else $set[key] = value;
+  }
+  return { $set, ...(Object.keys($unset).length ? { $unset } : {}) };
 };
 
 const writeMirror = async (identity, effective) => {
@@ -141,7 +147,7 @@ const writeMirror = async (identity, effective) => {
   const day = cleanDate(identity.date);
   return ResortAvailability.findOneAndUpdate(
     { roomType: identity.roomTypeId, date: day },
-    {
+    persistenceUpdate({
       organisation: identity.organisationId,
       resort: identity.resortId,
       roomType: identity.roomTypeId,
@@ -158,7 +164,7 @@ const writeMirror = async (identity, effective) => {
       overrideExpiresAt: effective.overrideExpiresAt,
       effectiveSourceName: effective.effectiveSourceName,
       resolvedAt: new Date(),
-    },
+    }),
     { new: true, upsert: true, runValidators: true }
   );
 };
@@ -219,9 +225,19 @@ const resolveAvailability = async (identity, { actorUserId, operationId, reason 
       // Never let an expired/cleared manual override become an anonymous source value.
       // A legacy/source-backed mirror may be retained when no normalized snapshot exists yet,
       // but an override-only mirror must fall back to unknown.
-      const reusablePrevious = previous && previous.sourceType !== 'admin_manual_override' && !previous.manualOverride;
-      effective = reusablePrevious ? { ...previous, freshnessState: previous.freshnessState || 'unknown', conflictState: false, manualOverride: false, overrideExpiresAt: undefined, resolvedAt: now } : {
-        status: 'unknown', sourceType: 'none', sourceReference: undefined, sourceUpdatedAt: undefined, receivedAt: now,
+      const reusablePrevious = snapshots.length === 0 && previous && (previous.sourceType || previous.source) !== 'admin_manual_override' && !previous.manualOverride;
+      effective = reusablePrevious ? {
+        status: previous.status,
+        totalCabins: previous.totalCabins, cabinsAvailable: previous.cabinsAvailable,
+        totalSpaces: previous.totalSpaces, spacesAvailable: previous.spacesAvailable,
+        roomsAvailable: previous.roomsAvailable,
+        sourceType: previous.sourceType || previous.source,
+        sourceReference: previous.sourceReference, sourceUpdatedAt: previous.sourceUpdatedAt,
+        receivedAt: previous.receivedAt, effectiveSourceName: previous.effectiveSourceName,
+        freshnessState: previous.freshnessState || 'unknown', conflictState: false,
+        manualOverride: false, overrideExpiresAt: undefined, resolvedAt: now,
+      } : {
+        status: 'unknown', totalCabins: undefined, cabinsAvailable: undefined, totalSpaces: undefined, spacesAvailable: undefined, roomsAvailable: undefined, sourceType: 'none', sourceReference: undefined, sourceUpdatedAt: undefined, receivedAt: now,
         freshnessState: 'unknown', conflictState: false, manualOverride: false, overrideExpiresAt: undefined, effectiveSourceName: 'No source', resolvedAt: now,
       };
     } else {
@@ -248,12 +264,12 @@ const resolveAvailability = async (identity, { actorUserId, operationId, reason 
   if (changed) await writeMirror(identity, effective);
   await AvailabilityEffective.findOneAndUpdate(
     { inventoryKey: identity.inventoryKey },
-    {
+    persistenceUpdate({
       inventoryKey: identity.inventoryKey, productType: identity.productType, organisation: identity.organisationId,
       vessel: identity.vesselId, departure: identity.departureId, cabinType: identity.cabinType,
       resort: identity.resortId, roomType: identity.roomTypeId, date: identity.date,
       ...effective, operationId,
-    },
+    }),
     { new: true, upsert: true, runValidators: true }
   );
   if (changed) {

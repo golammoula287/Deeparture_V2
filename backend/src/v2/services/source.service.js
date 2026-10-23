@@ -94,13 +94,25 @@ const upsertSourceConfig = async (input) => {
   return SourceConfig.create(update);
 };
 
-const findSourceConfig = async ({ organisationId, sourceType, providerName, sourceReference }) => {
-  const providerKey = normalizeProviderKey(providerName || sourceReference || sourceType);
-  const exact = providerKey ? await SourceConfig.findOne({ providerKey, organisation: organisationId || null }).lean() : null;
-  if (exact) return exact;
-  const orgType = await SourceConfig.findOne({ organisation: organisationId || null, sourceType: String(sourceType || '').toLowerCase(), enabled: true }).sort({ priority: 1 }).lean();
-  if (orgType) return orgType;
-  return SourceConfig.findOne({ organisation: null, sourceType: String(sourceType || '').toLowerCase(), enabled: true }).sort({ priority: 1 }).lean();
+// Provider identity takes precedence over source-type defaults, including disabled configs.
+// A generic default is explicitly keyed by the source type (e.g. providerKey "api").
+const selectSourceConfig = (configs, { organisationId, sourceType, providerName, sourceReference }) => {
+  const type = String(sourceType || '').trim().toLowerCase();
+  const providerKey = normalizeProviderKey(providerName || sourceReference || type);
+  const inScope = (scope, key) => configs.find(config =>
+    config.sourceType === type && sameId(config.organisation, scope) && config.providerKey === key);
+  return (organisationId && inScope(organisationId, providerKey)) ||
+    inScope(null, providerKey) ||
+    (organisationId && inScope(organisationId, normalizeProviderKey(type))) ||
+    inScope(null, normalizeProviderKey(type)) || null;
 };
 
-module.exports = { normalizeProviderKey, upsertMapping, upsertSourceConfig, findSourceConfig, assertExpectedVersion, assertNoSensitiveMetadata };
+const findSourceConfig = async (input) => {
+  const configs = await SourceConfig.find({
+    sourceType: String(input.sourceType || '').trim().toLowerCase(),
+    $or: [{ organisation: input.organisationId || null }, { organisation: null }],
+  }).lean();
+  return selectSourceConfig(configs, input);
+};
+
+module.exports = { selectSourceConfig, normalizeProviderKey, upsertMapping, upsertSourceConfig, findSourceConfig, assertExpectedVersion, assertNoSensitiveMetadata };

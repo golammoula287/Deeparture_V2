@@ -1,5 +1,5 @@
 {
-  "testedAt": "2026-10-15T14:55:14.460Z",
+  "testedAt": "2026-10-20T17:14:31.442Z",
   "scope": "isolated local; hosted acceptance not implied",
   "results": [
     {
@@ -75,11 +75,11 @@
       "status": "passed",
       "dataset": 2000,
       "timingsMs": [
-        87,
-        96,
-        89,
-        103,
-        93
+        9,
+        8,
+        8,
+        8,
+        8
       ],
       "thresholdMs": 2000
     },
@@ -91,19 +91,19 @@
       "benchmarks": [
         {
           "route": "/catalog/liveaboards?status=published&source=deeparture_import&completenessMax=30&limit=25",
-          "ms": 33
+          "ms": 5
         },
         {
           "route": "/imports/history?limit=25",
-          "ms": 10
+          "ms": 2
         },
         {
           "route": "/audit?limit=25",
-          "ms": 13
+          "ms": 2
         },
         {
           "route": "/reports/operational",
-          "ms": 19
+          "ms": 3
         }
       ],
       "indexes": {

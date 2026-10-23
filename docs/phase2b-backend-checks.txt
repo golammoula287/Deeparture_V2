@@ -1,0 +1,100 @@
+
+> deeparture-v2-backend@0.1.0 verify:phase2b
+> npm run check && npm run verify:phase2b:static && npm test
+
+
+> deeparture-v2-backend@0.1.0 check
+> node scripts/check-v2-syntax.js
+
+Syntax OK: 95 JavaScript files.
+
+> deeparture-v2-backend@0.1.0 verify:phase2b:static
+> node scripts/verify-phase2b-static.js
+
+PASS file src/v2/controllers/phase2b.controller.js
+PASS file src/v2/models/notification.model.js
+PASS file src/v2/models/externalSourceMapping.model.js
+PASS file src/v2/models/sourceConfig.model.js
+PASS file src/v2/models/verificationRecord.model.js
+PASS file src/v2/models/availabilitySnapshot.model.js
+PASS file src/v2/models/availabilityEffective.model.js
+PASS file src/v2/models/availabilityOverride.model.js
+PASS file src/v2/models/availabilityHistory.model.js
+PASS file src/v2/models/domainEvent.model.js
+PASS file src/v2/services/availability.service.js
+PASS file src/v2/services/completeness.service.js
+PASS file src/v2/services/domainEvent.service.js
+PASS file src/v2/services/pagination.service.js
+PASS file src/v2/services/source.service.js
+PASS file src/v2/services/verification.service.js
+PASS file src/middleware/operationId.js
+PASS global operation ID middleware
+PASS notification routes
+PASS availability administration routes
+PASS bounded bulk route
+PASS typed attribute filter support
+PASS shared server pagination
+PASS availability freshness semantics
+PASS availability conflict semantics
+PASS manual override source enforcement
+PASS protected external mapping reassignment
+PASS bulk action maximum batch size
+PASS availability override audit
+PASS claim revocation audit
+PASS availability override optimistic concurrency
+PASS website source queue cannot be pre-approved on create
+PASS typed attribute search index
+PASS import schema version history
+PASS import operation correlation ID
+PASS source metadata secret guard
+PASS source sensitive-key detection
+PASS paginated organisation mode
+PASS organisation paged result contract
+PASS import update preserves verification status
+PASS import update preserves source provenance
+PASS read path is side-effect free for availability maintenance (src/v2/controllers/public.controller.js)
+PASS read path is side-effect free for availability maintenance (src/v2/services/search.service.js)
+PASS availability maintenance is explicit/admin-only
+Phase 2B static verification passed.
+
+> deeparture-v2-backend@0.1.0 test
+> node --test tests/*.test.js
+
+✔ updated mailer generates local JSON without delivery (24.842125ms)
+✔ updated ExcelJS UUID dependency supports conditional-formatting workbook roundtrip (93.036917ms)
+✔ SMTP credentials cannot enable delivery in default or test mode (105.098875ms)
+✔ demo seed rejects missing and documented default passwords before connecting (171.548583ms)
+✔ catalog rows normalize source-specific fields into Deeparture contract (0.953375ms)
+✔ availability input retains source and timestamps (0.150416ms)
+✔ invalid inventory cannot become stored availability (0.206625ms)
+✔ preview identifies skipped and invalid numeric source rows (0.074875ms)
+✔ unfiltered catalogue search keeps the unrestricted product set (0.569541ms)
+✔ Phase 2B pagination clamps limits and preserves stable descending sort (0.118917ms)
+✔ Phase 2B pagination falls back to the full default sort when an unsupported sort is requested (0.050083ms)
+✔ Phase 2B paged result reports navigation metadata (0.058625ms)
+✔ Operation IDs preserve a safe caller supplied ID (0.079958ms)
+✔ Operation IDs replace unsafe/too-short caller values (0.190709ms)
+✔ Catalogue adapter carries the import schema version into the normalized DTO (0.236125ms)
+✔ Catalogue adapter treats blank optional spreadsheet fields as no-update values (0.052666ms)
+✔ Catalogue adapter still accepts explicit empty arrays for an intentional structured clear (0.069334ms)
+✔ base discount produces 4950 USD (0.394709ms)
+✔ USD override replaces the inherited USD amount before discount (0.063083ms)
+✔ foreign currency override without conversion does not retain stale USD (0.049084ms)
+✔ explicit USD conversion is used for foreign currency override (0.046792ms)
+✔ offer validity consistently uses the requested pricing date (0.064292ms)
+✔ best offer is chosen without stacking discounts (0.044083ms)
+✔ release identity exposes only a valid configured source SHA and never guesses (0.583625ms)
+✔ disabled exact global provider wins over another enabled global provider (0.336125ms)
+✔ organisation provider override wins over global provider, including disabled overrides (0.061166ms)
+✔ exact global provider wins over organisation generic default (0.048667ms)
+✔ explicit generic defaults respect organisation scope and disabled state (0.054125ms)
+✔ provider lookup excludes unrelated providers, organisations and source types (0.042791ms)
+✔ provider reference and source type defaults normalize consistently (0.038333ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 312.677166

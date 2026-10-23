@@ -1,5 +1,7 @@
 # Deeparture V2 — Standalone Phase 1 + Phase 2A + Phase 2B
 
+Current correction handover: [Rev 1.3 review corrections](docs/phase2b/REVIEW_CORRECTIONS_2026-10-20.md) and [all 125 acceptance rows with evidence](docs/phase2b/REV1.3_ACCEPTANCE_EVIDENCE.md). Local regressions passed; final corrected Render/Atlas deployment evidence is pending. The owner reports the existing Render deployment passed.
+
 Phase 2B Rev 1.3 is integrated on the Phase 2A baseline. Start with [the integration record](docs/phase2b/INTEGRATION_RECORD_2026-10-15.md) and [handover guide](HANDOVER_START_HERE.md). Admins sign in at `/login` and use `/admin/v2`; operators use `/dashboard/v2`.
 
 This repository is a **standalone extraction of Deeparture V2 Phase 1**. It does not require the legacy Deeparture V1 application to start or to create its own V2 database.

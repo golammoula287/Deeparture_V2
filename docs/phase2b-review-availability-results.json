@@ -1,0 +1,34 @@
+{
+  "testedAt": "2026-10-20T17:18:23.780Z",
+  "scope": "isolated local real MongoDB; not Render staging",
+  "results": [
+    {
+      "check": "real MongoDB: disabled global Beta does not inherit Alpha",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: disabled sole source clears persisted room counts and provenance, including misbound snapshots",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: new organisation override replaces historical snapshot configuration",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: disabling one provider retains another enabled provider",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: legacy inventory without normalized snapshots is preserved",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: disabled sole departure source clears eight spaces and four cabins",
+      "passed": true
+    },
+    {
+      "check": "real MongoDB: manual override still works and clearing it cannot revive a disabled source",
+      "passed": true
+    }
+  ]
+}
