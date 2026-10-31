@@ -1,0 +1,70 @@
+▲ Next.js 16.3.5 (webpack)
+✓ Running next.config.mjs took 4ms
+
+  Running TypeScript ...
+  Finished TypeScript in 1ms ...
+  Creating an optimized production build ...
+✓ Compiled successfully in 842ms
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/41) ...
+  Generating static pages using 9 workers (10/41) 
+  Generating static pages using 9 workers (20/41) 
+  Generating static pages using 9 workers (30/41) 
+✓ Generating static pages using 9 workers (41/41) in 37ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (pages)
+┌ ○ /
+├   /_app
+├ ○ /404
+├ ○ /admin/v2
+├ ○ /admin/v2/attributes
+├ ○ /admin/v2/audit
+├ ○ /admin/v2/availability
+├ ○ /admin/v2/duplicates
+├ ○ /admin/v2/enquiries
+├ ○ /admin/v2/import
+├ ○ /admin/v2/imports/history
+├ ○ /admin/v2/liveaboards
+├ ○ /admin/v2/liveaboards/[id]
+├ ○ /admin/v2/locations
+├ ○ /admin/v2/notifications
+├ ○ /admin/v2/operators
+├ ○ /admin/v2/operators/[id]
+├ ○ /admin/v2/preview/liveaboard/[id]
+├ ○ /admin/v2/preview/resort/[id]
+├ ○ /admin/v2/reports
+├ ○ /admin/v2/resorts
+├ ○ /admin/v2/resorts/[id]
+├ ○ /admin/v2/sources
+├ ○ /admin/v2/website-sources
+├ ƒ /api/release
+├ ○ /claim-operator
+├ ○ /dashboard/v2
+├ ○ /explore/liveaboards
+├ ○ /explore/resorts
+├ ƒ /liveaboards/[slug]
+├ ○ /login
+├ ○ /operator/v2
+├ ○ /operator/v2/availability
+├ ○ /operator/v2/enquiries
+├ ○ /operator/v2/imports
+├ ○ /operator/v2/liveaboards
+├ ○ /operator/v2/liveaboards/[id]
+├ ○ /operator/v2/notifications
+├ ○ /operator/v2/profile
+├ ○ /operator/v2/resorts
+├ ○ /operator/v2/resorts/[id]
+├ ○ /operator/v2/team
+├ ƒ /resorts/[slug]
+└ ○ /team-invite/[token]
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+▲ Next.js 16.3.5
+- Local:         http://localhost:3019
+- Network:       http://192.168.0.120:3019
+✓ Ready in 50ms
+✓ Running next.config.mjs took 5ms

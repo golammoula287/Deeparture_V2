@@ -15,6 +15,9 @@ const env = { ...process.env, NODE_ENV: 'development', DATABASE_URL: 'mongodb://
   DEMO_OPERATOR_PASSWORD: crypto.randomBytes(24).toString('hex'),
   NEXT_PUBLIC_API_URL: 'http://localhost:5019/api', API_INTERNAL_URL: 'http://localhost:5019/api',
   VERIFY_FRONTEND_URL: 'http://localhost:3019', VERIFY_REPORT_PATH: path.join(root, 'docs/phase1-test-results.json') };
+const reportDir = process.env.VERIFY_REPORT_DIR || path.join(root, 'docs');
+fs.mkdirSync(reportDir, { recursive: true });
+env.VERIFY_REPORT_PATH = path.join(reportDir, 'phase1-test-results.json');
 const children = [];
 function start(exe, args, cwd, extra = {}) {
   const child = spawn(exe, args, { cwd, env: { ...env, ...extra }, stdio: 'inherit', windowsHide: true });
@@ -54,10 +57,13 @@ async function ready(url) {
     start(process.execPath, ['src/server.js'], backend);
     start(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3019'], frontend, { NODE_ENV: 'production' });
     await ready('http://localhost:5019/health'); await ready('http://localhost:3019');
+    if (!process.argv.includes('--phase3-only')) {
     if (!process.argv.includes('--phase2-only') && !process.argv.includes('--phase2b-only')) await run('scripts/verify-phase1.js', backend, ['--browser']);
-    if (!process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(root, 'docs/phase2a-test-results.json') });
+    if (!process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2a.js', backend, ['--browser'], { VERIFY_REPORT_PATH: path.join(reportDir, 'phase2a-test-results.json') });
     if (process.argv.includes('--phase2b') || process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2b.js');
     if (process.argv.includes('--phase2b') || process.argv.includes('--phase2b-only')) await run('scripts/verify-phase2b-acceptance.js');
+    }
+    if (process.argv.includes('--phase3') || process.argv.includes('--phase3-only')) await run('scripts/verify-phase3.js');
   } finally {
     for (const child of children.reverse()) if (child.exitCode === null) child.kill();
     console.log('Local verification services stopped; isolated temporary database: ' + dbPath);

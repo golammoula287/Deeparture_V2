@@ -1,0 +1,7 @@
+import { useEffect,useState } from "react";
+import Link from "next/link";
+import OperatorLayout from "@/src/components/operator/OperatorLayout";
+import { Card,Button } from "@/src/components/operator/Ui";
+import { v2Api } from "@/src/lib/v2Api";
+function View({organisationId,refreshUnread}){const [data,setData]=useState({items:[],unread:0});const load=()=>organisationId&&v2Api(`/operator/organisations/${organisationId}/notifications?limit=100`).then(setData).catch(()=>{});useEffect(()=>{load()},[organisationId]);const read=async id=>{await v2Api(`/operator/organisations/${organisationId}/notifications/${id}/read`,{method:'PATCH',body:'{}'});load();refreshUnread()};return <div className="space-y-3">{data.items.map(n=><Card key={n._id} className={!n.readAt?'border-gray-900':''}><div className="flex justify-between gap-3"><div><strong>{n.title}</strong><p className="text-sm text-gray-600 mt-1">{n.message}</p><div className="text-xs text-gray-400 mt-2">{new Date(n.createdAt).toLocaleString()}</div></div>{!n.readAt?<Button kind="secondary" onClick={()=>read(n._id)}>Mark read</Button>:null}</div>{n.actionTarget?<Link className="text-sm underline inline-block mt-2" href={n.actionTarget.replace('/dashboard/v2','/operator/v2')}>Open</Link>:null}</Card>)}{!data.items.length?<p className="text-gray-500">No notifications.</p>:null}</div>}
+export default function Page(){return <OperatorLayout title="Notifications">{ctx=><View organisationId={ctx.organisationId} refreshUnread={ctx.refreshUnread}/>}</OperatorLayout>}

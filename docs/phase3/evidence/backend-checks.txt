@@ -1,0 +1,157 @@
+
+> deeparture-v2-backend@0.1.0 verify:phase3
+> npm run check && npm run verify:phase2b:static && npm run verify:phase3:static && npm test
+
+
+> deeparture-v2-backend@0.1.0 check
+> node scripts/check-v2-syntax.js
+
+Syntax OK: 104 JavaScript files.
+
+> deeparture-v2-backend@0.1.0 verify:phase2b:static
+> node scripts/verify-phase2b-static.js
+
+PASS file src/v2/controllers/phase2b.controller.js
+PASS file src/v2/models/notification.model.js
+PASS file src/v2/models/externalSourceMapping.model.js
+PASS file src/v2/models/sourceConfig.model.js
+PASS file src/v2/models/verificationRecord.model.js
+PASS file src/v2/models/availabilitySnapshot.model.js
+PASS file src/v2/models/availabilityEffective.model.js
+PASS file src/v2/models/availabilityOverride.model.js
+PASS file src/v2/models/availabilityHistory.model.js
+PASS file src/v2/models/domainEvent.model.js
+PASS file src/v2/services/availability.service.js
+PASS file src/v2/services/completeness.service.js
+PASS file src/v2/services/domainEvent.service.js
+PASS file src/v2/services/pagination.service.js
+PASS file src/v2/services/source.service.js
+PASS file src/v2/services/verification.service.js
+PASS file src/middleware/operationId.js
+PASS global operation ID middleware
+PASS notification routes
+PASS availability administration routes
+PASS bounded bulk route
+PASS typed attribute filter support
+PASS shared server pagination
+PASS availability freshness semantics
+PASS availability conflict semantics
+PASS manual override source enforcement
+PASS protected external mapping reassignment
+PASS bulk action maximum batch size
+PASS availability override audit
+PASS claim revocation audit
+PASS availability override optimistic concurrency
+PASS website source queue cannot be pre-approved on create
+PASS typed attribute search index
+PASS import schema version history
+PASS import operation correlation ID
+PASS source metadata secret guard
+PASS source sensitive-key detection
+PASS paginated organisation mode
+PASS organisation paged result contract
+PASS import update preserves verification status
+PASS import update preserves source provenance
+PASS read path is side-effect free for availability maintenance (src/v2/controllers/public.controller.js)
+PASS read path is side-effect free for availability maintenance (src/v2/services/search.service.js)
+PASS availability maintenance is explicit/admin-only
+Phase 2B static verification passed.
+
+> deeparture-v2-backend@0.1.0 verify:phase3:static
+> node scripts/verify-phase3-static.js
+
+PASS file src/v2/routes/operator.routes.js
+PASS file src/v2/controllers/operator.controller.js
+PASS file src/v2/services/operatorPortal.service.js
+PASS file src/v2/services/operatorImport.service.js
+PASS file src/v2/services/operatorPortal.helpers.js
+PASS file src/v2/models/organisationMemberInvitation.model.js
+PASS operator routes mounted under /api/v2/operator
+PASS operator routes require authenticated operator/admin
+PASS catalogue edits enforce organisation editor access
+PASS team management requires organisation admin access
+PASS reservations access protects enquiry operations
+PASS operator dashboard exposes completeness, stale/conflicts and active offers
+PASS member invitations store hashed tokens
+PASS team invite can onboard a new user without an existing session
+PASS existing team invite user must prove account password
+PASS member invitation acceptance is bound to the invited email
+PASS at least one owner is protected
+PASS operator media is scoped to entity type/id
+PASS operator media remains source-attributed
+PASS operator listing verification can only mark operator_verified
+PASS operator imports have preview before commit
+PASS operator inventory batches are organisation scoped
+PASS import preview keeps row-level classifications/errors
+PASS operator imports reuse shared inventory import service
+PASS operator availability reads normalized AvailabilityEffective
+PASS operator availability writes continue through shared inventory controller/service
+PASS notifications are recipient/user or organisation scoped
+PASS operator profile uses optimistic concurrency
+PASS operator audit source is recorded
+PASS frontend pages/operator/v2/index.jsx
+PASS frontend pages/operator/v2/liveaboards/index.jsx
+PASS frontend pages/operator/v2/liveaboards/[id].jsx
+PASS frontend pages/operator/v2/resorts/index.jsx
+PASS frontend pages/operator/v2/resorts/[id].jsx
+PASS frontend pages/operator/v2/availability.jsx
+PASS frontend pages/operator/v2/enquiries.jsx
+PASS frontend pages/operator/v2/imports.jsx
+PASS frontend pages/operator/v2/notifications.jsx
+PASS frontend pages/operator/v2/team.jsx
+PASS frontend pages/operator/v2/profile.jsx
+PASS frontend pages/team-invite/[token].jsx
+PASS frontend src/components/operator/OperatorLayout.jsx
+PASS operator portal is a protected frontend area
+PASS legacy operator dashboard redirects to Phase 3 portal
+Phase 3 static verification passed.
+
+> deeparture-v2-backend@0.1.0 test
+> node --test tests/*.test.js
+
+✔ updated mailer generates local JSON without delivery (25.96875ms)
+✔ updated ExcelJS UUID dependency supports conditional-formatting workbook roundtrip (101.202459ms)
+✔ SMTP credentials cannot enable delivery in default or test mode (111.370458ms)
+✔ demo seed rejects missing and documented default passwords before connecting (174.189917ms)
+✔ catalog rows normalize source-specific fields into Deeparture contract (0.812709ms)
+✔ availability input retains source and timestamps (0.130125ms)
+✔ invalid inventory cannot become stored availability (0.207584ms)
+✔ preview identifies skipped and invalid numeric source rows (0.075ms)
+✔ unfiltered catalogue search keeps the unrestricted product set (0.692458ms)
+✔ Phase 2B pagination clamps limits and preserves stable descending sort (0.130042ms)
+✔ Phase 2B pagination falls back to the full default sort when an unsupported sort is requested (0.052375ms)
+✔ Phase 2B paged result reports navigation metadata (0.060292ms)
+✔ Operation IDs preserve a safe caller supplied ID (0.084167ms)
+✔ Operation IDs replace unsafe/too-short caller values (0.192ms)
+✔ Catalogue adapter carries the import schema version into the normalized DTO (0.234209ms)
+✔ Catalogue adapter treats blank optional spreadsheet fields as no-update values (0.053ms)
+✔ Catalogue adapter still accepts explicit empty arrays for an intentional structured clear (0.069834ms)
+✔ operator member roles default safely to viewer (0.362333ms)
+✔ organisation admin cannot change an owner role (0.059709ms)
+✔ owner can manage non-owner roles (0.03575ms)
+✔ operator import requirements identify missing departure dates (0.305375ms)
+✔ operator import types map to the correct product domain (0.338333ms)
+✔ operator list limits are bounded (0.080458ms)
+✔ preview rejects invalid inventory, prices and dates before writes (0.1215ms)
+✔ enquiries require Admin dispatch and reject backward operator transitions (0.043667ms)
+✔ base discount produces 4950 USD (0.802458ms)
+✔ USD override replaces the inherited USD amount before discount (0.136834ms)
+✔ foreign currency override without conversion does not retain stale USD (0.088875ms)
+✔ explicit USD conversion is used for foreign currency override (0.086916ms)
+✔ offer validity consistently uses the requested pricing date (0.133042ms)
+✔ best offer is chosen without stacking discounts (0.093625ms)
+✔ release identity exposes only a valid configured source SHA and never guesses (0.571667ms)
+✔ disabled exact global provider wins over another enabled global provider (0.753958ms)
+✔ organisation provider override wins over global provider, including disabled overrides (0.09ms)
+✔ exact global provider wins over organisation generic default (0.05075ms)
+✔ explicit generic defaults respect organisation scope and disabled state (0.055167ms)
+✔ provider lookup excludes unrelated providers, organisations and source types (0.045208ms)
+✔ provider reference and source type defaults normalize consistently (0.042ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 336.590917

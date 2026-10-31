@@ -30,6 +30,14 @@ async function ok(path, token, body, method) {
   for(const item of result.successes)await ok('/api/v2/admin/catalog/'+kind+'/'+item.productId+'/status',token,{listingStatus:'published'},'PATCH');
   return {...result,imported:result.summary.committed,failed:result.summary.commitErrors};
  }
+ if (/^\/api\/v2\/organisations\/[^/]+\/import\//.test(path)) {
+  const preview=await api(path,token,body,method); assert.equal(preview.status,201);
+  const orgId=path.split('/')[4];
+  const batch=await ok('/api/v2/operator/organisations/'+orgId+'/imports/'+preview.data._id+'/commit',token,{});
+  const modelName={itineraries:'ItineraryV2',departures:'DepartureV2',resort_packages:'ResortPackageV2',resort_availability:'ResortAvailabilityV2'}[batch.importType];
+  const items=await Promise.all(batch.results.map(item=>mongoose.model(modelName).findById(item.id).lean()));
+  return {imported:batch.summary.committed,items:JSON.parse(JSON.stringify(items))};
+ }
  const r=await api(path,token,body,method); assert.ok(r.status<300 && r.success!==false, path+' failed: '+r.status+' '+(r.message||'')); return r.data; }
 async function login(email,password) { const data=await ok('/api/auth/login',null,{email,password}); return data.token; }
 function csv(rows) { const keys=Object.keys(rows[0]); return [keys,...rows.map(r=>keys.map(k=>r[k]??''))].map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n'); }
@@ -133,7 +141,7 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
   await page.evaluate(()=>localStorage.setItem('access-token','Bearer invalid-token'));await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');assert.equal(await page.evaluate(()=>localStorage.getItem('access-token')),null);
   pass('anonymous Operator link and direct dashboard access require login; invalid sessions cleared');
   for(const [kind,label] of [['ADMIN','admin'],['DEMO_OPERATOR','operator']]){
-   await page.goto(frontend+'/login');await page.getByPlaceholder('Email',{exact:true}).fill(process.env[kind+'_EMAIL']);await page.getByPlaceholder('Password',{exact:true}).fill(process.env[kind+'_PASSWORD']);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL(kind==='ADMIN'?'**/admin/v2':'**/dashboard/v2');if(kind==='ADMIN')await page.goto(frontend+'/dashboard/v2');await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();pass(label+' browser login and populated dashboard');
+   await page.goto(frontend+'/login');await page.getByPlaceholder('Email',{exact:true}).fill(process.env[kind+'_EMAIL']);await page.getByPlaceholder('Password',{exact:true}).fill(process.env[kind+'_PASSWORD']);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL(kind==='ADMIN'?'**/admin/v2':'**/operator/v2');if(kind==='ADMIN')await page.goto(frontend+'/dashboard/v2');await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();pass(label+' browser login and populated dashboard');
    await page.reload();await page.getByText('Demo Dive Company',{exact:true}).last().waitFor();
    const otherTab=await page.context().newPage();await otherTab.goto(frontend+'/dashboard/v2');await otherTab.getByText('Demo Dive Company',{exact:true}).last().waitFor();
    await page.getByRole('button',{name:'Logout',exact:true}).click();await page.waitForURL('**/login');

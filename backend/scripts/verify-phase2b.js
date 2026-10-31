@@ -147,5 +147,5 @@ const pass = (label) => { results.push({ label, status: 'passed' }); console.log
   pass('shared search, reporting, audit, and notifications');
   console.log(`VERIFIED ${results.length} Phase 2B API groups`);
 })().catch(error => { console.error('FAIL Phase 2B', error); results.push({ label: error.message, status: 'failed' }); process.exitCode = 1; }).finally(() => {
-  require('node:fs').writeFileSync(require('node:path').join(__dirname, '../../docs/phase2b-api-results.json'), JSON.stringify({ testedAt: new Date().toISOString(), scope: 'isolated local; not Render staging', results }, null, 2) + '\n');
+  require('node:fs').writeFileSync(require('node:path').join(process.env.VERIFY_REPORT_DIR || require('node:path').join(__dirname, '../../docs'), 'phase2b-api-results.json'), JSON.stringify({ testedAt: new Date().toISOString(), scope: 'isolated local; not Render staging', results }, null, 2) + '\n');
 });

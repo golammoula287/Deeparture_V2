@@ -1,17 +1,17 @@
 # Project context and work tracker
 
-Last updated: 2026-10-24 (Asia/Dhaka)
+Last updated: 2026-10-31 (Asia/Dhaka)
 
 ## Current task
 
-Correct Phase 2B against the client developer review and Rev 1.3 acceptance requirements. Local implementation and regression checks are complete. Corrected-source deployment and final authenticated Render/Atlas acceptance remain pending access and deployment evidence.
+Phase 3 Operator Portal Rev 1.0 integrated locally from the authoritative Clean Developer Package onto corrected Phase 2B commit `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Local backend checks, 38 unit tests, production build, prior-phase regressions and 14 Phase 3 API/browser groups passed. Owner authorized commit and push on `phase2b-rev1.3-review-fixes`; release publication is being finalized. Render deployment and staging acceptance remain pending. Resume with `docs/phase3/INTEGRATION_RESULTS_2026-10-31.md`.
 
 ## Source and scope
 
 - Repository: Deeparture_V2, Express/Mongoose API and Next.js/React frontend.
 - Working branch: `phase2b-rev1.3-review-fixes`, based on `df61c280abac73f21765d3eb4a9f7285d25231f8` from `origin/phase2b-rev1.3-integration`.
 - Initial checkout was Phase 1 on main. The reviewed Phase 2B remote branch was already available locally.
-- Current corrections are uncommitted; the baseline SHA does not identify the modified source.
+- Corrections committed and pushed by the owner: `01cb93ea3ce312ef0227099bd224094b2072ddb8` on `phase2b-rev1.3-review-fixes`; verified directly with GitHub `git ls-remote` on 24 October 2026.
 - Read `AGENTS.md`, `docs/phase2b/REVIEW_CORRECTIONS_2026-10-20.md` and `docs/phase2b/REV1.3_ACCEPTANCE_EVIDENCE.md` to resume.
 
 ## Completed changes
@@ -41,7 +41,7 @@ Correct Phase 2B against the client developer review and Rev 1.3 acceptance requ
 - Project records list frontend `https://deeparture-v2-1.onrender.com` and backend `https://deeparture-v2-3hr6.onrender.com`.
 - No staging login credentials, Render deployment access, corrected deployed SHA, Atlas environment name or Atlas index results supplied.
 - No remote writes, deployment, commit or push performed. No V1 production database accessed.
-- Next: commit/review the corrected source, deploy the exact commit to both V2 staging services, run the release collector with private environment credentials, complete authenticated workflow evidence, verify dedicated V2 Atlas identity/indexes, and run/record Admin maintenance.
+- Next: deploy corrected commit `01cb93ea3ce312ef0227099bd224094b2072ddb8` to both V2 staging services, run the release collector with private environment credentials, complete authenticated workflow evidence, verify dedicated V2 Atlas identity/indexes, and run/record Admin maintenance.
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
@@ -79,3 +79,49 @@ Regenerated `deliverables/Deeparture_V2_Phase2B_Final_Checklist_Rev1.3.pdf` from
 Rechecked branch and full HEAD: `phase2b-rev1.3-review-fixes`, `df61c280abac73f21765d3eb4a9f7285d25231f8`. Corrections remain uncommitted; no final corrected commit is established. No authenticated Render Deploys access or Render environment credential was available; dashboard web access returned a JavaScript shell, and public identity endpoints were inaccessible via the web tool. Both Live commit IDs and dedicated V2 Atlas identity remain unverified.
 
 Reissued source and evidence in `deliverables/Phase2B_Housekeeping_2026-10-24.zip` with explicit limitations. Source ZIP integrity and byte comparison of 172 archived backend/frontend files passed; reissue ZIP integrity passed; `git diff --check` passed before this documentation update. No application changes or test rerun. Prior seven availability groups passed locally; all-pass staging PDF remains owner-attested. Next: obtain authenticated Render Deploys evidence and Atlas identity, commit/deploy reviewed corrections under authorization, then collect exact-commit staging acceptance before Phase 3.
+
+### 2026-10-24 — Owner push verified
+
+Verified local HEAD and GitHub branch `phase2b-rev1.3-review-fixes` both equal `01cb93ea3ce312ef0227099bd224094b2072ddb8` (`Refactor Phase 2B`). Working tree was clean before this context update. Direct `git ls-remote` succeeded after retrying with network access; integration branch remains at `df61c280abac73f21765d3eb4a9f7285d25231f8`. Local branch still tracks `origin/phase2b-rev1.3-integration`, explaining its ahead-one indicator; pushed fixes branch exists remotely. Render Live commits and dedicated Atlas connection remain unverified. No application changes, tests, deployment, commit or push performed by this check.
+
+### 2026-10-24 — Clean client deliverables for committed baseline
+
+User stated Render tests pass and Atlas connection string is set with restricted IP access; requested clean deliverables without personal attribution. Created `deliverables/Deeparture_V2_Phase2B_Rev1.3_Client_Deliverables_2026-10-24.zip`: exact-commit code-focused source ZIP (176 Git files), application/configuration patch against reviewed baseline, eight-page PDF and Markdown checklist containing all 125 requirements and Local/Render PASS columns, availability summary, original local reports and SHA256 checksums. Client documents omit personal attribution and explicitly list missing Live deploy details, non-secret Atlas database name and detailed staging logs. No per-service Live hash or dedicated database identity was invented.
+
+Validated all source files against commit `01cb93ea3ce312ef0227099bd224094b2072ddb8`, source and bundle ZIP integrity, all checksums, 125 PDF result rows, and clean patch applicability against isolated reviewed-baseline files. No application changes or new test execution. Existing context modifications preserved. Next: attach both Render Live full-hash records, dedicated V2 database name and staging execution evidence to close deployment evidence.
+
+### 2026-10-24 — Checklist tables and service links
+
+Updated the client delivery checklist PDF with bordered ID/Requirement/Local/Render staging tables, alternating row backgrounds, repeated column headers and page numbers. Added clickable frontend, backend/API and Admin portal links to both PDF and Markdown. Preserved all 125 requirement texts, status values and deployment-evidence scope. Refreshed bundle ZIP and checksums. Verified 125 requirement IDs, 250 PASS cells, three PDF link annotations, all packaged checksums and ZIP integrity. No application changes or new tests.
+
+### 2026-10-24 — Simplified client package
+
+Removed the three optional client Markdown documents (handover, checklist duplicate and availability summary) at the user's request. Kept the PDF checklist with commit and service links, source ZIP, application patch, original test evidence and checksums. Renamed generated source setup note to SOURCE_README.txt inside the source archive; all 176 committed application/configuration files remain unchanged. Refreshed delivery ZIP/checksums and verified no Markdown files at either archive level, both ZIP integrity checks, checksums and all source manifest hashes. No application changes or test rerun. Deployment evidence limitations remain stated in the PDF.
+
+
+### 2026-10-31 — All-branch deployment audit
+
+User requested all existing branches combined for Render deployment. Refreshed GitHub remote refs with `git fetch origin --prune`. All four remote branches form one linear history: `main` (1377479), `phase2a-integration` (68e30d6), `phase2b-rev1.3-integration` (df61c28), and `phase2b-rev1.3-review-fixes` (01cb93e). Verified with `git rev-list --left-right --count HEAD...origin/<branch>`: respectively 5/0, 3/0, 1/0, and 0/0. No branch has commits missing from the current fixes branch, so no merge or new application commit is needed.
+
+Use `phase2b-rev1.3-review-fixes` at `01cb93ea3ce312ef0227099bd224094b2072ddb8` for both Render services; it already contains Phase 1 + Phase 2A + Phase 2B + review fixes. Render deploys the full selected branch snapshot, with each service using its configured root directory (`backend` or `frontend`). Selecting `main` currently gives the older Phase 1 source. No Render configuration, deployment, commit, push, or branch deletion performed. Existing CONTEXT.md edits preserved. Validation: refreshed remote refs, inspected complete commit graph, checked all branch ancestry counts and documentation diff; application tests unnecessary because application source did not change. Next: select the fixes branch for both services and verify their deployed commit identities.
+
+
+### 2026-10-31 — Phase 3 Operator Portal integration
+
+Read both supplied Phase 3 ZIPs. The Clean Developer Package explicitly supersedes the older planning package; verified its 13 outer manifest hashes/sizes and clean patch applicability to current HEAD `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Integrated the full implementation's 31 new and 10 modified files once, preserving prior work and historical evidence. Added portal inventory editing and media controls; corrected legacy import confirmation bypass, invalid preview values, commit concurrency/replay, invitation membership overwrite, profile concurrency, ownership validation, cross-resort room references, enquiry transitions, definition visibility and React effect cleanup.
+
+Validation: backend syntax 104 files; Phase 2B/3 static checks; 38/38 units; Next.js production build; isolated Phase 1 34 groups, Phase 2A 27, Phase 2B API 10, extended Phase 2B 19; Phase 3 14 API/browser groups all passed. Browser widths 390/768/1440, mobile cabin editing and image attachment passed. Media backfill dry-run/apply/idempotency tested only on temporary local data. Current evidence is in `docs/phase3/evidence/`; historical reports preserved. Existing installed dependencies used; downloaded temporary MongoDB for isolated loopback tests, generated local credentials and test email only. `git diff --check` passed.
+
+No commit, push, deployment, hosted migration or real email performed. Supplied package baseline deployment confirmation remains client-reported. Next: owner-authorized review/commit/push and deployment of the new Phase 3 revision to both Render services; verify matching Live hashes, dedicated V2 Atlas identity/indexes, review media backfill dry run and complete the supplied staging checklist. Baseline hash does not identify these uncommitted changes. Detailed changes/results/limitations: `docs/phase3/INTEGRATION_RESULTS_2026-10-31.md`.
+
+
+### 2026-10-31 — Phase 3 PDF test report
+
+Created `deliverables/Deeparture_V2_Phase3_Test_Report_Rev1.0_2026-10-31.pdf` in the earlier client table format, with Local and Render columns, summary, all 104 recorded regression/API/browser groups (including 14 Phase 3 groups), 38-unit-test result, build/static results, source identity, service links and evidence hashes. Local results are PASS; Phase 3 Render staging and final acceptance are PENDING. No personal attribution added. The report identifies the source as an uncommitted working tree rather than mislabelling the Phase 2B baseline as a Phase 3 release.
+
+Reproducible generator: `docs/phase3/generate-test-report.cjs`; PDF checksum stored alongside the PDF. Validated input evidence statuses/counts, PDF creation and visual layout; documentation diff checked. This task generated a report from existing test evidence; no new application tests, commit, push or deployment performed. Existing application/context changes preserved. Next: deploy an owner-authorized Phase 3 commit and collect staging evidence before changing Render results to PASS.
+
+
+### 2026-10-31 — Authorized Phase 3 commit and push
+
+Owner requested committing and pushing the current Phase 3 integration without GPT contributor attribution. Using the existing Git author and committer identity, Golam Moula, with no AI co-author trailer. Backend verification rerun passed: 104-file syntax check, Phase 2B/3 static checks and 38/38 unit tests. Frontend production build passed (41 pages). Historical integration/API/browser evidence remains unchanged; no database tests, deployment or migration rerun in this task. Publishing to the same-named GitHub branch; verify remote HEAD after push. Next: deploy this Phase 3 revision to both Render services and collect staging acceptance evidence.

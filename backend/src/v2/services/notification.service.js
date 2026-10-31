@@ -67,7 +67,7 @@ const sendEnquiryToOperator = async ({ enquiry, product, organisation, operation
   await notifyOrganisationInApp({
     organisationId: organisation._id, type: 'enquiry.approved', title: `Approved enquiry - ${product?.name || organisation.name}`,
     message: `${enquiry.customer.name} has an approved Deeparture enquiry.`, relatedRecordType: 'enquiry', relatedRecordId: enquiry._id,
-    actionTarget: `/dashboard/v2`, operationId, retentionClass: 'business',
+    actionTarget: `/operator/v2/enquiries`, operationId, retentionClass: 'business',
   });
   const productUrl = product?.slug ? `${process.env.FRONTEND_URL || ''}/${enquiry.productType === 'vessel' ? 'liveaboards' : 'resorts'}/${product.slug}` : process.env.FRONTEND_URL;
   const html = `${enquiryDetailHtml({ enquiry, product })}<p><a href="${escapeHtml(productUrl || '#')}">View listing</a></p>`;

@@ -249,5 +249,5 @@ async function ok(route, body, method) { const r = await request(route, body, me
   pass('seeded catalogue/import/report performance and deployed local index verification', { additionalVessels: 1000, additionalImports: 1000, benchmarks, indexes });
 })().catch(error => { console.error(error); results.push({ status: 'failed', message: error.message, stack: error.stack }); process.exitCode = 1; }).finally(async () => {
   if (browser) await browser.close(); await mongoose.disconnect();
-  fs.writeFileSync(path.join(__dirname, '../../docs/phase2b-acceptance-results.json'), JSON.stringify({ testedAt: new Date().toISOString(), scope: 'isolated local; hosted acceptance not implied', results }, null, 2));
+  fs.writeFileSync(path.join(process.env.VERIFY_REPORT_DIR || path.join(__dirname, '../../docs'), 'phase2b-acceptance-results.json'), JSON.stringify({ testedAt: new Date().toISOString(), scope: 'isolated local; hosted acceptance not implied', results }, null, 2));
 });

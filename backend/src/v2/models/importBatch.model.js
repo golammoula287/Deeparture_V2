@@ -2,8 +2,10 @@ const { Schema, model } = require("mongoose");
 
 const importBatchSchema = new Schema(
   {
-    kind: { type: String, enum: ["catalog"], default: "catalog", index: true },
+    kind: { type: String, enum: ["catalog", "operator_inventory"], default: "catalog", index: true },
     productType: { type: String, enum: ["vessel", "resort"], required: true, index: true },
+    organisation: { type: Schema.Types.ObjectId, ref: "OrganisationV2", index: true },
+    importType: { type: String, index: true },
     sourceType: { type: String, enum: ["csv", "xlsx", "json", "admin", "api", "feed", "website"], required: true, index: true },
     sourceFilename: String,
     adapterType: { type: String, default: "catalog_normalized_v1", index: true },
@@ -39,4 +41,5 @@ const importBatchSchema = new Schema(
 
 importBatchSchema.index({ status: 1, createdAt: -1 });
 importBatchSchema.index({ sourceType: 1, adapterType: 1, createdAt: -1 });
+importBatchSchema.index({ organisation: 1, kind: 1, createdAt: -1 });
 module.exports = model("ImportBatchV2", importBatchSchema);

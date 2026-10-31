@@ -11,7 +11,8 @@ export default function AuthProvider({ children }) {
   const [session, setSession] = useState({ user: null, checkedPath: null, error: '' });
   const [revision, setRevision] = useState(0);
   const adminPage = router.pathname.startsWith('/admin');
-  const protectedPage = router.pathname.startsWith('/dashboard') || adminPage;
+  const operatorPage = router.pathname.startsWith('/operator');
+  const protectedPage = router.pathname.startsWith('/dashboard') || adminPage || operatorPage;
   const clearCredentials = () => {
     localStorage.removeItem('access-token');
     localStorage.removeItem('deeparture-user');

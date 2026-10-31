@@ -6,12 +6,15 @@ const Enquiry = require("../models/enquiry.model");
 const { logAudit } = require("../services/audit.service");
 const { publishDomainEvent } = require("../services/domainEvent.service");
 
+const { canTransitionEnquiry } = require("../services/operatorPortal.helpers");
+
 const updateStatus = catchAsync(async (req, res) => {
   const allowed = ["operator_accepted", "operator_replied", "quoted"];
   if (!allowed.includes(req.body.status)) throw new AppError(httpStatus.BAD_REQUEST, "Unsupported operator enquiry status");
   const enquiry = await Enquiry.findOne({ _id: req.params.id, organisation: req.params.organisationId });
   if (!enquiry) throw new AppError(httpStatus.NOT_FOUND, "Enquiry not found for this organisation");
   if (!["sent_to_operator", "operator_accepted", "operator_replied", "quoted"].includes(enquiry.status)) throw new AppError(httpStatus.BAD_REQUEST, `Enquiry cannot be updated from ${enquiry.status}`);
+  if (!canTransitionEnquiry(enquiry.status, req.body.status)) throw new AppError(400, `Invalid enquiry transition from ${enquiry.status} to ${req.body.status}`);
   enquiry.status = req.body.status;
   enquiry.statusHistory.push({ status: req.body.status, actorUser: req.v2User._id, note: req.body.note });
   await enquiry.save();
