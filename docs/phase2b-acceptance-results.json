@@ -1,0 +1,758 @@
+{
+  "testedAt": "2026-10-20T17:14:31.442Z",
+  "scope": "isolated local; hosted acceptance not implied",
+  "results": [
+    {
+      "label": "import metadata, row errors, partial outcomes, provenance, affected record and normalized retry",
+      "status": "passed"
+    },
+    {
+      "label": "duplicate existing/new decisions persist and preserve internal IDs and external mapping",
+      "status": "passed"
+    },
+    {
+      "label": "organisation and listing verification, provenance, revocation and publication independence",
+      "status": "passed"
+    },
+    {
+      "label": "claim sent/resend/revoke/expiry history uses shared claim service",
+      "status": "passed"
+    },
+    {
+      "label": "shared completeness categories for both product types do not block publication",
+      "status": "passed"
+    },
+    {
+      "label": "website queue accepts operator/product/URL and all review states",
+      "status": "passed"
+    },
+    {
+      "label": "validation/not-found/conflict response contract with correlation IDs and no stack traces",
+      "status": "passed"
+    },
+    {
+      "label": "fresh/aging/stale/unknown, configurable priority, conflict, stale inventory and older-write rejection",
+      "status": "passed"
+    },
+    {
+      "label": "real timed override expiry restores source inventory and records source/override history",
+      "status": "passed"
+    },
+    {
+      "label": "dashboard flags, operational report sections and correlated audit actor/action/entity/time",
+      "status": "passed"
+    },
+    {
+      "label": "eleven Phase 2B screens load without horizontal page overflow at 1440/768/390px",
+      "status": "passed"
+    },
+    {
+      "label": "import history browser error panel and affected-record navigation",
+      "status": "passed"
+    },
+    {
+      "label": "notification actionable link, unread count and live sidebar badge update",
+      "status": "passed"
+    },
+    {
+      "label": "claim history rendered in organisation activity",
+      "status": "passed"
+    },
+    {
+      "label": "combined status/source/completeness Admin filters and bulk confirmation/result UI",
+      "status": "passed"
+    },
+    {
+      "label": "availability source inspection, visible override, clear and repeat edit without stale version",
+      "status": "passed"
+    },
+    {
+      "label": "no browser runtime errors across Phase 2B acceptance",
+      "status": "passed"
+    },
+    {
+      "label": "2000-row notification pagination, stable sorting and local response benchmark",
+      "status": "passed",
+      "dataset": 2000,
+      "timingsMs": [
+        9,
+        8,
+        8,
+        8,
+        8
+      ],
+      "thresholdMs": 2000
+    },
+    {
+      "label": "seeded catalogue/import/report performance and deployed local index verification",
+      "status": "passed",
+      "additionalVessels": 1000,
+      "additionalImports": 1000,
+      "benchmarks": [
+        {
+          "route": "/catalog/liveaboards?status=published&source=deeparture_import&completenessMax=30&limit=25",
+          "ms": 5
+        },
+        {
+          "route": "/imports/history?limit=25",
+          "ms": 2
+        },
+        {
+          "route": "/audit?limit=25",
+          "ms": 2
+        },
+        {
+          "route": "/reports/operational",
+          "ms": 3
+        }
+      ],
+      "indexes": {
+        "notification": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "type_1",
+            "key": {
+              "type": 1
+            }
+          },
+          {
+            "name": "recipientUser_1",
+            "key": {
+              "recipientUser": 1
+            }
+          },
+          {
+            "name": "recipientOrganisation_1",
+            "key": {
+              "recipientOrganisation": 1
+            }
+          },
+          {
+            "name": "audience_1",
+            "key": {
+              "audience": 1
+            }
+          },
+          {
+            "name": "readAt_1",
+            "key": {
+              "readAt": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "retentionClass_1",
+            "key": {
+              "retentionClass": 1
+            }
+          },
+          {
+            "name": "audience_1_recipientUser_1_readAt_1_createdAt_-1",
+            "key": {
+              "audience": 1,
+              "recipientUser": 1,
+              "readAt": 1,
+              "createdAt": -1
+            }
+          },
+          {
+            "name": "recipientOrganisation_1_readAt_1_createdAt_-1",
+            "key": {
+              "recipientOrganisation": 1,
+              "readAt": 1,
+              "createdAt": -1
+            }
+          }
+        ],
+        "auditLog": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "actorUser_1",
+            "key": {
+              "actorUser": 1
+            }
+          },
+          {
+            "name": "actorOrganisation_1",
+            "key": {
+              "actorOrganisation": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "action_1",
+            "key": {
+              "action": 1
+            }
+          },
+          {
+            "name": "source_1",
+            "key": {
+              "source": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "entityType_1_entityId_1_createdAt_-1",
+            "key": {
+              "entityType": 1,
+              "entityId": 1,
+              "createdAt": -1
+            }
+          },
+          {
+            "name": "actorUser_1_createdAt_-1",
+            "key": {
+              "actorUser": 1,
+              "createdAt": -1
+            }
+          },
+          {
+            "name": "organisation_1_createdAt_-1",
+            "key": {
+              "organisation": 1,
+              "createdAt": -1
+            }
+          }
+        ],
+        "importBatch": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "kind_1",
+            "key": {
+              "kind": 1
+            }
+          },
+          {
+            "name": "productType_1",
+            "key": {
+              "productType": 1
+            }
+          },
+          {
+            "name": "sourceType_1",
+            "key": {
+              "sourceType": 1
+            }
+          },
+          {
+            "name": "adapterType_1",
+            "key": {
+              "adapterType": 1
+            }
+          },
+          {
+            "name": "schemaVersion_1",
+            "key": {
+              "schemaVersion": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "status_1",
+            "key": {
+              "status": 1
+            }
+          },
+          {
+            "name": "createdBy_1",
+            "key": {
+              "createdBy": 1
+            }
+          },
+          {
+            "name": "status_1_createdAt_-1",
+            "key": {
+              "status": 1,
+              "createdAt": -1
+            }
+          },
+          {
+            "name": "sourceType_1_adapterType_1_createdAt_-1",
+            "key": {
+              "sourceType": 1,
+              "adapterType": 1,
+              "createdAt": -1
+            }
+          }
+        ],
+        "externalSourceMapping": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "providerKey_1",
+            "key": {
+              "providerKey": 1
+            }
+          },
+          {
+            "name": "sourceType_1",
+            "key": {
+              "sourceType": 1
+            }
+          },
+          {
+            "name": "internalEntityType_1",
+            "key": {
+              "internalEntityType": 1
+            }
+          },
+          {
+            "name": "internalEntityId_1",
+            "key": {
+              "internalEntityId": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "active_1",
+            "key": {
+              "active": 1
+            }
+          },
+          {
+            "name": "providerKey_1_externalEntityType_1_externalId_1",
+            "key": {
+              "providerKey": 1,
+              "externalEntityType": 1,
+              "externalId": 1
+            }
+          },
+          {
+            "name": "internalEntityType_1_internalEntityId_1_providerKey_1",
+            "key": {
+              "internalEntityType": 1,
+              "internalEntityId": 1,
+              "providerKey": 1
+            }
+          }
+        ],
+        "sourceConfig": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "providerKey_1",
+            "key": {
+              "providerKey": 1
+            }
+          },
+          {
+            "name": "sourceType_1",
+            "key": {
+              "sourceType": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "enabled_1",
+            "key": {
+              "enabled": 1
+            }
+          },
+          {
+            "name": "priority_1",
+            "key": {
+              "priority": 1
+            }
+          },
+          {
+            "name": "status_1",
+            "key": {
+              "status": 1
+            }
+          },
+          {
+            "name": "providerKey_1_organisation_1",
+            "key": {
+              "providerKey": 1,
+              "organisation": 1
+            }
+          },
+          {
+            "name": "enabled_1_status_1_priority_1",
+            "key": {
+              "enabled": 1,
+              "status": 1,
+              "priority": 1
+            }
+          }
+        ],
+        "availabilitySnapshot": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "inventoryKey_1",
+            "key": {
+              "inventoryKey": 1
+            }
+          },
+          {
+            "name": "productType_1",
+            "key": {
+              "productType": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "vessel_1",
+            "key": {
+              "vessel": 1
+            }
+          },
+          {
+            "name": "departure_1",
+            "key": {
+              "departure": 1
+            }
+          },
+          {
+            "name": "cabinType_1",
+            "key": {
+              "cabinType": 1
+            }
+          },
+          {
+            "name": "resort_1",
+            "key": {
+              "resort": 1
+            }
+          },
+          {
+            "name": "roomType_1",
+            "key": {
+              "roomType": 1
+            }
+          },
+          {
+            "name": "date_1",
+            "key": {
+              "date": 1
+            }
+          },
+          {
+            "name": "status_1",
+            "key": {
+              "status": 1
+            }
+          },
+          {
+            "name": "sourceType_1",
+            "key": {
+              "sourceType": 1
+            }
+          },
+          {
+            "name": "sourceKey_1",
+            "key": {
+              "sourceKey": 1
+            }
+          },
+          {
+            "name": "sourceUpdatedAt_1",
+            "key": {
+              "sourceUpdatedAt": 1
+            }
+          },
+          {
+            "name": "receivedAt_1",
+            "key": {
+              "receivedAt": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "inventoryKey_1_sourceKey_1",
+            "key": {
+              "inventoryKey": 1,
+              "sourceKey": 1
+            }
+          },
+          {
+            "name": "organisation_1_sourceType_1_sourceUpdatedAt_-1",
+            "key": {
+              "organisation": 1,
+              "sourceType": 1,
+              "sourceUpdatedAt": -1
+            }
+          }
+        ],
+        "availabilityEffective": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "inventoryKey_1",
+            "key": {
+              "inventoryKey": 1
+            }
+          },
+          {
+            "name": "productType_1",
+            "key": {
+              "productType": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "vessel_1",
+            "key": {
+              "vessel": 1
+            }
+          },
+          {
+            "name": "departure_1",
+            "key": {
+              "departure": 1
+            }
+          },
+          {
+            "name": "resort_1",
+            "key": {
+              "resort": 1
+            }
+          },
+          {
+            "name": "roomType_1",
+            "key": {
+              "roomType": 1
+            }
+          },
+          {
+            "name": "date_1",
+            "key": {
+              "date": 1
+            }
+          },
+          {
+            "name": "status_1",
+            "key": {
+              "status": 1
+            }
+          },
+          {
+            "name": "sourceType_1",
+            "key": {
+              "sourceType": 1
+            }
+          },
+          {
+            "name": "freshnessState_1",
+            "key": {
+              "freshnessState": 1
+            }
+          },
+          {
+            "name": "conflictState_1",
+            "key": {
+              "conflictState": 1
+            }
+          },
+          {
+            "name": "manualOverride_1",
+            "key": {
+              "manualOverride": 1
+            }
+          },
+          {
+            "name": "overrideExpiresAt_1",
+            "key": {
+              "overrideExpiresAt": 1
+            }
+          },
+          {
+            "name": "resolvedAt_1",
+            "key": {
+              "resolvedAt": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "organisation_1_freshnessState_1_conflictState_1_resolvedAt_-1",
+            "key": {
+              "organisation": 1,
+              "freshnessState": 1,
+              "conflictState": 1,
+              "resolvedAt": -1
+            }
+          },
+          {
+            "name": "productType_1_status_1_resolvedAt_-1",
+            "key": {
+              "productType": 1,
+              "status": 1,
+              "resolvedAt": -1
+            }
+          },
+          {
+            "name": "manualOverride_1_overrideExpiresAt_1",
+            "key": {
+              "manualOverride": 1,
+              "overrideExpiresAt": 1
+            }
+          }
+        ],
+        "availabilityHistory": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "inventoryKey_1",
+            "key": {
+              "inventoryKey": 1
+            }
+          },
+          {
+            "name": "productType_1",
+            "key": {
+              "productType": 1
+            }
+          },
+          {
+            "name": "organisation_1",
+            "key": {
+              "organisation": 1
+            }
+          },
+          {
+            "name": "eventType_1",
+            "key": {
+              "eventType": 1
+            }
+          },
+          {
+            "name": "operationId_1",
+            "key": {
+              "operationId": 1
+            }
+          },
+          {
+            "name": "inventoryKey_1_createdAt_-1",
+            "key": {
+              "inventoryKey": 1,
+              "createdAt": -1
+            }
+          },
+          {
+            "name": "organisation_1_createdAt_-1",
+            "key": {
+              "organisation": 1,
+              "createdAt": -1
+            }
+          }
+        ],
+        "productAttribute": [
+          {
+            "name": "_id_",
+            "key": {
+              "_id": 1
+            }
+          },
+          {
+            "name": "product_1",
+            "key": {
+              "product": 1
+            }
+          },
+          {
+            "name": "product_1_definition_1",
+            "key": {
+              "product": 1,
+              "definition": 1
+            }
+          },
+          {
+            "name": "productModel_1_definition_1_value_1",
+            "key": {
+              "productModel": 1,
+              "definition": 1,
+              "value": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

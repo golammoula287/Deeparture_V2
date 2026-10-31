@@ -1,0 +1,115 @@
+{
+  "testedAt": "2026-10-20T17:14:08.754Z",
+  "scope": "isolated local Phase 2A; Render deployment not verified",
+  "passed": 27,
+  "results": [
+    {
+      "label": "admin login and Admin V2 dashboard API",
+      "status": "passed"
+    },
+    {
+      "label": "unclaimed operator organisation creation",
+      "status": "passed"
+    },
+    {
+      "label": "draft liveaboard and resort creation",
+      "status": "passed"
+    },
+    {
+      "label": "normalized catalogue preview then explicit commit",
+      "status": "passed"
+    },
+    {
+      "label": "normalized availability replace/upsert path with source metadata",
+      "status": "passed"
+    },
+    {
+      "label": "Admin-first enquiry moderation flow",
+      "status": "passed"
+    },
+    {
+      "label": "draft listing preview endpoint",
+      "status": "passed"
+    },
+    {
+      "label": "anonymous and operator access denied across Admin V2 APIs",
+      "status": "passed"
+    },
+    {
+      "label": "admin dashboard counts agree with persisted catalogue, claim states and enquiry queue",
+      "status": "passed"
+    },
+    {
+      "label": "global catalogue filtering, pagination, all moderation states and published-only public access",
+      "status": "passed"
+    },
+    {
+      "label": "claim creates owner on existing organisation; tokens cannot replay; suspension and reactivation enforced",
+      "status": "passed"
+    },
+    {
+      "label": "CSV upload, atomic single commit and durable batch row outcomes",
+      "status": "passed"
+    },
+    {
+      "label": "XLSX Operators/Resorts adapter, no catalogue writes before confirmation, matched organisation and draft default",
+      "status": "passed"
+    },
+    {
+      "label": "idempotent reimport and CREATE/UPDATE/DUPLICATE_REVIEW/ERROR/SKIP preview classification",
+      "status": "passed"
+    },
+    {
+      "label": "attribute edit, data type/options, applicability, filter/public flags and inactive admin visibility",
+      "status": "passed"
+    },
+    {
+      "label": "canonical location edit, alias/case duplicate rejection, cycle prevention and compatible slug search",
+      "status": "passed"
+    },
+    {
+      "label": "enquiries withheld from operator email AND dashboard until approval; receipt notifications and invalid transition guards",
+      "status": "passed"
+    },
+    {
+      "label": "email failure retains enquiry and approval can retry without losing the lead",
+      "status": "passed"
+    },
+    {
+      "label": "partial cabin inventory upsert preserves other cabins and source timestamps; invalid quantities rejected",
+      "status": "passed"
+    },
+    {
+      "label": "moderation, import and enquiry audit records exist without raw invitation tokens or passwords",
+      "status": "passed"
+    },
+    {
+      "label": "browser guest redirect, operator denial and admin login to dedicated Admin V2",
+      "status": "passed"
+    },
+    {
+      "label": "all Admin V2 routes, listing editors and previews render at desktop/tablet/phone widths",
+      "status": "passed"
+    },
+    {
+      "label": "attribute creation and editing through Admin UI",
+      "status": "passed"
+    },
+    {
+      "label": "phone location/profile editing and organisation suspend/reactivate controls",
+      "status": "passed"
+    },
+    {
+      "label": "browser CSV preview/confirm, phone moderation and automatically rendered published page",
+      "status": "passed"
+    },
+    {
+      "label": "phone enquiry approval UI sends enquiry to the operator",
+      "status": "passed"
+    },
+    {
+      "label": "admin logout and no browser runtime errors",
+      "status": "passed"
+    }
+  ]
+}

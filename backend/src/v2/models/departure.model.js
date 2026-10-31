@@ -2,13 +2,23 @@ const { Schema, model } = require("mongoose");
 
 const availabilitySchema = new Schema(
   {
-    cabinType: { type: Schema.Types.ObjectId, ref: "CabinTypeV2", required: true },
+    cabinType: { type: Schema.Types.ObjectId, ref: "CabinTypeV2" },
     totalCabins: Number,
     cabinsAvailable: Number,
     totalSpaces: Number,
     spacesAvailable: Number,
-    status: { type: String, enum: ["available", "limited", "sold_out", "on_request"], default: "on_request" },
+    status: { type: String, enum: ["unknown", "available", "limited", "sold_out", "on_request"], default: "on_request" },
     updatedAt: { type: Date, default: Date.now },
+    sourceType: { type: String, default: "operator" },
+    sourceReference: String,
+    sourceUpdatedAt: Date,
+    receivedAt: { type: Date, default: Date.now },
+    freshnessState: { type: String, enum: ["fresh", "aging", "stale", "unknown"], default: "unknown" },
+    conflictState: { type: Boolean, default: false },
+    manualOverride: { type: Boolean, default: false },
+    overrideExpiresAt: Date,
+    effectiveSourceName: String,
+    resolvedAt: Date,
   },
   { _id: true }
 );

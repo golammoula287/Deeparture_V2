@@ -1,0 +1,143 @@
+{
+  "testedAt": "2026-10-30T21:32:02.011Z",
+  "scope": "local; no hosted deployment sign-off",
+  "passed": 34,
+  "results": [
+    {
+      "label": "API health",
+      "status": "passed"
+    },
+    {
+      "label": "invalid and expired tokens rejected with 401",
+      "status": "passed"
+    },
+    {
+      "label": "admin and operator login, token validation",
+      "status": "passed"
+    },
+    {
+      "label": "invalid passwords, anonymous access, admin-only permission",
+      "status": "passed"
+    },
+    {
+      "label": "seed attributes and operator organisation dashboard",
+      "status": "passed"
+    },
+    {
+      "label": "demo detail pages data, 4950 USD pricing, six available spaces",
+      "status": "passed"
+    },
+    {
+      "label": "catalogue-first unclaimed organisation, published page and import provenance",
+      "status": "passed"
+    },
+    {
+      "label": "CSV two-vessel and XLSX resort import, shared organisation matching",
+      "status": "passed"
+    },
+    {
+      "label": "operators cannot access another organisation",
+      "status": "passed"
+    },
+    {
+      "label": "operators cannot self-award editorial ratings, verification or publication",
+      "status": "passed"
+    },
+    {
+      "label": "claim invitations are admin-only, hashed, expiring, single-use and preserve existing credentials and ownership",
+      "status": "passed"
+    },
+    {
+      "label": "catalogue reimport preserves product IDs",
+      "status": "passed"
+    },
+    {
+      "label": "itinerary, cabin, three departures, override, discount and sold-out imports",
+      "status": "passed"
+    },
+    {
+      "label": "itinerary reimport refreshes existing departure pricing",
+      "status": "passed"
+    },
+    {
+      "label": "pricing close-out: USD 6000 itinerary base -> USD 7000 departure override -> 10 percent offer -> USD 6300 public API price",
+      "status": "passed"
+    },
+    {
+      "label": "cross-organisation cabin references rejected",
+      "status": "passed"
+    },
+    {
+      "label": "inventory ownership cannot be transferred by a request body",
+      "status": "passed"
+    },
+    {
+      "label": "viewer reads allowed, viewer edits forbidden",
+      "status": "passed"
+    },
+    {
+      "label": "seasonal rate creation and retrieval",
+      "status": "passed"
+    },
+    {
+      "label": "enquiry persisted and customer, operator, admin notifications generated in test transport",
+      "status": "passed"
+    },
+    {
+      "label": "resort packages, room ownership and availability import",
+      "status": "passed"
+    },
+    {
+      "label": "imported records appear in destination, price and availability search",
+      "status": "passed"
+    },
+    {
+      "label": "documented default demo login rejected",
+      "status": "passed"
+    },
+    {
+      "label": "anonymous Operator link and direct dashboard access require login; invalid sessions cleared",
+      "status": "passed"
+    },
+    {
+      "label": "admin browser login and populated dashboard",
+      "status": "passed"
+    },
+    {
+      "label": "admin logout clears credentials and blocks dashboard re-entry",
+      "status": "passed"
+    },
+    {
+      "label": "operator browser login and populated dashboard",
+      "status": "passed"
+    },
+    {
+      "label": "operator logout clears credentials and blocks dashboard re-entry",
+      "status": "passed"
+    },
+    {
+      "label": "demo and imported public pages render in browser",
+      "status": "passed"
+    },
+    {
+      "label": "search pages load database records in browser",
+      "status": "passed"
+    },
+    {
+      "label": "mobile detail page fits viewport",
+      "status": "passed"
+    },
+    {
+      "label": "desktop and phone layouts fit viewport across starter pages",
+      "status": "passed"
+    },
+    {
+      "label": "search controls filter results and listing links navigate",
+      "status": "passed"
+    },
+    {
+      "label": "no browser JavaScript errors",
+      "status": "passed"
+    }
+  ]
+}

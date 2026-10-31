@@ -5,18 +5,26 @@ const v2PublicRoutes = require('./v2/routes/public.routes');
 const v2ClaimRoutes = require('./v2/routes/claim.routes');
 const v2AdminRoutes = require('./v2/routes/admin.routes');
 const v2OrganisationRoutes = require('./v2/routes/organisation.routes');
+const v2OperatorRoutes = require('./v2/routes/operator.routes');
 const globalErrorHandler = require('./utilities/globalErrorHandler');
 const notFound = require('./utilities/notFound');
+const operationId = require('./middleware/operationId');
+const releaseIdentity = require('./utilities/releaseIdentity');
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
+app.use(operationId);
 app.use(express.json({ limit: '30mb' }));
-app.get('/health', (req, res) => res.json({ ok: true, service: 'deeparture-v2-api' }));
+app.get('/health', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.json({ ok: true, service: 'deeparture-v2-api', ...releaseIdentity() });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/v2', v2PublicRoutes);
 app.use('/api/v2/claims', v2ClaimRoutes);
 app.use('/api/v2/admin', v2AdminRoutes);
 app.use('/api/v2/organisations', v2OrganisationRoutes);
+app.use('/api/v2/operator', v2OperatorRoutes);
 app.use(notFound);
 app.use(globalErrorHandler);
 module.exports = app;

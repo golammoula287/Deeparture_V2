@@ -14,7 +14,16 @@
     "refresh:pricing": "node scripts/refresh-v2-pricing.js",
     "test": "node --test tests/*.test.js",
     "verify:phase1": "node scripts/verify-phase1.js",
-    "verify:phase1:local": "node scripts/verify-phase1-local.js"
+    "verify:phase1:local": "node scripts/verify-phase1-local.js",
+    "verify:phase2a": "node scripts/verify-phase2a.js",
+    "verify:phase2a:local": "node scripts/verify-phase1-local.js",
+    "verify:phase2b:static": "node scripts/verify-phase2b-static.js",
+    "verify:phase2b": "npm run check && npm run verify:phase2b:static && npm test",
+    "verify:phase2b:local": "node scripts/verify-phase1-local.js --phase2b-only",
+    "verify:phase3:static": "node scripts/verify-phase3-static.js",
+    "verify:phase3": "npm run check && npm run verify:phase2b:static && npm run verify:phase3:static && npm test",
+    "migrate:phase3:media": "node scripts/migrate-phase3-media.js",
+    "verify:phase3:local": "node scripts/verify-phase1-local.js --phase2b --phase3"
   },
   "engines": {
     "node": ">=20"

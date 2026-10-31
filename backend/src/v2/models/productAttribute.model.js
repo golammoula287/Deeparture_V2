@@ -24,5 +24,6 @@ const productAttributeSchema = new Schema(
 );
 
 productAttributeSchema.index({ product: 1, definition: 1 }, { unique: true });
+productAttributeSchema.index({ productModel: 1, definition: 1, value: 1 });
 
 module.exports = model("ProductAttributeV2", productAttributeSchema);

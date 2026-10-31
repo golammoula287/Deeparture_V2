@@ -22,7 +22,7 @@ const dashboard = catchAsync(async (req, res) => {
     Organisation.findById(id).lean(),
     Vessel.find({ organisation: id }).sort({ name: 1 }).lean(),
     Resort.find({ organisation: id }).sort({ name: 1 }).lean(),
-    Enquiry.find({ organisation: id }).sort({ createdAt: -1 }).limit(50).lean(),
+    Enquiry.find({ organisation: id, ...(req.v2User.role === 'admin' ? {} : { $or: [{ 'statusHistory.status': 'sent_to_operator' }, { status: { $in: ['sent_to_operator','operator_accepted','operator_replied','quoted','confirmed'] } }] }) }).sort({ createdAt: -1 }).limit(50).lean(),
   ]);
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Operator dashboard", data: { organisation, vessels, resorts, enquiries } });
 });

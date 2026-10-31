@@ -7,6 +7,8 @@ const claimTokenSchema = new Schema(
     tokenHash: { type: String, required: true, unique: true },
     expiresAt: { type: Date, required: true, index: { expires: 0 } },
     usedAt: Date,
+    revokedAt: Date,
+    revokeReason: String,
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }

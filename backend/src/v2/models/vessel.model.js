@@ -8,7 +8,7 @@ const vesselSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     listingStatus: {
       type: String,
-      enum: ["draft", "published", "archived"],
+      enum: ["draft", "pending_review", "published", "restricted", "archived"],
       default: "draft",
       index: true,
     },
@@ -26,6 +26,14 @@ const vesselSchema = new Schema(
     sourceUrl: String,
     lastCheckedAt: Date,
     verifiedAt: Date,
+    verifiedByUser: { type: Schema.Types.ObjectId, ref: "User" },
+    verificationSourceType: String,
+    verificationSourceRef: String,
+    verificationScope: String,
+    verificationNotes: String,
+    completenessScore: { type: Number, min: 0, max: 100, default: 0, index: true },
+    completenessMissing: { type: [String], default: [] },
+    completenessUpdatedAt: Date,
     summary: String,
     description: String,
     featuredImage: String,
@@ -39,6 +47,7 @@ const vesselSchema = new Schema(
     cabinCount: Number,
     homePort: { type: Schema.Types.ObjectId, ref: "LocationV2" },
     destinationSlugs: [{ type: String, index: true }],
+    destinationLocations: [{ type: Schema.Types.ObjectId, ref: "LocationV2", index: true }],
     facilities: [{ type: String, lowercase: true }],
     dietary: [{ type: String, lowercase: true }],
     accessibility: [{ type: String, lowercase: true }],
@@ -56,6 +65,8 @@ vesselSchema.pre("validate", function (next) {
 });
 
 vesselSchema.index({ listingStatus: 1, destinationSlugs: 1, veganRating: 1 });
+vesselSchema.index({ listingStatus: 1, completenessScore: 1, updatedAt: -1 });
+vesselSchema.index({ organisation: 1, updatedAt: -1 });
 vesselSchema.index({ name: "text", summary: "text", description: "text" });
 
 module.exports = model("VesselV2", vesselSchema);

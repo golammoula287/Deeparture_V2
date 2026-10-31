@@ -14,6 +14,22 @@ const ResortAvailability = require("../models/resortAvailability.model");
 const { materializeDeparturePricing, repriceDeparturesForItinerary } = require("../services/pricing.service");
 const { logAudit } = require("../services/audit.service");
 const slugify = require("../utilities/slugify");
+const { replaceDepartureAvailability, upsertResortAvailability } = require("../services/availability.service");
+
+const OPERATOR_VESSEL_FIELDS = new Set([
+  'name','summary','description','featuredImage','gallery','vesselType','yearBuilt','yearRefit','lengthMeters','beamMeters',
+  'maxGuests','cabinCount','homePort','destinationSlugs','destinationLocations','facilities','dietary','accessibility','divingFeatures'
+]);
+const OPERATOR_RESORT_FIELDS = new Set([
+  'name','summary','description','featuredImage','gallery','country','region','district','destinationSlugs','destinationLocations',
+  'facilities','dietary','accessibility','divingFeatures'
+]);
+const operatorSafeProductPayload = (req, body, kind) => {
+  if (req.v2User?.role === 'admin' || req.user?.role === 'admin') return { ...body };
+  const allowed = kind === 'resort' ? OPERATOR_RESORT_FIELDS : OPERATOR_VESSEL_FIELDS;
+  return Object.fromEntries(Object.entries(body || {}).filter(([key]) => allowed.has(key)));
+};
+const operatorSourceType = (req, requested) => (req.v2User?.role === 'admin' || req.user?.role === 'admin') ? (requested || 'admin') : 'operator';
 
 const assertEditorialPermission = (req) => {
   if (req.user.role === 'admin') return;
@@ -50,7 +66,7 @@ const applyUpdate = (item, body) => {
 
 const createVessel = catchAsync(async (req, res) => {
   assertEditorialPermission(req);
-  const payload = { ...req.body, organisation: req.params.organisationId };
+  const payload = { ...operatorSafeProductPayload(req, req.body, "vessel"), organisation: req.params.organisationId, source: operatorSourceType(req, req.body.source) };
   if (!payload.slug && payload.name) payload.slug = slugify(payload.name);
   const item = await Vessel.create(payload);
   await logAudit({ req, organisation: item.organisation, action: "vessel.create", entityType: "vessel", entityId: item._id, after: item.toObject() });
@@ -61,7 +77,9 @@ const updateVessel = catchAsync(async (req, res) => {
   assertEditorialPermission(req);
   const item = await assertOwned(Vessel, req.params.id, req.params.organisationId);
   const before = item.toObject();
-  applyUpdate(item, req.body);
+  if (req.body.organisation && String(req.body.organisation) !== String(item.organisation)) throw new AppError(400, "organisation cannot be changed on an existing record");
+  applyUpdate(item, operatorSafeProductPayload(req, req.body, "vessel"));
+  if (req.v2User?.role !== "admin" && req.user?.role !== "admin") item.source = "operator";
   await item.save();
   await logAudit({ req, organisation: item.organisation, action: "vessel.update", entityType: "vessel", entityId: item._id, before, after: item.toObject() });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Vessel updated", data: item });
@@ -69,7 +87,7 @@ const updateVessel = catchAsync(async (req, res) => {
 
 const createItinerary = catchAsync(async (req, res) => {
   await assertOwned(Vessel, req.body.vessel, req.params.organisationId);
-  const payload = { ...req.body, organisation: req.params.organisationId };
+  const payload = { ...req.body, organisation: req.params.organisationId, source: operatorSourceType(req, req.body.source) };
   if (!payload.slug && payload.name) payload.slug = slugify(payload.name);
   await assertCabins(payload.basePrices, payload.vessel, payload.organisation);
   const item = await Itinerary.create(payload);
@@ -80,7 +98,8 @@ const createItinerary = catchAsync(async (req, res) => {
 const updateItinerary = catchAsync(async (req, res) => {
   const item = await assertOwned(Itinerary, req.params.id, req.params.organisationId);
   await assertCabins(req.body.basePrices, item.vessel, item.organisation);
-  applyUpdate(item, req.body);
+  const body = { ...req.body, source: operatorSourceType(req, req.body.source) };
+  applyUpdate(item, body);
   await item.save();
   if (item.destinationSlugs?.length) await Vessel.findByIdAndUpdate(item.vessel, { $addToSet: { destinationSlugs: { $each: item.destinationSlugs } } });
   const repriced = await repriceDeparturesForItinerary(item._id);
@@ -89,27 +108,35 @@ const updateItinerary = catchAsync(async (req, res) => {
 
 const createDeparture = catchAsync(async (req, res) => {
   const itinerary = await assertOwned(Itinerary, req.body.itinerary, req.params.organisationId);
-  const payload = { ...req.body, organisation: req.params.organisationId, vessel: itinerary.vessel };
-  await assertCabins([...(payload.availability || []), ...(payload.priceOverrides || []), ...(payload.offers || [])], payload.vessel, payload.organisation);
+  const availability = req.body.availability || [];
+  const payload = { ...req.body, organisation: req.params.organisationId, vessel: itinerary.vessel, source: operatorSourceType(req, req.body.source) };
+  delete payload.availability;
+  await assertCabins([...(availability || []), ...(payload.priceOverrides || []), ...(payload.offers || [])], payload.vessel, payload.organisation);
   const item = new Departure(payload);
   await materializeDeparturePricing(item);
   await item.save();
-  sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Departure created", data: item });
+  if (availability.length) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: operatorSourceType(req, req.body.source), sourceUpdatedAt: req.body.sourceUpdatedAt, actorUserId: req.v2User?._id || req.user?._id, operationId: req.operationId });
+  const refreshed = await Departure.findById(item._id);
+  sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Departure created", data: refreshed });
 });
 
 const updateDeparture = catchAsync(async (req, res) => {
   const item = await assertOwned(Departure, req.params.id, req.params.organisationId);
-  await assertCabins([...(req.body.availability || []), ...(req.body.priceOverrides || []), ...(req.body.offers || [])], item.vessel, item.organisation);
-  applyUpdate(item, req.body);
-  if (req.body.availability) item.availabilityUpdatedAt = new Date();
+  const availability = req.body.availability;
+  const body = { ...req.body, source: operatorSourceType(req, req.body.source) };
+  delete body.availability;
+  await assertCabins([...(availability || []), ...(body.priceOverrides || []), ...(body.offers || [])], item.vessel, item.organisation);
+  applyUpdate(item, body);
   await materializeDeparturePricing(item);
   await item.save();
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Departure updated", data: item });
+  if (availability) await replaceDepartureAvailability({ organisationId: req.params.organisationId, departureId: item._id, updates: availability, sourceType: operatorSourceType(req, req.body.source), sourceUpdatedAt: req.body.sourceUpdatedAt, actorUserId: req.v2User?._id || req.user?._id, operationId: req.operationId });
+  const refreshed = await Departure.findById(item._id);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Departure updated", data: refreshed });
 });
 
 const createResort = catchAsync(async (req, res) => {
   assertEditorialPermission(req);
-  const payload = { ...req.body, organisation: req.params.organisationId };
+  const payload = { ...operatorSafeProductPayload(req, req.body, "resort"), organisation: req.params.organisationId, source: operatorSourceType(req, req.body.source) };
   if (!payload.slug && payload.name) payload.slug = slugify(payload.name);
   const item = await Resort.create(payload);
   sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: "Resort created", data: item });
@@ -118,7 +145,9 @@ const createResort = catchAsync(async (req, res) => {
 const updateResort = catchAsync(async (req, res) => {
   assertEditorialPermission(req);
   const item = await assertOwned(Resort, req.params.id, req.params.organisationId);
-  applyUpdate(item, req.body);
+  if (req.body.organisation && String(req.body.organisation) !== String(item.organisation)) throw new AppError(400, "organisation cannot be changed on an existing record");
+  applyUpdate(item, operatorSafeProductPayload(req, req.body, "resort"));
+  if (req.v2User?.role !== "admin" && req.user?.role !== "admin") item.source = "operator";
   await item.save();
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Resort updated", data: item });
 });
@@ -150,12 +179,18 @@ const createRatePeriod = catchAsync(async (req, res) => {
 });
 
 const upsertAvailability = catchAsync(async (req, res) => {
-  const room = await assertOwned(RoomType, req.body.roomType, req.params.organisationId);
-  const item = await ResortAvailability.findOneAndUpdate(
-    { roomType: req.body.roomType, date: new Date(req.body.date) },
-    { ...req.body, organisation: req.params.organisationId, resort: room.resort, sourceUpdatedAt: new Date() },
-    { new: true, upsert: true, runValidators: true }
-  );
+  const item = await upsertResortAvailability({
+    organisationId: req.params.organisationId,
+    roomTypeId: req.body.roomType,
+    date: req.body.date,
+    roomsAvailable: req.body.roomsAvailable,
+    status: req.body.status,
+    sourceType: operatorSourceType(req, req.body.sourceType),
+    sourceReference: req.body.sourceReference,
+    sourceUpdatedAt: req.body.sourceUpdatedAt,
+    actorUserId: req.v2User?._id || req.user?._id,
+    operationId: req.operationId,
+  });
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Availability updated", data: item });
 });
 

@@ -6,7 +6,7 @@ const resortSchema = new Schema(
     organisation: { type: Schema.Types.ObjectId, ref: "OrganisationV2", required: true, index: true },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true },
-    listingStatus: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
+    listingStatus: { type: String, enum: ["draft", "pending_review", "published", "restricted", "archived"], default: "draft", index: true },
     verificationStatus: {
       type: String,
       enum: ["unverified", "operator_verified", "deeparture_verified"],
@@ -17,6 +17,14 @@ const resortSchema = new Schema(
     sourceUrl: String,
     lastCheckedAt: Date,
     verifiedAt: Date,
+    verifiedByUser: { type: Schema.Types.ObjectId, ref: "User" },
+    verificationSourceType: String,
+    verificationSourceRef: String,
+    verificationScope: String,
+    verificationNotes: String,
+    completenessScore: { type: Number, min: 0, max: 100, default: 0, index: true },
+    completenessMissing: { type: [String], default: [] },
+    completenessUpdatedAt: Date,
     summary: String,
     description: String,
     featuredImage: String,
@@ -25,6 +33,7 @@ const resortSchema = new Schema(
     region: String,
     district: String,
     destinationSlugs: [{ type: String, index: true }],
+    destinationLocations: [{ type: Schema.Types.ObjectId, ref: "LocationV2", index: true }],
     facilities: [{ type: String, lowercase: true }],
     dietary: [{ type: String, lowercase: true }],
     accessibility: [{ type: String, lowercase: true }],
@@ -42,5 +51,7 @@ resortSchema.pre("validate", function (next) {
 });
 
 resortSchema.index({ listingStatus: 1, destinationSlugs: 1, veganRating: 1 });
+resortSchema.index({ listingStatus: 1, completenessScore: 1, updatedAt: -1 });
+resortSchema.index({ organisation: 1, updatedAt: -1 });
 resortSchema.index({ name: "text", summary: "text", description: "text" });
 module.exports = model("ResortV2", resortSchema);

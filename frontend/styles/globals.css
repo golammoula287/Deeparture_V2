@@ -5,3 +5,8 @@
 html, body { padding: 0; margin: 0; background: #fff; color: #111827; }
 * { box-sizing: border-box; }
 a { color: inherit; text-decoration: none; }
+
+/* Admin grids must shrink around scrollable tables and long source identifiers. */
+.admin-v2 section, .admin-v2 article, .admin-v2 form { min-width: 0; }
+.admin-v2 input, .admin-v2 select, .admin-v2 textarea { min-width: 0; max-width: 100%; }
+.admin-v2 section { overflow-wrap: anywhere; }

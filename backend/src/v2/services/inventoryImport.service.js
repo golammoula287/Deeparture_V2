@@ -10,6 +10,7 @@ const ResortPackage = require("../models/resortPackage.model");
 const ResortAvailability = require("../models/resortAvailability.model");
 const { materializeDeparturePricing, repriceDeparturesForItinerary } = require("./pricing.service");
 const slugify = require("../utilities/slugify");
+const { replaceDepartureAvailability, upsertResortAvailability } = require("./availability.service");
 
 const findVessel = async (organisationId, name) => {
   const vessel = await Vessel.findOne({ organisation: organisationId, name: new RegExp(`^${String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") });
@@ -83,7 +84,7 @@ const importItineraryRows = async ({ organisationId, rows }) => {
   return results;
 };
 
-const importDepartureRows = async ({ organisationId, rows }) => {
+const importDepartureRows = async ({ organisationId, rows, sourceType = "operator", actorUserId, operationId }) => {
   const groups = new Map();
   for (const row of rows) {
     const code = row.departureCode || `${row.vesselName}|${row.itineraryName}|${row.startDate}`;
@@ -135,40 +136,37 @@ const importDepartureRows = async ({ organisationId, rows }) => {
     departure.startDate = new Date(first.startDate);
     departure.endDate = new Date(first.endDate);
     departure.status = first.status || "scheduled";
-    departure.availability = availability;
     departure.priceOverrides = priceOverrides;
     departure.offers = offers;
-    departure.availabilityUpdatedAt = availability.length ? new Date() : departure.availabilityUpdatedAt;
     departure.sourceUpdatedAt = new Date();
-    departure.source = "operator";
+    departure.source = sourceType;
     await materializeDeparturePricing(departure);
     await departure.save();
-    results.push(departure);
+    await replaceDepartureAvailability({ organisationId, departureId: departure._id, updates: availability, sourceType, sourceReference: code, sourceUpdatedAt: new Date(), actorUserId, operationId });
+    results.push(await Departure.findById(departure._id));
   }
   return results;
 };
 
-const importResortAvailabilityRows = async ({ organisationId, rows }) => {
+const importResortAvailabilityRows = async ({ organisationId, rows, sourceType = "operator", actorUserId, operationId }) => {
   const results = [];
   for (const row of rows) {
     const resort = await Resort.findOne({ organisation: organisationId, name: new RegExp(`^${String(row.resortName).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") });
     if (!resort) throw new AppError(httpStatus.BAD_REQUEST, `Unknown resort: ${row.resortName}`);
     let roomType = await RoomType.findOne({ resort: resort._id, name: new RegExp(`^${String(row.roomType).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") });
     if (!roomType) roomType = await RoomType.create({ organisation: organisationId, resort: resort._id, name: row.roomType });
-    const item = await ResortAvailability.findOneAndUpdate(
-      { roomType: roomType._id, date: new Date(row.date) },
-      {
-        organisation: organisationId,
-        resort: resort._id,
-        roomType: roomType._id,
-        date: new Date(row.date),
-        roomsAvailable: row.roomsAvailable !== "" ? Number(row.roomsAvailable) : undefined,
-        status: row.status || (Number(row.roomsAvailable) === 0 ? "sold_out" : "available"),
-        source: "operator",
-        sourceUpdatedAt: new Date(),
-      },
-      { new: true, upsert: true, runValidators: true }
-    );
+    const item = await upsertResortAvailability({
+      organisationId,
+      roomTypeId: roomType._id,
+      date: row.date,
+      roomsAvailable: row.roomsAvailable,
+      status: row.status,
+      sourceType,
+      sourceReference: row.sourceReference,
+      sourceUpdatedAt: row.sourceUpdatedAt || new Date(),
+      actorUserId,
+      operationId,
+    });
     results.push(item);
   }
   return results;
@@ -204,13 +202,13 @@ const importResortPackageRows = async ({ organisationId, rows }) => {
   return results;
 };
 
-const importInventoryRows = async ({ organisationId, importType, rows }) => {
+const importInventoryRows = async ({ organisationId, importType, rows, sourceType = "operator", actorUserId, operationId }) => {
   if (!Array.isArray(rows)) throw new AppError(httpStatus.BAD_REQUEST, "rows must be an array");
   switch (importType) {
     case "itineraries": return importItineraryRows({ organisationId, rows });
-    case "departures": return importDepartureRows({ organisationId, rows });
+    case "departures": return importDepartureRows({ organisationId, rows, sourceType, actorUserId, operationId });
     case "resort_packages": return importResortPackageRows({ organisationId, rows });
-    case "resort_availability": return importResortAvailabilityRows({ organisationId, rows });
+    case "resort_availability": return importResortAvailabilityRows({ organisationId, rows, sourceType, actorUserId, operationId });
     default: throw new AppError(httpStatus.BAD_REQUEST, "Unsupported import type");
   }
 };

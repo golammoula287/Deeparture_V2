@@ -1,0 +1,62 @@
+{
+  "testedAt": "2026-10-30T21:36:28.930Z",
+  "scope": "isolated local database and browser; not Render acceptance",
+  "results": [
+    {
+      "label": "authentication, active membership, cross-organisation isolation and role restrictions",
+      "status": "passed"
+    },
+    {
+      "label": "draft catalogue, editorial protection, cabins, itinerary, shared pricing and normalized availability",
+      "status": "passed"
+    },
+    {
+      "label": "resort rooms, package and seasonal rate edits and normalized stop-sell",
+      "status": "passed"
+    },
+    {
+      "label": "typed boolean/number/select/multi-select attributes and shared search facets",
+      "status": "passed"
+    },
+    {
+      "label": "scoped URL media, approval boundary, update and deletion",
+      "status": "passed"
+    },
+    {
+      "label": "media migration dry run is read-only and applied backfill is idempotent on isolated data",
+      "status": "passed"
+    },
+    {
+      "label": "organisation profile stale update conflict",
+      "status": "passed"
+    },
+    {
+      "label": "hashed single-use invitations, new-account onboarding, existing password and owner protection",
+      "status": "passed"
+    },
+    {
+      "label": "no-write preview, row errors, explicit commit, replay protection, stable upsert and legacy preview",
+      "status": "passed"
+    },
+    {
+      "label": "Admin-first enquiry visibility, reservations workflow and invalid transitions",
+      "status": "passed"
+    },
+    {
+      "label": "suspended organisation access and organisation picker filtering",
+      "status": "passed"
+    },
+    {
+      "label": "notification organisation isolation, unread count and scoped read marking",
+      "status": "passed"
+    },
+    {
+      "label": "mobile cabin editing and image attachment controls persist through the scoped API",
+      "status": "passed"
+    },
+    {
+      "label": "portal navigation at 390/768/1440px, legacy redirect and no browser runtime errors",
+      "status": "passed"
+    }
+  ]
+}

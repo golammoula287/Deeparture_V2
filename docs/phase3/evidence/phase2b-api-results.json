@@ -1,0 +1,46 @@
+{
+  "testedAt": "2026-10-30T21:32:04.820Z",
+  "scope": "isolated local; not Render staging",
+  "results": [
+    {
+      "label": "admin authorization",
+      "status": "passed"
+    },
+    {
+      "label": "bounded operational lists",
+      "status": "passed"
+    },
+    {
+      "label": "completeness and verification history",
+      "status": "passed"
+    },
+    {
+      "label": "website source queue and stale edit protection",
+      "status": "passed"
+    },
+    {
+      "label": "source configuration, mappings, and secret protection",
+      "status": "passed"
+    },
+    {
+      "label": "bounded bulk action with partial outcomes",
+      "status": "passed"
+    },
+    {
+      "label": "manual availability override, sources, and history",
+      "status": "passed"
+    },
+    {
+      "label": "combined boolean, numeric, select, and multi-select search",
+      "status": "passed"
+    },
+    {
+      "label": "canonical port plus price, availability and four typed attributes combine with negative controls",
+      "status": "passed"
+    },
+    {
+      "label": "shared search, reporting, audit, and notifications",
+      "status": "passed"
+    }
+  ]
+}

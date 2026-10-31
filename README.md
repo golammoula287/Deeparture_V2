@@ -1,4 +1,10 @@
-# Deeparture V2 — Standalone Phase 1
+# Deeparture V2 — Phase 1 + Phase 2A + Phase 2B + Phase 3
+
+Phase 3 Operator Portal is integrated locally from the Clean Developer Package Rev 1.0 on corrected baseline `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Operators enter at `/operator/v2`; `/dashboard/v2` redirects there. See [Phase 3 integration and validation](docs/phase3/INTEGRATION_RESULTS_2026-10-31.md), [deployment instructions](docs/phase3/IMPLEMENTATION_AND_DEPLOYMENT.md), and [migration/rollback notes](docs/phase3/MIGRATIONS_AND_ROLLBACK.md). Render deployment and staging acceptance remain separate steps.
+
+Current correction handover: [Rev 1.3 review corrections](docs/phase2b/REVIEW_CORRECTIONS_2026-10-20.md) and [all 125 acceptance rows with evidence](docs/phase2b/REV1.3_ACCEPTANCE_EVIDENCE.md). Local regressions passed; final corrected Render/Atlas deployment evidence is pending. The owner reports the existing Render deployment passed.
+
+Phase 2B Rev 1.3 is integrated on the Phase 2A baseline. Start with [the integration record](docs/phase2b/INTEGRATION_RECORD_2026-10-15.md) and [handover guide](HANDOVER_START_HERE.md). Admins sign in at `/login` and use `/admin/v2`; operators use `/dashboard/v2`.
 
 This repository is a **standalone extraction of Deeparture V2 Phase 1**. It does not require the legacy Deeparture V1 application to start or to create its own V2 database.
 
@@ -22,7 +28,7 @@ It contains:
 
 ## Important scope
 
-This is the **standalone Phase 1 foundation**, not the finished Deeparture V2 product. Admin V2, the complete Operator Portal V2, the redesigned mobile-first customer frontend/PWA, automated website ingestion and the future Agent platform remain later phases.
+This includes the **standalone Phase 1 foundation, Phase 2A Admin V2, and Phase 2B Admin automation**. Phase 3 adds the Operator Portal V2. Customer frontend/PWA redesign, provider connectors and the future Agent platform remain later phases. Catalogue and operator inventory imports require preview and explicit commit; catalogue imports create drafts; enquiries go to Admin review before operator delivery.
 
 The legacy migration script is intentionally **not included** in this repository because this standalone build is designed to run without V1. Migration from the existing production application should remain a separate controlled staging task.
 
@@ -141,8 +147,9 @@ Operator organisations:
 Admin catalogue:
 
 - `GET /api/v2/admin/catalog/template-fields`
-- `POST /api/v2/admin/catalog/import`
-- `POST /api/v2/admin/catalog/import-file`
+- `POST /api/v2/admin/catalog/import/preview`
+- `POST /api/v2/admin/catalog/import-file/preview`
+- `POST /api/v2/admin/catalog/import-batches/:batchId/commit`
 - `POST /api/v2/admin/attributes`
 - `POST /api/v2/admin/claim-invitations/bulk`
 

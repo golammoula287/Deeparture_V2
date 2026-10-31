@@ -89,7 +89,7 @@ const setProductAttributes = async ({ organisationId, productType, productId, at
         source,
         sourceUrl: item.sourceUrl,
         lastCheckedAt: new Date(),
-        verificationStatus: item.verificationStatus || "unverified",
+        verificationStatus: source === "operator" ? "unverified" : (item.verificationStatus || "unverified"),
       },
       { new: true, upsert: true, runValidators: true }
     );
