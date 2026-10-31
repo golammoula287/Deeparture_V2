@@ -4,7 +4,7 @@ Last updated: 2026-10-31 (Asia/Dhaka)
 
 ## Current task
 
-Phase 3 Operator Portal Rev 1.0 integrated locally from the authoritative Clean Developer Package onto corrected Phase 2B commit `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Local backend checks, 38 unit tests, production build, prior-phase regressions and 14 Phase 3 API/browser groups passed. Owner authorized commit and push on `phase2b-rev1.3-review-fixes`; release publication is being finalized. Render deployment and staging acceptance remain pending. Resume with `docs/phase3/INTEGRATION_RESULTS_2026-10-31.md`.
+Phase 3 Operator Portal Rev 1.0 integrated locally from the authoritative Clean Developer Package onto corrected Phase 2B commit `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Local backend checks, 38 unit tests, production build, prior-phase regressions and 14 Phase 3 API/browser groups passed. Phase 3 implementation committed as `db65197a1ef76e839cb05debaba06b0ea16fc341`. Owner clarified publication must use new branch `phase3-operator-portal`. Render deployment and staging acceptance remain pending. Resume with `docs/phase3/INTEGRATION_RESULTS_2026-10-31.md`.
 
 ## Source and scope
 
@@ -125,3 +125,8 @@ Reproducible generator: `docs/phase3/generate-test-report.cjs`; PDF checksum sto
 ### 2026-10-31 — Authorized Phase 3 commit and push
 
 Owner requested committing and pushing the current Phase 3 integration without GPT contributor attribution. Using the existing Git author and committer identity, Golam Moula, with no AI co-author trailer. Backend verification rerun passed: 104-file syntax check, Phase 2B/3 static checks and 38/38 unit tests. Frontend production build passed (41 pages). Historical integration/API/browser evidence remains unchanged; no database tests, deployment or migration rerun in this task. Publishing to the same-named GitHub branch; verify remote HEAD after push. Next: deploy this Phase 3 revision to both Render services and collect staging acceptance evidence.
+
+
+### 2026-10-31 — Dedicated Phase 3 branch
+
+Owner corrected the publication destination to a new branch. Created `phase3-operator-portal` from Phase 3 commit `db65197a1ef76e839cb05debaba06b0ea16fc341` for publication with upstream tracking. The earlier push to `phase2b-rev1.3-review-fixes` remains; no remote history was rewritten. Author and committer remain Golam Moula, with no AI co-author. Validation: clean working tree before branching and documentation diff check; application source unchanged, so tests were not rerun. Next: use `phase3-operator-portal` for Phase 3 deployment and staging verification.
