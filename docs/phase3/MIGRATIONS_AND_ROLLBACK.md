@@ -39,6 +39,17 @@ Apply only after reviewing the dry-run counts:
 npm run migrate:phase3:media -- --apply
 ```
 
+For a controlled staging check, restrict both commands to the same test organisation:
+
+```bash
+npm run migrate:phase3:media -- --organisation=<organisation-id>
+npm run migrate:phase3:media -- --organisation=<organisation-id> --apply
+```
+
+Only products belonging to that organisation are scanned or changed. Omit the angle brackets and use its 24-character MongoDB ID. Malformed scope flags fail before connecting. A scoped fixture run does not represent migration of every organisation.
+
+The API `/health` response reports `emailDeliveryMode` from the actual configured transport. Keep it `test` for staging acceptance; this diagnostic contains no SMTP credentials.
+
 The migration converts existing vessel/resort `featuredImage` and `gallery` URLs into MediaAsset records while preserving the original fields. It is idempotent because it checks for an existing organisation/entity/url combination before creating a record.
 
 ## Rollback

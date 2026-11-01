@@ -46,14 +46,16 @@ const listMyOrganisations = async user => {
 const dashboardSummary = async ({ organisationId, userId }) => {
   const now = new Date();
   const in90Days = new Date(now.getTime() + 90 * 86400000);
-  const [organisation, vessels, resorts, upcoming, enquiries, stale, conflicts, unread, recentImports] = await Promise.all([
+  const activeEnquiryFilter = { organisation: organisationId, status: { $in: ["sent_to_operator", "operator_accepted", "operator_replied", "quoted"] } };
+  const [organisation, vessels, resorts, upcoming, enquiries, pendingEnquiries, stale, conflicts, unread, recentImports] = await Promise.all([
     Organisation.findById(organisationId).lean(),
     Vessel.find({ organisation: organisationId, listingStatus: { $ne: "archived" } }).sort({ updatedAt: -1 }).lean(),
     Resort.find({ organisation: organisationId, listingStatus: { $ne: "archived" } }).sort({ updatedAt: -1 }).lean(),
     Departure.find({ organisation: organisationId, startDate: { $gte: now, $lte: in90Days }, status: { $ne: "cancelled" } })
       .sort({ startDate: 1 }).limit(8).populate("vessel", "name").populate("itinerary", "name").lean(),
-    Enquiry.find({ organisation: organisationId, status: { $in: ["sent_to_operator", "operator_accepted", "operator_replied", "quoted"] } })
+    Enquiry.find(activeEnquiryFilter)
       .sort({ createdAt: -1 }).limit(8).lean(),
+    Enquiry.countDocuments(activeEnquiryFilter),
     AvailabilityEffective.countDocuments({ organisation: organisationId, freshnessState: "stale" }),
     AvailabilityEffective.countDocuments({ organisation: organisationId, conflictState: true }),
     Notification.countDocuments({ audience: "operator", readAt: { $exists: false }, $or: [{ recipientUser: userId }, { recipientOrganisation: organisationId }] }),
@@ -67,7 +69,7 @@ const dashboardSummary = async ({ organisationId, userId }) => {
   ].sort((a,b) => a.score - b.score).slice(0, 8);
   return {
     organisation,
-    counts: { vessels: vessels.length, resorts: resorts.length, pendingEnquiries: enquiries.length, staleAvailability: stale, availabilityConflicts: conflicts, activeOffers, unreadNotifications: unread },
+    counts: { vessels: vessels.length, resorts: resorts.length, pendingEnquiries, staleAvailability: stale, availabilityConflicts: conflicts, activeOffers, unreadNotifications: unread },
     incomplete, upcomingDepartures: upcoming, enquiries, recentImports,
   };
 };

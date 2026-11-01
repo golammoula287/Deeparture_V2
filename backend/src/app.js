@@ -10,6 +10,7 @@ const globalErrorHandler = require('./utilities/globalErrorHandler');
 const notFound = require('./utilities/notFound');
 const operationId = require('./middleware/operationId');
 const releaseIdentity = require('./utilities/releaseIdentity');
+const emailTransport = require('./config/smtp');
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -17,7 +18,7 @@ app.use(operationId);
 app.use(express.json({ limit: '30mb' }));
 app.get('/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
-  res.json({ ok: true, service: 'deeparture-v2-api', ...releaseIdentity() });
+  res.json({ ok: true, service: 'deeparture-v2-api', ...releaseIdentity(), emailDeliveryMode: emailTransport.options.jsonTransport ? 'test' : 'live' });
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/v2', v2PublicRoutes);
