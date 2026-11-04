@@ -1,15 +1,15 @@
 # Project context and work tracker
 
-Last updated: 2026-10-31 (Asia/Dhaka)
+Last updated: 2026-11-05 (Asia/Dhaka)
 
 ## Current task
 
-Phase 3 Operator Portal Rev 1.0 integrated locally from the authoritative Clean Developer Package onto corrected Phase 2B commit `01cb93ea3ce312ef0227099bd224094b2072ddb8`. Local backend checks, 38 unit tests, production build, prior-phase regressions and 14 Phase 3 API/browser groups passed. Phase 3 implementation committed as `db65197a1ef76e839cb05debaba06b0ea16fc341`. Owner clarified publication must use new branch `phase3-operator-portal`. Render deployment and staging acceptance remain pending. Resume with `docs/phase3/INTEGRATION_RESULTS_2026-10-31.md`.
+Phase 4 steps 1–2 implemented: handover/API audit, 148-row acceptance tracker, working search/results and liveaboard detail design previews in the existing frontend. [Design review and screenshots](docs/phase4/DESIGN_REVIEW.md); [implementation context](docs/phase4/CONTEXT.md). Frontend production build and 16/16 local Chromium preview groups passed at 390/768/1440px. Owner visual review is the next gate before full rollout. Fixtures are explicitly sample data; shared-service integration, resort rollout, SEO/PWA and integrated/staging acceptance remain pending. Phase 4 publication authorized on new branch `phase4-customer-marketplace`; no deployment requested.
 
 ## Source and scope
 
 - Repository: Deeparture_V2, Express/Mongoose API and Next.js/React frontend.
-- Working branch: `phase2b-rev1.3-review-fixes`, based on `df61c280abac73f21765d3eb4a9f7285d25231f8` from `origin/phase2b-rev1.3-integration`.
+- Working branch: `phase4-customer-marketplace`, created from accepted Phase 3 baseline `f6693c6a05b7bd172fc773fe010494ee61f276f9`; Phase 4 design previews and handover are the current scope.
 - Initial checkout was Phase 1 on main. The reviewed Phase 2B remote branch was already available locally.
 - Corrections committed and pushed by the owner: `01cb93ea3ce312ef0227099bd224094b2072ddb8` on `phase2b-rev1.3-review-fixes`; verified directly with GitHub `git ls-remote` on 24 October 2026.
 - Read `AGENTS.md`, `docs/phase2b/REVIEW_CORRECTIONS_2026-10-20.md` and `docs/phase2b/REV1.3_ACCEPTANCE_EVIDENCE.md` to resume.
@@ -130,3 +130,24 @@ Owner requested committing and pushing the current Phase 3 integration without G
 ### 2026-10-31 — Dedicated Phase 3 branch
 
 Owner corrected the publication destination to a new branch. Created `phase3-operator-portal` from Phase 3 commit `db65197a1ef76e839cb05debaba06b0ea16fc341` for publication with upstream tracking. The earlier push to `phase2b-rev1.3-review-fixes` remains; no remote history was rewritten. Author and committer remain Golam Moula, with no AI co-author. Validation: clean working tree before branching and documentation diff check; application source unchanged, so tests were not rerun. Next: use `phase3-operator-portal` for Phase 3 deployment and staging verification.
+
+
+### 2026-11-05 — Phase 4 handover review and implementation context
+
+Located `docs/Deeparture_V2_Phase4_COMPLETE_Handover_Rev1.1.zip`; reviewed the controlling specification, acceptance checklist, future-proofing matrix, handover/integration notes and representative existing code. Created `docs/phase4/CONTEXT.md` with source precedence, owner-required modern customer redesign, search/detail visual review gate, full functional scope, architectural constraints, integration differences, SEO/PWA requirements, validation/handback expectations and concrete next steps. Verified local main HEAD equals accepted Phase 3 baseline `f6693c6a05b7bd172fc773fe010494ee61f276f9`. Preserved existing context, Phase 3 tooling/evidence and supplied archive.
+
+Validation: original ZIP CRC integrity and all 63 master SHA256 hashes passed; documentation diff and local references checked. No application tests required or run for this documentation-only task. No overlay integration, application edits, database operations, commit, push or deployment. Package-author test claims are explicitly distinguished from locally executed verification. Next: prepare search/results and one liveaboard detail design direction for owner review before full UI rollout.
+
+
+### 2026-11-05 — Phase 4 steps 1–2: working design direction
+
+User requested Phase 4 completion step by step. Followed the earlier requirement to review search/results and one liveaboard detail direction before broad UI rollout. Created isolated `/phase4-preview` routes in the existing Next.js frontend, reusable preview controls/styles, local illustrative travel imagery and fictional inventory. Search supports sample primary/advanced filters, sorting/pagination and reset/empty states; detail includes gallery, itinerary/features/cabins, mobile departure cards and a contextual enquiry preview that sends nothing. Preview-specific header suppression preserves existing AuthProvider logic. Added production opt-in guard/noindex/no-store. Existing public customer/API routes and private environment files unchanged.
+
+Captured all 148 controlling acceptance rows (Local/Staging NOT RUN), documented the implementation sequence and concrete API integration differences, and produced owner review notes with seven desktop/tablet/phone screenshots. Frontend `npm run build` passed; final `node scripts/verify-phase4-design.cjs` passed all 16 Chromium groups with no console/page errors, including production guard, focus/dismissal, responsive layout, sample interactions, zero submission requests and operator login redirect. Initial root-directory build invocation and browser label timeout were corrected and documented. Script syntax and documentation/diff checks passed. Backend/full integration/staging/PWA tests were not run or marked passed. Local QA servers stopped; no database/email/commit/push/deployment actions.
+
+Next: owner visual approval/refinements on the concrete pages, then shared V2 integration, approved customer rollout for liveaboards/resorts, SEO/PWA, full local regressions and authorized staging acceptance/handback. See `docs/phase4/DESIGN_REVIEW.md`, `IMPLEMENTATION_PLAN.md` and `API_INTEGRATION_MAP.md`.
+
+
+### 2026-11-05 — Authorized Phase 4 branch publication
+
+Owner requested a useful commit and all existing Phase 4 work pushed on a new branch. Created `phase4-customer-marketplace` from accepted Phase 3 baseline. Publishing the current design previews, assets, original supplied handover ZIP, integration/context/plan documents, 148-row pending acceptance tracker and browser evidence with commit title `Add Phase 4 marketplace design previews and implementation handover`. Full Phase 4 API integration, resort rollout, SEO/PWA and staging acceptance remain pending; this is not a completed Phase 4 release. Existing passing frontend build and 16/16 browser checks apply to unchanged application source; diff, source/evidence and secret-exclusion checks performed before publication. Preserve unrelated Phase 3 tooling/evidence and earlier root-context changes outside this commit. No deployment, merge or environment-file changes requested. Next: verify matching local/remote commit, then resume visual review and the remaining implementation steps.

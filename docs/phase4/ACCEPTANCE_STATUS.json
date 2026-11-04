@@ -1,0 +1,1193 @@
+{
+  "date": "2026-11-05",
+  "source_archive": "docs/Deeparture_V2_Phase4_COMPLETE_Handover_Rev1.1.zip",
+  "source_document": "Deeparture_V2_Phase4_Complete_Developer_Handover_Rev1.1/01_PHASE4_SPECIFICATION_AND_ACCEPTANCE/Deeparture_V2_Phase4_Acceptance_Checklist.docx",
+  "baseline": "f6693c6a05b7bd172fc773fe010494ee61f276f9",
+  "status": "DESIGN REVIEW PENDING \u2014 preview checks are not integrated Phase 4 acceptance",
+  "rows": [
+    {
+      "id": "1.1",
+      "requirement": "Phase 4 starts from the accepted Phase 3 commit.",
+      "verify": "Full starting hash is recorded and traceable to f6693c6a05b7bd172fc773fe010494ee61f276f9.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "1.2",
+      "requirement": "No legacy/standalone rollback has replaced accepted V2 architecture.",
+      "verify": "Shared V2 services/models remain the source of truth.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "1.3",
+      "requirement": "Frontend and API staging deployments identify the tested commit.",
+      "verify": "Deployment revision matches the returned commit.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "1.4",
+      "requirement": "Existing Phase 1-3 critical automated tests remain green.",
+      "verify": "Auth, ownership, catalogue, pricing, availability, offers, enquiries and operator/admin critical tests pass or intentional changes are documented.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "1.5",
+      "requirement": "Production V1 database is not used for Phase 4 testing.",
+      "verify": "Staging database/environment is documented.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "1.6",
+      "requirement": "Staging secrets are not exposed client-side or in handoff files.",
+      "verify": "No credentials/tokens in source, screenshots or logs.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.1",
+      "requirement": "Published liveaboard auto-renders a customer detail page.",
+      "verify": "No hand-coded page is required per vessel.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.2",
+      "requirement": "Published resort auto-renders a customer detail page.",
+      "verify": "No hand-coded page is required per resort.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.3",
+      "requirement": "Unpublished/restricted/archived records obey visibility rules.",
+      "verify": "Customer cannot access content that should not be public.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.4",
+      "requirement": "Liveaboard page works without current departures.",
+      "verify": "Catalogue page remains useful and offers enquiry path.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.5",
+      "requirement": "Resort page works without current packages/availability.",
+      "verify": "Catalogue page remains useful and offers enquiry path.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "2.6",
+      "requirement": "Stable slugs/URLs are preserved or redirected.",
+      "verify": "No unexplained breakage of accepted public routes.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.1",
+      "requirement": "Liveaboard search loads from V2 service/API.",
+      "verify": "No direct browser-to-database or legacy-only data path.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.2",
+      "requirement": "Destination filter works.",
+      "verify": "Only matching structured destination inventory is returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.3",
+      "requirement": "Departure date filter works.",
+      "verify": "Returned departures overlap/match the requested dates by documented rule.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.4",
+      "requirement": "Embarkation point filter works.",
+      "verify": "Only matching structured ports are returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.5",
+      "requirement": "Price filter uses effective customer price.",
+      "verify": "Base/override/offer resolution is respected.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.6",
+      "requirement": "Trip-length filter works.",
+      "verify": "Duration is server/service filtered, not cosmetic UI filtering.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.7",
+      "requirement": "Vegan Rating filter works.",
+      "verify": "Filtering occurs through the shared search contract.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.8",
+      "requirement": "Dietary filter works.",
+      "verify": "Structured dietary attributes filter correctly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.9",
+      "requirement": "Accessibility filter works.",
+      "verify": "Structured accessibility attributes filter correctly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.10",
+      "requirement": "Facilities filter works.",
+      "verify": "Structured facilities filter correctly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.11",
+      "requirement": "Nitrox filter works.",
+      "verify": "Only qualifying inventory is returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.12",
+      "requirement": "Photography filter works.",
+      "verify": "Only qualifying inventory is returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.13",
+      "requirement": "Rebreather filter works.",
+      "verify": "Only qualifying inventory is returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.14",
+      "requirement": "Available-only filter works.",
+      "verify": "Sold-out inventory is excluded.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.15",
+      "requirement": "Combined filters work together.",
+      "verify": "At minimum test destination + dates + duration + price + Vegan Rating + offer + availability.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.16",
+      "requirement": "No core filter relies on frontend post-processing of a broad result set.",
+      "verify": "API/service query determines eligible results.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.17",
+      "requirement": "Liveaboard results use server/service-side pagination.",
+      "verify": "Changing page/cursor does not require downloading the full result set; result metadata is usable by future clients.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "3.18",
+      "requirement": "Liveaboard sorting is server/service-side and deterministic.",
+      "verify": "Supported sort produces stable order and does not rely on browser-only sorting of a broad dataset.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.1",
+      "requirement": "Resort search loads from V2 service/API.",
+      "verify": "Shared resort catalogue is used.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.2",
+      "requirement": "Destination filter works for resorts.",
+      "verify": "Only matching resorts are returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.3",
+      "requirement": "Price filter works where structured package/rate data exists.",
+      "verify": "Effective resort price semantics are documented.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.4",
+      "requirement": "Vegan/dietary filters work for resorts.",
+      "verify": "Structured data drives results.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.5",
+      "requirement": "Accessibility filters work for resorts.",
+      "verify": "Structured data drives results.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.6",
+      "requirement": "Facilities filters work for resorts.",
+      "verify": "Structured data drives results.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.7",
+      "requirement": "Availability filter does not invent availability.",
+      "verify": "Unknown/unavailable data degrades to enquiry state.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.8",
+      "requirement": "Liveaboard-only filters are not misleadingly applied to resorts.",
+      "verify": "UI and API semantics are product-appropriate.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "4.9",
+      "requirement": "Resort results support server/service-side pagination and deterministic sorting.",
+      "verify": "Catalogue can scale without downloading all resorts to the browser.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.1",
+      "requirement": "Liveaboard result cards show decision-useful data.",
+      "verify": "Name, destination/route context, price/offer/availability context and detail CTA are clear.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.2",
+      "requirement": "Resort result cards show decision-useful data.",
+      "verify": "Name, location, relevant price/attributes/availability context and CTA are clear.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.3",
+      "requirement": "Active offer is visibly distinguishable from normal price.",
+      "verify": "Original and sale price are clear when both exist.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.4",
+      "requirement": "Expired offer is not presented as active.",
+      "verify": "Normal effective price returns automatically.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.5",
+      "requirement": "Search state can be refreshed/shared without silently losing core filters.",
+      "verify": "Stable URL/query state or documented equivalent.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.6",
+      "requirement": "Empty result state is useful.",
+      "verify": "No crash; filters can be changed/cleared.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "5.7",
+      "requirement": "API errors/load states are handled.",
+      "verify": "No unhandled blank screen or misleading stale data.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.1",
+      "requirement": "Core vessel content renders from V2 data.",
+      "verify": "Published fields display correctly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.2",
+      "requirement": "Image gallery is usable and responsive.",
+      "verify": "No broken aspect ratios/blocked mobile interaction.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.3",
+      "requirement": "Facilities and diving attributes render correctly.",
+      "verify": "Structured attributes are readable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.4",
+      "requirement": "Dietary/Vegan information renders correctly.",
+      "verify": "Deeparture-controlled rating remains correctly sourced.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.5",
+      "requirement": "Accessibility information renders correctly.",
+      "verify": "Structured attributes are readable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.6",
+      "requirement": "Itineraries render with route/duration context.",
+      "verify": "Data corresponds to selected vessel.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.7",
+      "requirement": "Departures link to correct itinerary/vessel.",
+      "verify": "No cross-record leakage.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "6.8",
+      "requirement": "Enquiry CTA retains listing/departure context.",
+      "verify": "Submitted enquiry identifies what customer asked about.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.1",
+      "requirement": "Core resort content renders from V2 data.",
+      "verify": "Published fields display correctly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.2",
+      "requirement": "Image gallery is usable and responsive.",
+      "verify": "No broken mobile interaction.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.3",
+      "requirement": "Facilities/dietary/accessibility render correctly.",
+      "verify": "Structured attributes are readable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.4",
+      "requirement": "Room types render when available.",
+      "verify": "Correct resort relationship.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.5",
+      "requirement": "Packages render when available.",
+      "verify": "Correct resort/room/package relationship.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.6",
+      "requirement": "Seasonal pricing/availability is presented accurately where available.",
+      "verify": "No fabricated dates/prices.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "7.7",
+      "requirement": "Enquiry CTA retains resort/package context where available.",
+      "verify": "Submitted enquiry identifies relevant product.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.1",
+      "requirement": "Itinerary details use structured V2 data.",
+      "verify": "Duration/destination/route remain consistent with API.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.2",
+      "requirement": "Desktop departure table is readable.",
+      "verify": "Dates, price, offer and availability are understandable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.3",
+      "requirement": "Phone layout converts table content to cards/stacked layout or equivalent.",
+      "verify": "No critical horizontal squeezing.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.4",
+      "requirement": "Departure rows/cards show correct effective pricing.",
+      "verify": "Matches pricing service response.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.5",
+      "requirement": "Departure rows/cards show correct availability state.",
+      "verify": "Matches availability service response.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "8.6",
+      "requirement": "Departure selection leads to correct enquiry/detail context.",
+      "verify": "Selected record identity is retained.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.1",
+      "requirement": "Normal departure inherits itinerary/base cabin price.",
+      "verify": "No unnecessary departure override.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.2",
+      "requirement": "Seasonal/date-specific departure uses valid override only where applicable.",
+      "verify": "Unaffected cabins/base prices remain inherited.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.3",
+      "requirement": "Active offer shows rack/original and sale price.",
+      "verify": "Offer validity window is respected.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.4",
+      "requirement": "Expired offer disappears automatically.",
+      "verify": "No manual cleanup required to restore normal price.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.5",
+      "requirement": "Original currency semantics are retained.",
+      "verify": "Converted/normalized price is not treated as source canonical price.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "9.6",
+      "requirement": "Customer UI does not independently recalculate core prices.",
+      "verify": "Shared pricing service is authoritative.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.1",
+      "requirement": "Resolved Availability Service output is used.",
+      "verify": "UI does not infer inventory from unrelated fields.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.2",
+      "requirement": "Available state displays correctly.",
+      "verify": "Matches API/service.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.3",
+      "requirement": "Sold-out state displays correctly.",
+      "verify": "Matches API/service.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.4",
+      "requirement": "Unknown/stale state degrades safely.",
+      "verify": "Enquiry/unknown wording, not false confirmation.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.5",
+      "requirement": "Live/real-time wording appears only when supported.",
+      "verify": "Freshness/source rules justify claim.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "10.6",
+      "requirement": "Available-only search excludes sold-out inventory.",
+      "verify": "Verified with deterministic test data.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.1",
+      "requirement": "Customer can submit enquiry from liveaboard detail.",
+      "verify": "Validation succeeds with correct context.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.2",
+      "requirement": "Customer can submit enquiry from resort detail.",
+      "verify": "Validation succeeds with correct context.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.3",
+      "requirement": "Departure/package context is retained when enquiry starts there.",
+      "verify": "Admin/operator can identify requested inventory.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.4",
+      "requirement": "Customer acknowledgement works in staging-safe mode.",
+      "verify": "No accidental external email during test.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.5",
+      "requirement": "Admin receives/processes enquiry through existing workflow.",
+      "verify": "Earlier-phase approval logic is preserved.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.6",
+      "requirement": "Operator notification remains compatible after approval where applicable.",
+      "verify": "Correct recipient/organisation.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "11.7",
+      "requirement": "Server-side validation rejects malformed/abusive submissions.",
+      "verify": "No client-only trust boundary.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.1",
+      "requirement": "Published detail pages have unique useful title/description.",
+      "verify": "Metadata derives from structured listing data.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.2",
+      "requirement": "Canonical URL is present and correct.",
+      "verify": "Avoid duplicate canonical variants.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.3",
+      "requirement": "Essential page content is indexable without requiring a fully interactive client-only render.",
+      "verify": "Crawler receives meaningful content.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.4",
+      "requirement": "Curated SEO landing page uses shared taxonomy/search data.",
+      "verify": "No separate duplicated catalogue.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.5",
+      "requirement": "Uncontrolled faceted combinations are not all indexable.",
+      "verify": "Canonical/noindex strategy is documented.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "12.6",
+      "requirement": "Known retained legacy/public URLs are preserved or redirected.",
+      "verify": "No unexplained SEO breakage.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.1",
+      "requirement": "Liveaboard search is usable on phone.",
+      "verify": "Filters, results and CTAs are touch friendly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.2",
+      "requirement": "Resort search is usable on phone.",
+      "verify": "Filters, results and CTAs are touch friendly.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.3",
+      "requirement": "Filters use a mobile-appropriate drawer/full-screen pattern or equivalent.",
+      "verify": "No tiny desktop sidebar squeezed onto phone.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.4",
+      "requirement": "Sticky enquiry/availability actions do not obscure content.",
+      "verify": "CTA remains usable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.5",
+      "requirement": "Image galleries are touch friendly.",
+      "verify": "Swipe/controls usable and accessible.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.6",
+      "requirement": "No critical horizontal scrolling on phone.",
+      "verify": "Tables/content adapt.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.7",
+      "requirement": "Tablet layouts are intentionally usable.",
+      "verify": "No desktop/mobile dead zone.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "13.8",
+      "requirement": "Desktop layout remains efficient and readable.",
+      "verify": "No regression from mobile-first work.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.1",
+      "requirement": "Web app manifest is valid.",
+      "verify": "Name, start URL, display mode, icons and theme metadata are valid.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.2",
+      "requirement": "PWA is installable on supported Chromium browser.",
+      "verify": "Install prompt/menu succeeds.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.3",
+      "requirement": "Installed app opens to a valid Deeparture route.",
+      "verify": "No blank/off-origin start state.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.4",
+      "requirement": "Service worker/PWA runtime is registered as intended.",
+      "verify": "No repeated fatal registration errors.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.5",
+      "requirement": "Offline/interrupted navigation fails gracefully.",
+      "verify": "No misleading confirmation of stale commercial data.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.6",
+      "requirement": "Pricing/offers/availability are not dangerously cached.",
+      "verify": "Freshness-sensitive data uses network-aware policy.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "14.7",
+      "requirement": "Enquiry submission does not falsely report success while offline.",
+      "verify": "Failure/retry state is explicit.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.1",
+      "requirement": "Search/filter controls have accessible names/labels.",
+      "verify": "Keyboard/screen-reader semantics are present.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.2",
+      "requirement": "Keyboard can operate search, filters, drawers and enquiry flow.",
+      "verify": "No focus trap or inaccessible control.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.3",
+      "requirement": "Visible focus states are retained.",
+      "verify": "Keyboard location is clear.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.4",
+      "requirement": "Filter drawers/modals manage focus and dismissal.",
+      "verify": "Escape/close and focus return work.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.5",
+      "requirement": "Form errors are associated with the relevant fields.",
+      "verify": "Accessible and understandable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.6",
+      "requirement": "Images use responsive loading/sizing where appropriate.",
+      "verify": "Avoid unnecessary oversized payloads.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.7",
+      "requirement": "No customer-critical console errors on accepted flows.",
+      "verify": "Browser console checked.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.8",
+      "requirement": "API failures do not expose secrets/internal stack traces to customer.",
+      "verify": "Safe error handling.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.9",
+      "requirement": "Essential customer content does not depend on avoidable client waterfalls.",
+      "verify": "Core pages load predictably.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.10",
+      "requirement": "Customer frontend uses a centralized V2 API/data layer.",
+      "verify": "Representative components do not scatter endpoint/domain logic or reproduce backend business rules.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.11",
+      "requirement": "Shared customer UI is built from reusable components.",
+      "verify": "Cards, filters, price/offer/availability displays and enquiry elements are reused/configured rather than duplicated page-by-page.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.12",
+      "requirement": "Filter/taxonomy presentation is configuration/shared-data driven where practical.",
+      "verify": "No separate hard-coded customer taxonomy diverges from Admin/Operator/public API structures.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "15.13",
+      "requirement": "Phase 4 introduces no new base64 image storage path.",
+      "verify": "Images use media references/URLs and remain compatible with object storage/CDN/responsive delivery.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.1",
+      "requirement": "Raja Ampat + date + 7-12 nights search.",
+      "verify": "Only matching liveaboard departures are returned.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.2",
+      "requirement": "Same search with available-only.",
+      "verify": "Sold-out departure is excluded.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.3",
+      "requirement": "Vegan Rating + destination combination.",
+      "verify": "Correct listing set without frontend-only post-filtering.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.4",
+      "requirement": "Active last-minute offer journey.",
+      "verify": "Search card -> detail -> departure shows consistent discounted pricing.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.5",
+      "requirement": "Expired offer journey.",
+      "verify": "Discount disappears throughout customer flow.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.6",
+      "requirement": "Base-price inheritance journey.",
+      "verify": "Normal departure displays inherited itinerary price.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.7",
+      "requirement": "Departure override journey.",
+      "verify": "Only valid date/cabin override is displayed.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.8",
+      "requirement": "Unknown/stale availability journey.",
+      "verify": "Customer sees safe enquiry state, not confirmed availability.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.9",
+      "requirement": "Published liveaboard with no departures.",
+      "verify": "Detail page remains usable and enquiry-capable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.10",
+      "requirement": "Published resort with incomplete package data.",
+      "verify": "Detail page remains usable and enquiry-capable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.11",
+      "requirement": "Mobile liveaboard search -> detail -> enquiry.",
+      "verify": "End-to-end flow passes on phone width.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.12",
+      "requirement": "Mobile resort search -> detail -> enquiry.",
+      "verify": "End-to-end flow passes on phone width.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "16.13",
+      "requirement": "Installed PWA search -> detail journey.",
+      "verify": "Core navigation works from installed context.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.1",
+      "requirement": "Full Git commit hash is supplied.",
+      "verify": "Exact reviewed source revision is unambiguous.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.2",
+      "requirement": "Frontend/API staging URLs are supplied.",
+      "verify": "Reviewer can reproduce hosted checks.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.3",
+      "requirement": "File-by-file change summary or PR/patch history is supplied.",
+      "verify": "Scope of changes is auditable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.4",
+      "requirement": "Updated API docs/examples are supplied for changed endpoints.",
+      "verify": "Queries/payloads are reproducible.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.5",
+      "requirement": "Automated test commands/results are supplied.",
+      "verify": "Critical business-rule evidence is reproducible.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.6",
+      "requirement": "Production build result is supplied.",
+      "verify": "Build passes for tested commit.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.7",
+      "requirement": "Environment/deployment notes are supplied without secrets.",
+      "verify": "Required config is documented.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.8",
+      "requirement": "Any migration has dry-run, backup and rollback instructions.",
+      "verify": "No irreversible undocumented DB change.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.9",
+      "requirement": "Known issues/deferred items are explicitly listed.",
+      "verify": "No hidden acceptance exceptions.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.10",
+      "requirement": "Completed checklist references evidence for every PASS.",
+      "verify": "Blank/unsubstantiated rows are not counted as passed.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.11",
+      "requirement": "Centralized frontend API/data layer is identified.",
+      "verify": "File/module references and representative usage are supplied.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.12",
+      "requirement": "Reusable customer components/configuration are identified.",
+      "verify": "Evidence shows shared cards/filters/price/availability/enquiry building blocks.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.13",
+      "requirement": "Pagination and sorting API examples are supplied.",
+      "verify": "Example queries/responses are reproducible and stable.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.14",
+      "requirement": "Media path is documented.",
+      "verify": "Developer confirms Phase 4 did not add base64-in-database media storage and identifies URL/key/media handling.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "17.15",
+      "requirement": "Future-client/integration compatibility note is supplied.",
+      "verify": "Web/PWA remain consumers of shared V2 services usable later by APIs, native clients and agent tooling.",
+      "local": "NOT RUN",
+      "staging": "NOT RUN",
+      "evidence": []
+    }
+  ]
+}

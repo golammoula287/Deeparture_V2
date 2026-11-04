@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-05",
+  "scope": "Fixture design preview only; not Phase 4 API or staging acceptance",
+  "results": [
+    {
+      "name": "Production preview guard rejects list and detail without opt-in",
+      "status": "PASS"
+    },
+    {
+      "name": "Enabled preview renders with noindex and no-store",
+      "status": "PASS"
+    },
+    {
+      "name": "desktop search layout, image loading and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "desktop detail layout, gallery and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "tablet search layout, image loading and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "tablet detail layout, gallery and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "phone search layout, image loading and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "phone detail layout, gallery and screenshot",
+      "status": "PASS"
+    },
+    {
+      "name": "Phone advanced filter drawer applies conjunctive sample filters",
+      "status": "PASS"
+    },
+    {
+      "name": "Drawer cancellation discards uncommitted changes and returns focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample destination, date, duration and price controls affect results",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty state offers working reset",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample sorting and pagination work",
+      "status": "PASS"
+    },
+    {
+      "name": "Departure context and enquiry preview never send a request",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared header and operator authentication remain intact",
+      "status": "PASS"
+    },
+    {
+      "name": "No console errors or page errors in accepted preview flows",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

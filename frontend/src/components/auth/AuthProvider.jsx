@@ -6,7 +6,7 @@ import SiteHeader from '@/src/components/layout/SiteHeader';
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
-export default function AuthProvider({ children }) {
+export default function AuthProvider({ children, hideHeader = false }) {
   const router = useRouter();
   const [session, setSession] = useState({ user: null, checkedPath: null, error: '' });
   const [revision, setRevision] = useState(0);
@@ -71,5 +71,5 @@ export default function AuthProvider({ children }) {
       content = <main className="p-8" role="alert">{adminPage ? 'An admin account is required.' : 'An operator or admin account is required.'}</main>;
     }
   }
-  return <AuthContext.Provider value={{ user: session.user, logout }}><SiteHeader />{content}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user: session.user, logout }}>{hideHeader ? null : <SiteHeader />}{content}</AuthContext.Provider>;
 }
