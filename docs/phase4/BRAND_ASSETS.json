@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-05",
+  "logos": [
+    {
+      "file": "frontend/public/brand/logo.svg",
+      "source": "https://deeparture.travel/images/client/logo.svg",
+      "sha256": "bc02d8daf1e3b7ae201f1e854e8b0471b2a87069c37405f17a58902315956c60",
+      "modified": false
+    },
+    {
+      "file": "frontend/public/brand/footerLogo.svg",
+      "source": "https://deeparture.travel/images/client/footerLogo.svg",
+      "sha256": "06f2493015bc661aed2ffda04366316b40e749aaad7ca9ba7f333120e81a1d39",
+      "modified": false
+    }
+  ],
+  "brandColor": "#0080FF",
+  "headingFont": "Outfit",
+  "bodyFont": "Roboto"
+}

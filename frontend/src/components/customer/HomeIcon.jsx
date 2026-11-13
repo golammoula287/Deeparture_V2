@@ -1,0 +1,30 @@
+export default function HomeIcon({ name = 'arrow', size = 22, ...props }) {
+  const paths = {
+    chevron: <path d="m8 10 4 4 4-4" />,
+    heart: <path d="M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-5 5 3 11 8 15 5-4 13-10 8-15Z" />,
+    user: <><circle cx="12" cy="7" r="4" /><path d="M4 22v-3a8 8 0 0 1 16 0v3Z" /></>,
+    calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M7 2v6M17 2v6" /></>,
+    money: <><circle cx="12" cy="12" r="9" /><path d="M15 8h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9M12 6v12" /></>,
+    wifi: <><path d="M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M9 16a5 5 0 0 1 6 0" /><circle cx="12" cy="20" r="1" /></>,
+    camera: <><path d="M3 7h4l2-3h6l2 3h4v14H3Z" /><circle cx="12" cy="13" r="4" /></>,
+    tank: <><rect x="7" y="6" width="10" height="16" rx="2" /><path d="M10 6V2h4v4M9 2h6" /></>,
+    gear: <><path d="m9 3 1-2h4l1 2 3 2 2 1v4l2 2-2 2v4l-3 1-2 3h-5l-2-3-3-1v-4l-2-2 2-2V6l3-1Z" /><circle cx="12" cy="12" r="4" /></>,
+    globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c-7 6-7 12 0 18 7-6 7-12 0-18ZM6 6l12 12" /></>,
+    shield: <path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6l-9-4ZM12 3v18" />,
+    tag: <><path d="m3 12 9-9h9v9l-9 9-9-9Z" /><circle cx="17" cy="7" r="1" /></>,
+    arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
+    search: <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></>,
+    pin: <><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
+    boat: <><path d="M3 14l9-4 9 4-3 6H6l-3-6ZM8 11V5h8v6M12 5V2M2 22l4-2 6 2 6-2 4 2" /></>,
+    resort: <><path d="m2 11 10-8 10 8M5 9v12h14V9M9 21v-8h6v8" /></>,
+    leaf: <><path d="M20 3C7 2 2 9 5 15s15 5 15-12ZM4 21 16 8" /></>,
+    filters: <><path d="M3 6h6m4 0h8M3 12h12m4 0h2M3 18h3m4 0h11M9 3v6m6 0v6M6 15v6" /></>,
+    check: <path d="m5 12 4 4L19 6" />,
+    close: <path d="m6 6 12 12M6 18 18 6" />,
+    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+    compass: <><circle cx="12" cy="12" r="9" /><path d="m16 8-3 5-5 3 3-5 5-3Z" /></>,
+    needs: <><circle cx="12" cy="5" r="2" /><path d="M5 9h14M12 7v8m0 0-5 6m5-6 5 6" /></>,
+    message: <path d="M21 11a9 9 0 0 1-9 9H4l-2 2V11a9 9 0 0 1 19 0Z" />,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" {...props}>{paths[name] || paths.arrow}</svg>;
+}

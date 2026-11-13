@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-14",
+  "scope": "Production frontend, synthetic loopback API; no real inventory/database/email/staging/date or offer eligibility acceptance/publication",
+  "results": [
+    {
+      "name": "Reference layout and responsive controls",
+      "status": "PASS"
+    },
+    {
+      "name": "Clean search layout for both products and stable active tab",
+      "status": "PASS"
+    },
+    {
+      "name": "Quick attributes, availability and price forwarding",
+      "status": "PASS"
+    },
+    {
+      "name": "Saved cards persist and favourites opens/closes accessibly",
+      "status": "PASS"
+    },
+    {
+      "name": "Unavailable shortcuts open filters; modal cancellation and offer destination",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

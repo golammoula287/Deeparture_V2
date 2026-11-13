@@ -1,6 +1,10 @@
 # Phase 4 — first design review
 
-Prepared: 2026-11-05 (Asia/Dhaka). Status: ready for owner visual review; full Phase 4 integration is pending.
+Updated: 2026-11-07 (Asia/Dhaka). Customer route implementation is now available for review; final production visual sign-off and full Phase 4 acceptance remain pending.
+
+See [implemented customer UX and validation](CUSTOMER_IMPLEMENTATION_2026-11-07.md), [UX specification](UX_PLAN.md), [brand guide](BRAND_GUIDE.md) and [remaining delivery plan](IMPLEMENTATION_PLAN.md). Actual pages now use shared V2 resources; synthetic API browser tests are explicitly separate from real-data/staging acceptance. Historical screenshots below are superseded for current review.
+
+## Historical first proposal (not current approval)
 
 ## Proposed direction
 
@@ -52,3 +56,6 @@ No backend source changed, so backend unit/API/database suites were not rerun. N
 ## Next decision
 
 The owner's instruction was to agree the search/results and one liveaboard detail visual direction before applying it throughout Phase 4. Review the screenshots or interactive pages and approve this direction, or identify changes to palette, typography, imagery, cards, search controls or detail hierarchy. After that review, continue shared V2 integration and customer rollout according to the [implementation plan](IMPLEMENTATION_PLAN.md) and [API integration map](API_INTEGRATION_MAP.md).
+
+
+Latest hero direction: [continuous ocean hero and sliding text](OCEAN_SLIDER_2026-11-06.md).

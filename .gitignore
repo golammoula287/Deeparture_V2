@@ -6,3 +6,6 @@
 *.log
 deliverables/
 ~$*
+
+# Isolated local development databases
+.local/

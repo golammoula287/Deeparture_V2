@@ -1,0 +1,43 @@
+{
+  "updated": "2026-11-07",
+  "timezone": "Asia/Dhaka",
+  "status": "Owner-selected palette with shared customer colour roles implemented; final visual review pending",
+  "reference": "Screenshot 2026-11-06 at 04.30.24.png",
+  "colours": {
+    "oceanNight": "#071925",
+    "oceanDeep": "#123749",
+    "oceanTeal": "#294E5C",
+    "slate": "#50636B",
+    "oceanBlue": "#527787",
+    "oceanMist": "#6D919D",
+    "oceanFog": "#9DB7C3"
+  },
+  "supportingNeutrals": {
+    "white": "#FFFFFF",
+    "paper": "#F5F8F9"
+  },
+  "fonts": {
+    "heading": "Manrope",
+    "body": "Manrope"
+  },
+  "logoPolicy": "Preserve original SVG artwork and baked-in colours; use original pale-white version on dark surfaces",
+  "historicalLogoProvenance": "BRAND_ASSETS.json",
+  "applicationIntegration": "Documentation handoff only; not imported by the frontend",
+  "semanticRoles": {
+    "canvas": "#F5F8F9",
+    "surface": "#FFFFFF",
+    "surfaceSoft": "#EDF3F5",
+    "selected": "#E1EBEF",
+    "ink": "#071925",
+    "muted": "#50636B",
+    "link": "#527787",
+    "action": "#071925",
+    "actionHover": "#294E5C",
+    "controlBorder": "#6D919D",
+    "errorText": "#8F2F35",
+    "errorSurface": "#FFF1F1",
+    "successText": "#24574C",
+    "successSurface": "#EDF5F2"
+  },
+  "fontProvenance": "Locally hosted Google Fonts Manrope variable TTF and OFL licence; updated by owner-requested GitHub skill pass"
+}

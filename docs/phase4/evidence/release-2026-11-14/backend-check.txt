@@ -1,0 +1,5 @@
+
+> deeparture-v2-backend@0.1.0 check
+> node scripts/check-v2-syntax.js
+
+Syntax OK: 109 JavaScript files.
