@@ -88,8 +88,9 @@ const canonicalLocationAndDescendants = async (value) => {
   return ids;
 };
 
-const vesselIdsFromOperationalFilters = async (query) => {
+const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {}) => {
   let ids = null;
+  let eligibleItineraryIds = null;
   const itineraryFilter = {};
   if (query.embarkation || query.departurePort) {
     const value = query.embarkation || query.departurePort;
@@ -106,7 +107,15 @@ const vesselIdsFromOperationalFilters = async (query) => {
     if (query.minNights) itineraryFilter.numberOfNights.$gte = Number(query.minNights);
     if (query.maxNights) itineraryFilter.numberOfNights.$lte = Number(query.maxNights);
   }
-  if (Object.keys(itineraryFilter).length) ids = (await Itinerary.distinct('vessel', itineraryFilter)).map(String);
+  if (Object.keys(itineraryFilter).length) {
+    // Keep every operational constraint attached to the same itinerary/departure.
+    // Intersecting only vessel IDs can match a short itinerary to a different,
+    // cheap departure on the same vessel. Public results use active itineraries;
+    // admin search retains its existing broader status scope.
+    const eligibleItineraries = await Itinerary.find({ ...itineraryFilter, ...(publicOnly ? { status: 'active' } : {}) }).select('_id vessel').lean();
+    eligibleItineraryIds = eligibleItineraries.map(item => item._id);
+    ids = [...new Set(eligibleItineraries.map(item => String(item.vessel)))];
+  }
 
   const departureFilter = { status: { $nin: ['cancelled'] } };
   let useDepartures = false;
@@ -121,7 +130,10 @@ const vesselIdsFromOperationalFilters = async (query) => {
   if (query.availabilitySource) { departureFilter['availability.sourceType'] = query.availabilitySource; useDepartures = true; }
   if (query.conflict === 'true') { departureFilter['availability.conflictState'] = true; useDepartures = true; }
   if (query.override === 'true') { departureFilter['availability.manualOverride'] = true; useDepartures = true; }
-  if (useDepartures) ids = intersect(ids, (await Departure.distinct('vessel', departureFilter)).map(String));
+  if (useDepartures) {
+    if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
+    ids = intersect(ids, (await Departure.distinct('vessel', departureFilter)).map(String));
+  }
   return ids;
 };
 
@@ -184,7 +196,7 @@ const baseProductFilter = async ({ productType, query, publicOnly }) => {
 const searchProducts = async ({ productType, query = {}, publicOnly = false, populateOrganisation = false }) => {
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
-  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query) : await vesselIdsFromOperationalFilters(query);
+  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query) : await vesselIdsFromOperationalFilters(query, { publicOnly });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
   if (ids !== null) filter._id = { $in: ids };

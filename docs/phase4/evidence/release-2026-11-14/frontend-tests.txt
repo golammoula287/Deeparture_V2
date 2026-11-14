@@ -1,0 +1,18 @@
+✔ Finder preserves supported applied criteria and encodes a shareable URL (1.259834ms)
+✔ Invalid dates, reversed nights and negative budget are not sent as filters (0.077833ms)
+✔ Resort criteria do not pretend to implement stay dates or nights (0.052708ms)
+✔ Typed conjunctive attributes preserve values without allowing nested query objects (0.338292ms)
+✔ Unsupported sorts fall back to a real API sort rather than an invented ranking (0.067292ms)
+✔ Homepage price range and embarkation reach the shared search URL without losing the lower bound (0.097041ms)
+✔ Reversed or invalid price bounds do not become silent partial filters (0.05875ms)
+✔ Available-only selection survives finder URLs and rejects arbitrary values (0.083875ms)
+✔ Offer uses actual displayed price and original amount (0.529083ms)
+✔ Expired, future, disabled and mismatched offers are excluded (0.099792ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.377584
