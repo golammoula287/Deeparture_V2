@@ -22,3 +22,9 @@ Inventory: 20 liveaboards and 20 resorts per destination (Raja Ampat, Maldives, 
 Searches return genuine matching records with normal pagination. Restrictive prices, unsupported dates or conflicting filters may correctly return fewer results or none. No fallback injects unrelated listings. A temporary MongoDB binary must be downloaded again if `/tmp` is cleared; data stays in the ignored `.local/` directory.
 
 Sample liveaboards1,10,11 per destination receive10%,15%,20% early-booking offers respectively on their first three monthly departures, valid60 days from seeding. Effective departure prices are recalculated by the existing pricing service. These are fictional discounts for local preview only.
+
+## Hosted staging API seed
+
+`npm run seed:search-staging` uses ignored root `.env` staging admin credentials in memory and the fixed Render staging API. It verifies the configured database name is exactly `deeparture-v2-staging` and hosted email is in test mode. It creates a dedicated Sample Search Preview organisation, 120 liveaboards and 120 resorts across six destinations, 720 future departures and sample discounts. Existing records outside this organisation and existing attribute definitions are preserved. Inventory uses validated API preview/commit imports; no direct Atlas access or email delivery. Listings and descriptions identify fictional samples. Re-running updates inventory using stable names and only creates missing listings; import/audit history records each execution.
+
+Read-only verification after seeding: `node backend/scripts/verify-search-staging-samples.js` from the repository root. It uses the saved sample-organisation ID and tests the public API without credentials or writes. The hosted seed was completed and all18 search groups passed; deployed desktop/mobile searches and three homepage offer cards were also verified.

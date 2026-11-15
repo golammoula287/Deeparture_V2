@@ -1,0 +1,9 @@
+{
+  "commit": "5e16d448404db80ddfb0cf8e6fa5f05e11a82e0d",
+  "checks": [
+    "desktop/mobile header, overflow, destination search",
+    "resort form action"
+  ],
+  "pageErrors": [],
+  "note": "Network-idle navigation timed out; retried with DOM-content-loaded."
+}

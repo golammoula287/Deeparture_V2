@@ -1,0 +1,78 @@
+{
+  "origin": "https://deeparture-v2-3hr6.onrender.com/api/v2",
+  "organisation": "6af8b28ec16b0a02a5a54296",
+  "results": [
+    {
+      "name": "liveaboards: 120 published sample listings and disjoint pagination",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: raja-ampat destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: maldives destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: komodo destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: red-sea destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: galapagos destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: philippines destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "liveaboards: bounded budgets exclude unrelated prices",
+      "passed": true
+    },
+    {
+      "name": "resorts: 120 published sample listings and disjoint pagination",
+      "passed": true
+    },
+    {
+      "name": "resorts: raja-ampat destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: maldives destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: komodo destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: red-sea destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: galapagos destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: philippines destination and combined filters",
+      "passed": true
+    },
+    {
+      "name": "resorts: bounded budgets exclude unrelated prices",
+      "passed": true
+    },
+    {
+      "name": "Liveaboard dates, nights, embarkation and price combine on matching departures",
+      "passed": true
+    },
+    {
+      "name": "Sample offers use linked original and discounted cabin prices",
+      "passed": true
+    }
+  ]
+}
