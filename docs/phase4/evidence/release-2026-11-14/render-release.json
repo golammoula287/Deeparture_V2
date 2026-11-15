@@ -1,0 +1,16 @@
+{
+  "expected": "5e16d448404db80ddfb0cf8e6fa5f05e11a82e0d",
+  "verifiedAt": "2026-11-14T16:24:09Z",
+  "services": {
+    "frontend": {
+      "commit": "5e16d448404db80ddfb0cf8e6fa5f05e11a82e0d",
+      "emailDeliveryMode": null,
+      "ok": true
+    },
+    "backend": {
+      "commit": "5e16d448404db80ddfb0cf8e6fa5f05e11a82e0d",
+      "emailDeliveryMode": "test",
+      "ok": true
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "type": "liveaboards",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "type": "resorts",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "type": "liveaboards",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "type": "resorts",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "offerCards": true,
+  "pageErrors": [],
+  "note": "Initial hosted request returned transient503; bounded retry used."
+}

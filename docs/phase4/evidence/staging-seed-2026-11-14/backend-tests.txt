@@ -1,0 +1,58 @@
+
+> deeparture-v2-backend@0.1.0 test
+> node --test tests/*.test.js
+
+✔ updated mailer generates local JSON without delivery (30.163708ms)
+✔ updated ExcelJS UUID dependency supports conditional-formatting workbook roundtrip (171.171208ms)
+✔ SMTP credentials cannot enable delivery in default or test mode (145.276791ms)
+✔ demo seed rejects missing and documented default passwords before connecting (172.873333ms)
+✔ health reports the actual email transport mode without exposing SMTP configuration (303.091959ms)
+✔ media migration rejects malformed scope flags before connecting to a database (234.023042ms)
+✔ dashboard reports all active enquiries while keeping the recent preview bounded (1.704042ms)
+✔ catalog rows normalize source-specific fields into Deeparture contract (0.797417ms)
+✔ availability input retains source and timestamps (0.14675ms)
+✔ invalid inventory cannot become stored availability (0.198292ms)
+✔ preview identifies skipped and invalid numeric source rows (0.075791ms)
+✔ unfiltered catalogue search keeps the unrestricted product set (1.072375ms)
+✔ Phase 2B pagination clamps limits and preserves stable descending sort (0.163458ms)
+✔ Phase 2B pagination falls back to the full default sort when an unsupported sort is requested (0.059375ms)
+✔ Phase 2B paged result reports navigation metadata (0.127583ms)
+✔ Operation IDs preserve a safe caller supplied ID (0.111542ms)
+✔ Operation IDs replace unsafe/too-short caller values (0.320416ms)
+✔ Catalogue adapter carries the import schema version into the normalized DTO (0.463792ms)
+✔ Catalogue adapter treats blank optional spreadsheet fields as no-update values (0.090583ms)
+✔ Catalogue adapter still accepts explicit empty arrays for an intentional structured clear (0.08975ms)
+✔ operator member roles default safely to viewer (0.314708ms)
+✔ organisation admin cannot change an owner role (0.053458ms)
+✔ owner can manage non-owner roles (0.033542ms)
+✔ operator import requirements identify missing departure dates (0.2885ms)
+✔ operator import types map to the correct product domain (0.638666ms)
+✔ operator list limits are bounded (0.110125ms)
+✔ preview rejects invalid inventory, prices and dates before writes (0.20525ms)
+✔ enquiries require Admin dispatch and reject backward operator transitions (0.104916ms)
+✔ base discount produces 4950 USD (0.773292ms)
+✔ USD override replaces the inherited USD amount before discount (0.13275ms)
+✔ foreign currency override without conversion does not retain stale USD (0.097833ms)
+✔ explicit USD conversion is used for foreign currency override (0.091875ms)
+✔ offer validity consistently uses the requested pricing date (0.133958ms)
+✔ best offer is chosen without stacking discounts (0.087791ms)
+✔ release identity exposes only a valid configured source SHA and never guesses (1.261625ms)
+✔ duration and price/date must match the same itinerary, not different trips on one vessel (1.334792ms)
+✔ port and country criteria stay attached to the qualifying departure itinerary (0.673ms)
+✔ public filters exclude archived itineraries; admin retains prior status scope (0.381041ms)
+✔ no eligible itinerary prevents unrelated matching departures from returning a vessel (0.309833ms)
+✔ departure-only and itinerary-only searches keep independent filtering behaviour (0.3795ms)
+✔ disabled exact global provider wins over another enabled global provider (0.414333ms)
+✔ organisation provider override wins over global provider, including disabled overrides (0.065375ms)
+✔ exact global provider wins over organisation generic default (0.048708ms)
+✔ explicit generic defaults respect organisation scope and disabled state (0.052834ms)
+✔ provider lookup excludes unrelated providers, organisations and source types (0.050167ms)
+✔ provider reference and source type defaults normalize consistently (0.0395ms)
+ℹ tests 46
+ℹ suites 0
+ℹ pass 46
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 896.971959

@@ -25,7 +25,8 @@
     "migrate:phase3:media": "node scripts/migrate-phase3-media.js",
     "verify:phase3:local": "node scripts/verify-phase1-local.js --phase2b --phase3",
     "seed:search-demo": "node scripts/seed-search-demo.js",
-    "dev:search-demo": "node scripts/start-search-demo.js"
+    "dev:search-demo": "node scripts/start-search-demo.js",
+    "seed:search-staging": "node scripts/seed-search-staging-api.js --apply"
   },
   "engines": {
     "node": ">=20"
