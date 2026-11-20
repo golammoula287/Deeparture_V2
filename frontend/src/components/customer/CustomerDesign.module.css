@@ -1,5 +1,15 @@
 @font-face { font-family: 'Deeparture Manrope'; src: url('/brand/manrope-variable.ttf') format('truetype'); font-style: normal; font-weight: 200 800; font-display: swap; }
 .system {
+ --home-deep:#0b3038; --home-ink:#15383e; --home-muted:#526665;
+ --home-sea:#0b6b68; --home-pale:#edf5f1; --home-canvas:#fbfaf6;
+ --home-line:#d7e2dc; --home-border:#7a9291;
+ --home-accent:#b54632; --home-accent-hover:#943724;
+ --home-on-accent:#fff; --home-action-border:var(--home-accent);
+ --home-deep-rgb:11,48,56; --home-footer:#0a292f;
+ --home-hero-highlight:#b9dfd2; --home-hero-eyebrow:#c7e7de;
+ --home-hero-copy:#edf5f1; --home-hero-detail:#d1e3da;
+ --home-footer-copy:#c8dad3; --home-footer-muted:#bacdc7;
+  --home-hero-art:url('/phase4/hero-sea-green-diver-whale-shark-v1.png');
   --font-customer: 'Deeparture Manrope', sans-serif;
   --type-heading-1: 600 60px/60px var(--font-customer);
   --type-heading-2: 600 48px/48px var(--font-customer);
@@ -19,6 +29,16 @@
   --spacing-600:48px; --spacing-700:64px; --spacing-800:80px; --spacing-900:96px;
   --motion-curve:cubic-bezier(.22,1,.36,1);
   font-family:var(--font-customer);
+}
+.system[data-home-palette=midnight] {
+ --home-deep:#101d34; --home-deep-rgb:16,29,52;
+ --home-ink:#172c43; --home-muted:#566479; --home-sea:#275b85;
+ --home-pale:#edf3fa; --home-canvas:#f7f8fc; --home-line:#dbe2ed;
+ --home-border:#7c8da8; --home-accent:#e6c27d; --home-accent-hover:#d8af61;
+ --home-on-accent:#172c43; --home-action-border:#8c672a;
+ --home-footer:#0b1628; --home-hero-highlight:#f0d9a4;
+ --home-hero-eyebrow:#e7dbbe; --home-hero-copy:#edf2fa;
+ --home-hero-detail:#d7e1f0; --home-footer-copy:#ccd7e8; --home-footer-muted:#bbc8db;
 }
 .system :is(h1,h2,h3,h4,p,a,input,button,label,textarea,select,small,strong,span,legend,dt,dd,summary,li) {font-family:var(--font-customer)!important;}
 .system :is(h1,h2,h3,h4){text-wrap:balance;}

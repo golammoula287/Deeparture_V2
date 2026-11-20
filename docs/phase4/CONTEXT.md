@@ -1,8 +1,73 @@
 # Phase 4 — Customer marketplace redesign and PWA
 
-Last updated: 2026-11-13 (Asia/Dhaka)
+Last updated: 2026-11-21 (Asia/Dhaka)
 
-## Current status
+## Current handoff — client corrections, 20 November 2026
+
+The client approved implementation of the consolidated corrections. Step 01 is implemented and locally verified. Step 02 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+
+### Source order and precedence
+
+The local client source pack is in [Phase 4 Full implementations Details](<../../deliverables/Phase 4  Full implementations Details />). The folder is Git-ignored. A fresh checkout needs the original client files supplied separately.
+
+1. Latest pasted client approval and the four WhatsApp references. The approved contact values and behaviour are captured below. The footer mockup supplies layout guidance. Retain the existing header logo in the footer and use the confirmed contact details.
+2. `Deeparture_Phase4_Consolidated_Developer_Checklist_FINAL_Rev5.pdf` (17 November, 7 pages). Use it for exact public copy, headers, search fields, Contact structure and all six FAQ entries in §7.
+3. `Deeparture_Phase4_Developer_Implementation_Guide.docx` (20 November). Use its 13-step sequence and developer handback. Refer to `Deeparture_Phase4_Desktop_UI_Audit_FINAL_Tile_Decision.pdf` (8 pages) and `Deeparture_Phase4_Mobile_UI_Audit_SEND_READY.pdf` (7 pages) for responsive and interaction details that Rev5 leaves in place.
+4. `Deeparture.pdf` is a visual identity concept deck. The SVG/PNG ZIPs contain logo, pictograph and social-icon artwork. Both ZIPs contain the same 19 artwork files byte for byte. They include the four original pictographs (puzzle, shield, cog and tag), two wordmarks, star graphics, a promotional diver image and social icons. The archive icons differ from the footer mockup, so verify which platforms and profile URLs the live footer actually uses. Preserve the existing site logo in both header and footer.
+5. The [original Rev 1.1 package](../Deeparture_V2_Phase4_COMPLETE_Handover_Rev1.1.zip) supplies wider API, commercial, SEO, PWA and acceptance requirements where the newer documents are silent.
+
+### Current code to build on
+
+- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer needs the approved Step 02 content.
+- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage still derives its featured selection from sampled catalogue results and offers. Current search controls include separate liveaboard dates, primary price fields in the finder and unsupported availability controls.
+- [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) has Nitrox and Rebreather support and has no Freediving entry.
+- [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
+- The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
+
+### Implementation sequence
+
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Step 01 is locally verified. Step 02 is next.
+
+| Step | Work and completion check |
+| --- | --- |
+| 01 | Centralize theme roles and shared header. Retain the modern layout and compact hero areas. Use the current Deeparture logo, approved pictographs and replaceable artwork. Share navigation and active states across customer routes. Desktop keeps Search and Contact us. Mobile keeps Search and hamburger. Remove deferred heart, account and agent controls throughout the customer UI. |
+| 02 | Build the shared footer with Brand, Explore, About, Contact, Follow, Operator login and legal links. Use the header logo and “Dive travel for everyone.” Keep “Sign in / Sign up” for Operator login. Verify existing legal and Groups/Charters destinations. Copy the official live-site social URLs into one shared configuration and verify each link. Add a floating direct WhatsApp action. |
+| 03 | Trace catalogue and preference-loading failures across V2 API, configuration, taxonomy and rendering. Definitions must load independently of matching inventory. Extend the shared Dietary, Accessibility, Facilities and Diving taxonomy with Freediving alongside Nitrox, Photography and Rebreather. Display supported attributes on relevant listings. Verify matching rules and structured Liveaboard embarkation ports. Define independent Featured and Active Offer contracts for both product types. |
+| 04 | Apply exact Rev5 homepage copy, including “Travel for everyone.” Keep Liveaboards as the default mode, configured shortcuts, separate Featured Trips and Special Offers, and six agreed destinations. Keep four compact “Explore Deeparture” tiles on desktop and remove the duplicate row on mobile. Mobile shortcuts are Wi-Fi, Accessible, Nitrox and All Filters. Desktop also includes Photography and Rebreather. |
+| 05 | Put one Departure Window range control on the homepage and label it Departure dates on the Liveaboard finder. Use exact dates, full-calendar-month shortcuts, Clear and Apply. Match inclusive departure-start dates. A trip departing 25 February and returning 5 March matches a February window. Resorts use separate, required Check-in and Check-out fields and validate the actual stay range. |
+| 06 | Move Price range to secondary filters with two handles synchronized with editable Min/Max. Keep Vegan Rating primary and explain vegan suitability. Use collapsible multi-select groups, usable duration fields and structured Liveaboard embarkation. Keep Apply/Clear and shortcut state in sync with counts and preserve unrelated search criteria. Remove Available only and use on-request/enquiry wording. |
+| 07 | Update `/explore/liveaboards` and `/explore/resorts` with the Contact-style compact hero, page identity and “Find your next Deeparture.” Put the active product tab first. Use Rev5 field order and wording. Liveaboards uses Destination, Departure dates, Trip length, Vegan Rating and Search. Resorts replaces departure dates and trip length with Check-in and Check-out. Desktop results use a visible left accordion and removable chips. Mobile uses a search summary, Modify Search, full-screen Filters and separate Sort. Use a travel-relevant default and verify sorting, card data and pagination. |
+| 08 | Build a dedicated mixed-product Featured Trips view and searchable `/special-offers`. Their only default restrictions are Featured = Yes and Active Offer = Yes respectively. Apply published/offer-validity rules, and test featured only, offer only, both and neither. Keep real cards, price basis, relevant detail/enquiry links and distinct no-match, no-active-offer and API-error states. Provide the dedicated `/why-deeparture` and `/destinations` routes in the customer journey. |
+| 09 | Use the compact Contact hero and exact Rev5 copy. Keep “Send us a message.” primary. Place the secondary FAQ beside it on desktop and below it on mobile, with a compact contact strip after both. Form requires Name, Email, interest and message. WhatsApp/Phone and destination/trip name are optional. Interest options are Liveaboard, Resort, Special Offer and Other. |
+| 10 | Use “Frequently asked questions” and the six exact Rev5 §7 question/answer pairs. Check structure and wording against the approved copy at phone and desktop widths. |
+| 11 | Persist general and contextual enquiries in V2, retaining relevant listing, trip, departure or offer context. Generate the Deeparture notification through a configurable server-side recipient and acknowledge receipt to the customer. Check record persistence and both email actions independently in test mode. Customer submission routes to Deeparture and avoids booking promises. |
+| 12 | Finish the wider customer journey from the original package and current V2 data, including details, galleries/lightbox, jump navigation, itineraries, cabins/rooms, departure/package detail, destination guides and offer routing. Review truthful pricing, accessibility, responsive performance, SEO and PWA. |
+| 13 | Run the guide’s acceptance checks and original-package checks against appropriate data. Record exact revision, environment, checks, screenshots, test URLs, configuration/schema changes and unresolved issues. Request review for each gate and record the outcome before marking it accepted. |
+
+Gate 1 covers shared foundations, catalogue and preferences, homepage search, dates and filters (steps 01–06). Gate 2 covers catalogue results, sorting and discovery (steps 07–08). Gate 3 covers Contact, FAQ, enquiries and the wider customer journey (steps 09–13). Approval to start is recorded. Gate approvals are pending.
+
+### Confirmed details and pending inputs
+
+- Public email `info@deeparture.travel` uses `mailto:info@deeparture.travel`. WhatsApp `+63 917 907 8121` uses `https://wa.me/639179078121`. Phone `+64 21 024 13170` uses `tel:+642102413170`. Verify official social URLs against the current footer at `deeparture.travel` during step 02.
+- Brett will provide final colours, real imagery and the receiving inbox. Preserve agreed hero proportions and the same overall hero treatment on Contact, Liveaboards and Resorts. Track final homepage logo placement separately from the instruction to use the current header logo in the footer. The public mailto and the enquiry notification recipient are separate settings.
+- Incomplete inventory is expected during development. Use clearly identified test records to exercise behaviour and preserve graceful empty states. Verify existing taxonomy combination rules, resort stay/rate semantics, offer validity, ranking if Recommended is chosen, and existing legal/Groups/Charters routes before fixing those contracts in code.
+- Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
+
+### Work log — 2026-11-21 (Asia/Dhaka)
+
+2026-11-21 (Asia/Dhaka) — Started the Phase 4 production build locally at http://127.0.0.1:3000 with the isolated test-mode API and existing sample database. Verified homepage HTTP 200 with the Step 01 pictographs and API HTTP 200 for 120 liveaboards and 120 resorts. Left the services running for review.
+
+- Implemented Step 01 on `phase4-customer-ux-implementation`. Centralized shared navigation palette and homepage hero artwork, added the four supplied brand pictographs, kept the approved homepage layout, and removed header and card favourites and customer account controls. The shared fixed header has desktop Search and Contact us, mobile Search and menu, and active links on category, detail and Contact routes.
+- Frontend production build and diff check passed. Chromium verified seven customer routes at 320, 390, 768, 901 and 1440 px using a production build and synthetic loopback API. Also verified menu Escape and focus return, homepage populated, empty and API-error states, pictograph loading, Search anchor and both palette options.
+- Next: Step 02 shared footer and contact links. Dedicated discovery routes remain scheduled for Step 08. Final imagery, palette and receiving inbox remain pending. Gate 1 review remains pending.
+
+### Work log — 2026-11-20 (Asia/Dhaka)
+
+Reviewed the client message, implementation guide, four PDFs, four visual/message references and both asset ZIP inventories. Checked the current branch and relevant source entry points, then added the scoped instructions and implementation handoff. Documentation validation covers the diff and referenced local paths. Application builds and tests were outside this documentation task.
+
+Follow-up visual review covered all 45 PDF pages, the three embedded guide mockups and all 19 unique ZIP assets. The Contact, footer and departure-window references confirm the layout and interaction details above. The alternate brand concepts and artwork remain reference material.
+
+## Historical status through 13 November 2026
 
 Removed the vertical “Beneath the surface, beyond the everyday.” homepage hero caption and its unused CSS, as requested. Frontend production build PASS; source absence and diff checks PASS. Build log: `docs/phase4/evidence/homepage-hero-polish-2026-11-13/frontend-build-caption-removal.txt`. No new tests/browser rerun/backend/deployment; known catalogue API limitation unchanged. Next: continue homepage visual review.
 

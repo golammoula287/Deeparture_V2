@@ -54,7 +54,7 @@
 .status { color: #294e5c; font-size:12px; margin: 16px 0 0; }
 .empty { background: var(--customer-surface-soft, #edf2f4); border-radius: 8px; padding: 24px; font-size:14px; color: var(--customer-muted, #50636b); }
 .empty a { display: inline-block; margin-top: 12px; text-decoration: underline; color: #123749; }
-.enquiry { position: sticky; top: 28px; border: 1px solid var(--customer-line, #d8e2e6); border-radius: 12px; padding: 24px; background: #fff; box-shadow: 0 12px 36px #07192508; }
+.enquiry { position: sticky; top: calc(var(--home-nav-height, 0px) + 28px); border: 1px solid var(--customer-line, #d8e2e6); border-radius: 12px; padding: 24px; background: #fff; box-shadow: 0 12px 36px #07192508; }
 .enquiry h2 { font-size:24px; }
 .enquiry > .muted { margin-bottom: 24px; }
 .selection { border-top: 1px solid var(--customer-line, #d8e2e6); border-bottom: 1px solid var(--customer-line, #d8e2e6); padding: 16px 0; margin-bottom: 24px; }

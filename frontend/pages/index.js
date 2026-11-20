@@ -38,11 +38,11 @@ export default function Home({ featured = [], catalogueError = false, definition
         <HomeSearch definitions={definitions} definitionsError={definitionsError} />
         <section className={styles.discovery} aria-label="Explore diving holidays"><div className={styles.exploreGrid}>{explore.map(tile => <Link key={tile.title} href={tile.href} className={styles.exploreTile}><Image src={tile.image} alt="" fill sizes="(max-width: 700px) 45vw, 23vw" quality={75} /><h2>{tile.title}</h2><HomeIcon size={19} /></Link>)}</div></section>
         <section className={styles.benefits} id="why-deeparture" aria-labelledby="why-title"><h2 id="why-title">Why Deeparture</h2>{[
-          ['globe', 'Inclusivity', 'Dive travel designed around individual needs.'],
-          ['shield', 'Trust', 'Explore the details. Enquire with confidence.'],
-          ['gear', 'Experience', 'Find your next diving adventure.'],
-          ['tag', 'Best price', 'Found a better deal? Ask our team to compare.'],
-        ].map(([icon, title, text]) => <article key={title}><HomeIcon name={icon} size={32} /><div><h3>{title}</h3><p>{text}</p></div></article>)}</section>
+          ['inclusivity', 'Inclusivity', 'Dive travel designed around individual needs.'],
+          ['trust', 'Trust', 'Explore the details. Enquire with confidence.'],
+          ['experience', 'Experience', 'Find your next diving adventure.'],
+          ['best-price', 'Best price', 'Found a better deal? Ask our team to compare.'],
+        ].map(([icon, title, text]) => <article key={title}><img src={`/brand/pictographs/${icon}.svg`} alt="" width="32" height="32" /><div><h3>{title}</h3><p>{text}</p></div></article>)}</section>
         <section className={styles.section} aria-labelledby="featured-title"><div className={styles.sectionHeading}><div><h2 id="featured-title">Featured trips &amp; special offers</h2></div><Link href="#special-offers" className={styles.textLink}>View all special offers<HomeIcon size={18} /></Link></div>
           {featured.length ? <div className={styles.catalogueGrid}>{featured.map(({ item, departure, type, offer }) => <HomeCatalogueCard key={`${type}-${item._id}`} item={item} departure={departure} type={type} offer={offer} />)}</div> : <div className={styles.catalogueEmpty}><HomeIcon name="compass" size={34} /><div><h3>{catalogueError ? 'A little pause in your journey.' : 'Your next adventure starts with exploring.'}</h3><p>{catalogueError ? 'We couldn’t load the catalogue just now. Your next destination can still start with a little inspiration below.' : 'There are no featured listings to show right now. Explore the catalogue or browse by destination.'}</p></div>{catalogueError ? <a href="/">Retry catalogue<HomeIcon size={17} /></a> : <Link href="/explore/liveaboards">Explore trips<HomeIcon size={17} /></Link>}</div>}
           <p className={styles.sectionNote}>Every journey starts with an enquiry. Prices, dates and availability are confirmed before a booking is agreed.</p>
