@@ -4,7 +4,7 @@ Last updated: 2026-11-21 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Step 01 is implemented and locally verified. Step 02 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01 and 02 are implemented and locally verified. Step 02 legal links await approved destinations. Step 03 is the next implementation step. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -18,7 +18,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Current code to build on
 
-- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer needs the approved Step 02 content.
+- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
 - [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage still derives its featured selection from sampled catalogue results and offers. Current search controls include separate liveaboard dates, primary price fields in the finder and unsupported availability controls.
 - [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) has Nitrox and Rebreather support and has no Freediving entry.
 - [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
@@ -26,7 +26,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Step 01 is locally verified. Step 02 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01 and 02 have local verification. Step 03 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -55,11 +55,19 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 
 ### Work log — 2026-11-21 (Asia/Dhaka)
 
+2026-11-21 (Asia/Dhaka) — Replaced the floating WhatsApp outline with a filled white mark in a 56 px green button. The approved chat URL is retained. Production build and diff check passed. Restarted the local frontend and verified the button and link before and after scrolling at 320, 390 and 1440 px. Next: review the Step 02 button.
+
+2026-11-21 (Asia/Dhaka) — Refined the Step 02 footer grid and aligned the social icons with the heading. Icons are white with the shared coral accent on hover and keyboard focus. Production build and diff check passed. Restarted port 3000 and verified alignment, overflow and icon styles in Chromium at 320, 390, 768, 961 and 1440 px. Next: review the updated footer.
+
+2026-11-21 (Asia/Dhaka) — Restarted the local frontend on port 3000 after a report that Step 02 was missing. Chromium verified the new homepage footer, fixed WhatsApp button and successful Next.js asset loads on port 3000 at 390 and 1440 px. The local server remains running. Next: review Step 02 on the homepage.
+
 2026-11-21 (Asia/Dhaka) — Started the Phase 4 production build locally at http://127.0.0.1:3000 with the isolated test-mode API and existing sample database. Verified homepage HTTP 200 with the Step 01 pictographs and API HTTP 200 for 120 liveaboards and 120 resorts. Left the services running for review.
 
 - Implemented Step 01 on `phase4-customer-ux-implementation`. Centralized shared navigation palette and homepage hero artwork, added the four supplied brand pictographs, kept the approved homepage layout, and removed header and card favourites and customer account controls. The shared fixed header has desktop Search and Contact us, mobile Search and menu, and active links on category, detail and Contact routes.
 - Frontend production build and diff check passed. Chromium verified seven customer routes at 320, 390, 768, 901 and 1440 px using a production build and synthetic loopback API. Also verified menu Escape and focus return, homepage populated, empty and API-error states, pictograph loading, Search anchor and both palette options.
-- Next: Step 02 shared footer and contact links. Dedicated discovery routes remain scheduled for Step 08. Final imagery, palette and receiving inbox remain pending. Gate 1 review remains pending.
+- Step 02 added the shared footer, approved contact details and fixed direct WhatsApp link. The live footer publishes Instagram, Facebook and X. It has an empty Telegram link, no YouTube or TikTok link, plain text for Groups or Charters, Terms and Privacy, and no Cookie Policy link. Group enquiries use a subject-prefilled email. Legal links and any additional social destinations await approved URLs.
+- Frontend production build and diff check passed. Chromium passed 42 checks across seven customer routes and six widths (320, 390, 768, 960, 961 and 1440 px) using the isolated sample API and representative liveaboard and resort details. Checked footer layout, logo, icons, configured link targets, and WhatsApp before/after scrolling. The published social URLs and WhatsApp destination returned HTTP 200 after redirects. Verified Step 02 on local port 3000.
+- Next implementation step: Step 03 catalogue and taxonomy. Gate 1 review remains pending.
 
 ### Work log — 2026-11-20 (Asia/Dhaka)
 
