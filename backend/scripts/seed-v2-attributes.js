@@ -12,6 +12,8 @@ const definitions = [
   ["sun_deck", "Sun Deck", "facility", "vessel"],
   ["spa", "Spa / Massage", "facility", "both"],
   ["laundry", "Laundry", "facility", "both"],
+  ["freediving", "Freediving", "diving", "both"],
+  ["photography", "Photography", "diving", "both"],
   ["nitrox", "Nitrox", "diving", "both"],
   ["free_nitrox", "Free Nitrox", "diving", "both"],
   ["rebreather_support", "Rebreather Support", "diving", "vessel"],

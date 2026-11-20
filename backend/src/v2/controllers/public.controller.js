@@ -6,7 +6,7 @@ const Resort = require("../models/resort.model");
 const RoomType = require("../models/roomType.model");
 const ResortPackage = require("../models/resortPackage.model");
 const ResortRatePeriod = require("../models/resortRatePeriod.model");
-const { listVessels, getVesselBySlug, listResorts } = require("../services/search.service");
+const { listVessels, getVesselBySlug, listResorts, listEmbarkationPorts } = require("../services/search.service");
 
 const vessels = catchAsync(async (req, res) => {
   const data = await listVessels(req.query);
@@ -34,4 +34,9 @@ const resort = catchAsync(async (req, res) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Resort retrieved", data: { ...item, roomTypes, packages, ratePeriods } });
 });
 
-module.exports = { vessels, vessel, resorts, resort };
+const embarkationPorts = catchAsync(async (req, res) => {
+  const data = await listEmbarkationPorts();
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Embarkation ports retrieved", data });
+});
+
+module.exports = { embarkationPorts, vessels, vessel, resorts, resort };

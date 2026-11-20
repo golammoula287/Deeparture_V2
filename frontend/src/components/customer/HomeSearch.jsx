@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import HomeIcon from './HomeIcon';
+import EmbarkationSelect from './EmbarkationSelect';
 import DestinationPicker from './DestinationPicker';
 import baseStyles from './HomePage.module.css';
 import searchStyles from './HomeSearch.module.css';
@@ -8,7 +9,7 @@ const styles = { ...baseStyles, ...searchStyles };
 const empty = { destination: '', startDate: '', endDate: '', minPrice: '', maxPrice: '', minNights: '', maxNights: '', embarkation: '', availableOnly: '', veganRatingMin: '', attributes: [] };
 const groups = { dietary: 'Dietary needs', accessibility: 'Accessibility', facility: 'Facilities & amenities', diving: 'Diving preferences', accommodation: 'Accommodation', sustainability: 'Sustainability', other: 'Other preferences' };
 
-export default function HomeSearch({ definitions = [], definitionsError = false }) {
+export default function HomeSearch({ definitions = [], definitionsError = false, ports = [], portsError = false }) {
   const [kind, setKind] = useState('vessel');
   const [criteria, setCriteria] = useState(empty);
   const [draft, setDraft] = useState(empty);
@@ -21,7 +22,9 @@ export default function HomeSearch({ definitions = [], definitionsError = false 
   const shortcutPattern = label => label === 'Accessible' ? /accessib|step.free|wheelchair|mobility/i : label === 'Photography' ? /photograph|camera.room/i : new RegExp(label === 'Wi-Fi' ? 'wi.?fi' : label, 'i');
   const quickFilter = label => {
     const pattern = shortcutPattern(label);
-    const definition = availableDefinitions.find(def => def.dataType === 'boolean' && pattern.test(`${def.key} ${def.label}`));
+    const eligible = availableDefinitions.filter(def => def.dataType === 'boolean');
+    const exactKey = { Nitrox: 'nitrox', Photography: 'photography' }[label];
+    const definition = eligible.find(def => def.key === exactKey) || eligible.find(def => pattern.test(`${def.key} ${def.label}`));
     if (!definition) { openFilters(); return; }
     setCriteria(previous => ({ ...previous, attributes: previous.attributes.some(item => item.key === definition.key) ? previous.attributes.filter(item => item.key !== definition.key) : [...previous.attributes, { key: definition.key, op: 'eq', value: true }] }));
   };
@@ -75,7 +78,7 @@ export default function HomeSearch({ definitions = [], definitionsError = false 
       <form className={styles.dialogForm} onSubmit={event => { event.preventDefault(); const message = validate(draft); if (message) { setError(message); return; } setCriteria(draft); setError(''); setOpen(false); }}>
         <div className={styles.dialogBody}>
           <fieldset><legend>Price range · USD</legend><p>{resort ? 'Package starting prices; final stay price is confirmed by enquiry.' : 'Departure starting prices; confirm the cabin and price basis on the trip page.'}</p><div className={styles.twoFields}><label className={styles.field}>Minimum price<input type="number" min="0" step="1" inputMode="numeric" placeholder="No minimum" value={draft.minPrice} onChange={event => setDraft({ ...draft, minPrice: event.target.value })} /></label><label className={styles.field}>Maximum price<input type="number" min="0" step="1" inputMode="numeric" placeholder="No maximum" value={draft.maxPrice} onChange={event => setDraft({ ...draft, maxPrice: event.target.value })} /></label></div></fieldset>
-          {!resort && <fieldset><legend>Trip length & departure</legend><div className={styles.twoFields}><label className={styles.field}>Minimum nights<input type="number" min="1" step="1" placeholder="Any" value={draft.minNights} onChange={event => setDraft({ ...draft, minNights: event.target.value })} /></label><label className={styles.field}>Maximum nights<input type="number" min="1" step="1" placeholder="Any" value={draft.maxNights} onChange={event => setDraft({ ...draft, maxNights: event.target.value })} /></label></div><label className={styles.field}>Embarkation point<input placeholder="Any departure port" value={draft.embarkation} onChange={event => setDraft({ ...draft, embarkation: event.target.value })} /></label></fieldset>}
+          {!resort && <fieldset><legend>Trip length & departure</legend><div className={styles.twoFields}><label className={styles.field}>Minimum nights<input type="number" min="1" step="1" placeholder="Any" value={draft.minNights} onChange={event => setDraft({ ...draft, minNights: event.target.value })} /></label><label className={styles.field}>Maximum nights<input type="number" min="1" step="1" placeholder="Any" value={draft.maxNights} onChange={event => setDraft({ ...draft, maxNights: event.target.value })} /></label></div><label className={styles.field}>Embarkation point<EmbarkationSelect ports={ports} error={portsError} value={draft.embarkation} onChange={embarkation => setDraft({ ...draft, embarkation })} /></label></fieldset>}
           <fieldset><legend>Availability</legend><label className={styles.checkField}><input type="checkbox" checked={draft.availableOnly === 'true'} onChange={event => setDraft({ ...draft, availableOnly: event.target.checked ? 'true' : '' })} />Available only</label></fieldset>
           <fieldset><legend>Food that fits you</legend>{ratingSelect(draft.veganRatingMin, value => setDraft({ ...draft, veganRatingMin: value }), styles.field)}<p>Deeparture’s Vegan Rating describes vegan suitability, rather than hotel quality or guest reviews.</p></fieldset>
           {definitionsError && <div className={styles.preferenceError} role="status"><strong>Extra preferences couldn’t load.</strong><p>Reload to try dietary, accessibility, facility and diving filters again.</p><a href="/#find-your-trip">Reload preferences</a></div>}

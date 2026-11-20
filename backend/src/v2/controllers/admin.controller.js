@@ -71,7 +71,7 @@ const syncDestinationLocations = async (payload) => {
   return payload;
 };
 
-const PRODUCT_FIELDS = ["name", "slug", "listingStatus", "verificationStatus", "summary", "description", "featuredImage", "gallery", "destinationLocations", "destinationSlugs", "facilities", "dietary", "accessibility", "divingFeatures", "veganRating", "environmentalRating", "sourceUrl", "lastCheckedAt", "verifiedAt", "vesselType", "yearBuilt", "yearRefit", "lengthMeters", "beamMeters", "maxGuests", "cabinCount", "homePort", "country", "region", "district"];
+const PRODUCT_FIELDS = ["name", "slug", "listingStatus", "verificationStatus", "summary", "description", "featured", "featuredImage", "gallery", "destinationLocations", "destinationSlugs", "facilities", "dietary", "accessibility", "divingFeatures", "veganRating", "environmentalRating", "sourceUrl", "lastCheckedAt", "verifiedAt", "vesselType", "yearBuilt", "yearRefit", "lengthMeters", "beamMeters", "maxGuests", "cabinCount", "homePort", "country", "region", "district"];
 
 const createProduct = (Model, type) => catchAsync(async (req, res) => {
   const organisation = await Organisation.findById(req.body.organisation);

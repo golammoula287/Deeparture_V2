@@ -8,7 +8,7 @@ import styles from './ProductDetail.module.css';
 const list = value => Array.isArray(value) ? value : [];
 const idOf = value => typeof value === 'string' ? value : value?._id;
 const words = value => String(value || '').replace(/[_-]/g, ' ');
-const textOf = value => typeof value === 'string' ? words(value) : value?.label || value?.name || value?.value || '';
+const textOf = value => value === 'freediving' ? 'Freediving supported' : typeof value === 'string' ? words(value) : value?.label || value?.name || value?.value || '';
 const date = value => {
   const parsed = new Date(value);
   return value && !Number.isNaN(parsed.getTime()) ? new Intl.DateTimeFormat('en', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(parsed) : 'Dates on request';

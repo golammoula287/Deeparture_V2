@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import CustomerShell from './CustomerShell';
+import EmbarkationSelect from './EmbarkationSelect';
 import CatalogueCard from './CatalogueCard';
 import { finderUrl, sorts } from '@/src/lib/customer/searchState';
 import styles from './Marketplace.module.css';
@@ -9,11 +10,12 @@ import styles from './Marketplace.module.css';
 const groups = { dietary: 'Dietary requirements', accessibility: 'Accessibility', diving: 'Diving features', facility: 'Facilities', accommodation: 'Accommodation', sustainability: 'Sustainability', other: 'Other preferences' };
 const parseAttributes = state => { try { return JSON.parse(state.attributes || '[]'); } catch { return []; } };
 
-export default function TripFinder({ resort = false, state, data, definitions = [], error, definitionsError, invalid }) {
+export default function TripFinder({ resort = false, state, data, definitions = [], error, definitionsError, ports = [], portsError, invalid }) {
   const router = useRouter();
   const path = resort ? '/explore/resorts' : '/explore/liveaboards';
   const [draft, setDraft] = useState(state);
   const [advanced, setAdvanced] = useState(parseAttributes(state));
+  const [embarkation, setEmbarkation] = useState(state.embarkation || '');
   const [rating, setRating] = useState(state.veganRatingMin || '');
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -34,11 +36,11 @@ export default function TripFinder({ resort = false, state, data, definitions = 
     if (draft.minPrice && draft.maxPrice && Number(draft.minPrice) > Number(draft.maxPrice)) { setValidation('Maximum price must be at least the minimum price.'); return; }
     navigate({ ...state, ...draft, page: '1' });
   };
-  const openFilters = () => { setAdvanced(parseAttributes(state)); setRating(state.veganRatingMin || ''); setOpen(true); };
+  const openFilters = () => { setAdvanced(parseAttributes(state)); setRating(state.veganRatingMin || ''); setEmbarkation(state.embarkation || ''); setOpen(true); };
   const changeAttribute = (definition, value) => setAdvanced(current => [...current.filter(item => item.key !== definition.key), ...(value === '' || value === false || (Array.isArray(value) && !value.length) ? [] : [{ key: definition.key, op: Array.isArray(value) ? 'all' : 'eq', value }])]);
-  const apply = () => { const next = { ...state, veganRatingMin: rating, attributes: advanced.length ? JSON.stringify(advanced) : '', page: '1' }; setOpen(false); navigate(next); };
+  const apply = () => { const next = { ...state, ...(!resort && { embarkation }), veganRatingMin: rating, attributes: advanced.length ? JSON.stringify(advanced) : '', page: '1' }; setOpen(false); navigate(next); };
   const attributes = parseAttributes(state);
-  const count = attributes.length + Number(Boolean(state.veganRatingMin));
+  const count = attributes.length + Number(Boolean(state.veganRatingMin)) + Number(Boolean(state.embarkation));
   const applied = Object.entries(state).filter(([key, value]) => value && !['page', 'sort', 'attributes'].includes(key));
   const labels = { destination: 'Destination', startDate: 'Depart from', endDate: 'Depart by', minNights: 'Minimum nights', maxNights: 'Maximum nights', minPrice: 'Minimum USD', maxPrice: 'Maximum USD', embarkation: 'Embarkation', veganRatingMin: 'Deeparture’s Vegan Rating at least' };
   const products = Array.isArray(data?.items) ? data.items : [];
@@ -68,6 +70,7 @@ export default function TripFinder({ resort = false, state, data, definitions = 
         <div className={styles.drawerHeader}><h2 id="trip-filters-title">Make it your journey</h2><button type="button" onClick={() => setOpen(false)}>Close</button></div>
         <div className={styles.drawerBody}>
           <fieldset className={styles.filterGroup}><legend>Vegan Rating</legend><label className={styles.field}>Minimum rating<select value={rating} onChange={e => setRating(e.target.value)}><option value="">Any rating</option><option value="3">3 / 5 and above</option><option value="4">4 / 5 and above</option><option value="5">5 / 5</option></select></label><p>Use a minimum published Deeparture rating. Ask about specific requirements before you travel.</p></fieldset>
+          {!resort && <label className={styles.field}>Embarkation point<EmbarkationSelect ports={ports} error={portsError} value={embarkation} onChange={setEmbarkation} /></label>}
           {definitionsError && <p role="status">Additional preferences couldn’t be loaded. Close and retry the page to load the current filters.</p>}
           {Object.entries(groups).map(([group, label]) => {
             const entries = definitions.filter(d => d.group === group && d.filterable !== false);
@@ -81,7 +84,7 @@ export default function TripFinder({ resort = false, state, data, definitions = 
           })}
           <p className={styles.criteriaNote}>Each selected requirement must be met. Current prices, dates and availability are confirmed through your enquiry.</p>
         </div>
-        <div className={styles.drawerFooter}><button type="button" className={styles.outlineButton} onClick={() => { setAdvanced([]); setRating(''); }}>Clear preferences</button><button type="button" className={styles.darkButton} onClick={apply}>Apply filters</button></div>
+        <div className={styles.drawerFooter}><button type="button" className={styles.outlineButton} onClick={() => { setAdvanced([]); setRating(''); setEmbarkation(''); }}>Clear preferences</button><button type="button" className={styles.darkButton} onClick={apply}>Apply filters</button></div>
       </dialog>
     </main>
   </CustomerShell>;

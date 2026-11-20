@@ -4,7 +4,7 @@ Last updated: 2026-11-21 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01 and 02 are implemented and locally verified. Step 02 legal links await approved destinations. Step 03 is the next implementation step. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–03 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 04 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -20,13 +20,13 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 - [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
 - [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage still derives its featured selection from sampled catalogue results and offers. Current search controls include separate liveaboard dates, primary price fields in the finder and unsupported availability controls.
-- [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) has Nitrox and Rebreather support and has no Freediving entry.
+- [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) includes Freediving, Photography, Nitrox and Rebreather.
 - [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
 - The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01 and 02 have local verification. Step 03 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–03 have local verification. Step 04 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -54,6 +54,12 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
 ### Work log — 2026-11-21 (Asia/Dhaka)
+
+
+- Step 03 added shared Freediving and Photography definitions for both product types. Search keeps existing AND matching for selected requirements and respects definition eligibility. Structured embarkation choices use active itineraries on published liveaboards, with canonical port records and legacy stored slugs supported. Harbour labels in fixtures reflect their synthetic data.
+- Both catalogue APIs accept `featured=true` for the admin-managed listing flag and `activeOffer=true` for an actual current discount on eligible departure cabin pricing or an active resort package and rate period. The filters can be combined. Homepage selection and dedicated discovery views are scheduled for Steps 04 and 08.
+- Before changes, the local catalogue and preference endpoints succeeded with 120 listings per type and six definitions per type. Added 31 standard definitions only to the isolated sample database. Backend syntax (112 files), all 46 tests, frontend production build and diff check passed. Verified filter combinations and port matching through the local API, all Featured/Active Offer combinations per product type using temporary fixture changes, and homepage and finder controls in Chromium at 390, 768 and 1440 px. A separate synthetic 503 verified that the frontend preserves working preferences and distinguishes catalogue/offer outages from no results. Removed temporary offer fixtures and restored prior featured flags after validation.
+- Four read-only requests to the hosted catalogue and definitions timed out at 20 seconds. The client-reported hosted failure is unresolved. Local port 3000 serves Step 03. Next implementation step: Step 04 homepage copy and search.
 
 2026-11-21 (Asia/Dhaka) — Replaced the floating WhatsApp outline with a filled white mark in a 56 px green button. The approved chat URL is retained. Production build and diff check passed. Restarted the local frontend and verified the button and link before and after scrolling at 320, 390 and 1440 px. Next: review the Step 02 button.
 

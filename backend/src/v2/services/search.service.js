@@ -4,6 +4,7 @@ const Itinerary = require('../models/itinerary.model');
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
 const ResortAvailability = require('../models/resortAvailability.model');
+const { activeOfferProductIds } = require('./catalogueOffers.service');
 const RoomType = require('../models/roomType.model');
 const Organisation = require('../models/organisation.model');
 const Location = require('../models/location.model');
@@ -59,7 +60,7 @@ const productIdsForAttributes = async ({ productType, filters }) => {
   const modelName = productType === 'resort' ? 'ResortV2' : 'VesselV2';
   let ids = null;
   for (const filter of filters) {
-    const definition = await AttributeDefinition.findOne({ key: normalizeFacet(filter.key), active: true, filterable: true }).lean();
+    const definition = await AttributeDefinition.findOne({ key: normalizeFacet(filter.key), active: true, filterable: true, applicableTo: { $in: [productType, 'both'] } }).lean();
     if (!definition) return [];
     const value = typedValue(definition, filter.value, filter.op || 'eq');
     let condition = value;
@@ -166,6 +167,7 @@ const resortIdsFromOperationalFilters = async (query) => {
 const baseProductFilter = async ({ productType, query, publicOnly }) => {
   const filter = publicOnly ? { listingStatus: 'published' } : {};
   if (!publicOnly && query.status) filter.listingStatus = query.status;
+  if (query.featured === 'true') filter.featured = true;
   if (query.organisation) filter.organisation = query.organisation;
   if (!publicOnly && query.claimStatus) {
     const orgIds = await Organisation.distinct('_id', { status: query.claimStatus });
@@ -199,6 +201,9 @@ const searchProducts = async ({ productType, query = {}, publicOnly = false, pop
   let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query) : await vesselIdsFromOperationalFilters(query, { publicOnly });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
+  if (publicOnly && query.activeOffer === 'true' && ids?.length !== 0) {
+    ids = intersect(ids, await activeOfferProductIds(productType));
+  }
   if (ids !== null) filter._id = { $in: ids };
 
   const { page, limit, skip, sort } = parsePagination(query, { defaultLimit: publicOnly ? 24 : 25, maxLimit: 100, allowedSort: ['name','updatedAt','createdAt','completenessScore','veganRating'], defaultSort: publicOnly ? 'name' : '-updatedAt' });
@@ -225,4 +230,20 @@ const getVesselBySlug = async (slug) => {
   return { ...vessel, itineraries, departures };
 };
 
-module.exports = { listVessels, getVesselBySlug, listResorts, searchAdminProducts, searchProducts, parseAttributeFilters, productIdsForAttributes, typedValue, normalizeFacet, intersect };
+const listEmbarkationPorts = () => Itinerary.aggregate([
+  { $match: { status: 'active', $or: [{ 'embarkation.slug': { $type: 'string', $ne: '' } }, { 'embarkation.location': { $type: 'objectId' } }] } },
+  { $lookup: { from: Vessel.collection.name, localField: 'vessel', foreignField: '_id', as: 'listing' } },
+  { $match: { 'listing.listingStatus': 'published' } },
+  { $lookup: { from: Location.collection.name, localField: 'embarkation.location', foreignField: '_id', as: 'port' } },
+  { $set: { port: { $first: '$port' } } },
+  { $set: {
+    portSlug: { $cond: ['$port.active', '$port.slug', '$embarkation.slug'] },
+    portName: { $cond: ['$port.active', '$port.name', '$embarkation.name'] },
+  } },
+  { $match: { portSlug: { $type: 'string', $ne: '' } } },
+  { $group: { _id: '$portSlug', name: { $min: '$portName' } } },
+  { $project: { _id: 0, slug: '$_id', name: { $ifNull: ['$name', '$_id'] } } },
+  { $sort: { name: 1, slug: 1 } },
+]);
+
+module.exports = { listEmbarkationPorts, listVessels, getVesselBySlug, listResorts, searchAdminProducts, searchProducts, parseAttributeFilters, productIdsForAttributes, typedValue, normalizeFacet, intersect };

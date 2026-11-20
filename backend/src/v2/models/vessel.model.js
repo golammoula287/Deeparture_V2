@@ -36,6 +36,7 @@ const vesselSchema = new Schema(
     completenessUpdatedAt: Date,
     summary: String,
     description: String,
+    featured: { type: Boolean, default: false },
     featuredImage: String,
     gallery: [String],
     vesselType: String,
