@@ -4,6 +4,7 @@ const Itinerary = require('../models/itinerary.model');
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
 const ResortAvailability = require('../models/resortAvailability.model');
+const { parseDay, resortIdsForStay } = require('./resortStay.service');
 const { activeOfferProductIds } = require('./catalogueOffers.service');
 const RoomType = require('../models/roomType.model');
 const Organisation = require('../models/organisation.model');
@@ -121,7 +122,14 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {
   const departureFilter = { status: { $nin: ['cancelled'] } };
   let useDepartures = false;
   if (query.startDate) { departureFilter.startDate = { ...(departureFilter.startDate || {}), $gte: new Date(query.startDate) }; useDepartures = true; }
-  if (query.endDate) { departureFilter.startDate = { ...(departureFilter.startDate || {}), $lte: new Date(query.endDate) }; useDepartures = true; }
+  if (query.endDate) {
+    const endDay = publicOnly && parseDay(query.endDate);
+    const end = endDay
+      ? { $lt: new Date(endDay.setUTCDate(endDay.getUTCDate() + 1)) }
+      : { $lte: new Date(query.endDate) };
+    departureFilter.startDate = { ...departureFilter.startDate, ...end };
+    useDepartures = true;
+  }
   if (query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
   if (query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
   if (query.hasPricing === 'true') { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $exists: true, $ne: null }; useDepartures = true; }
@@ -138,16 +146,17 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {
   return ids;
 };
 
-const resortIdsFromOperationalFilters = async (query) => {
+const resortIdsFromOperationalFilters = async (query, { publicOnly }) => {
   let ids = null;
-  if (query.maxPrice || query.minPrice || query.hasPricing === 'true') {
+  const hasStay = publicOnly && (query.checkIn !== undefined || query.checkOut !== undefined);
+  if (hasStay || query.maxPrice || query.minPrice || query.hasPricing === 'true') {
     const price = { active: true };
     if (query.maxPrice || query.minPrice) {
       price['basePrice.amountUsd'] = {};
       if (query.maxPrice) price['basePrice.amountUsd'].$lte = Number(query.maxPrice);
       if (query.minPrice) price['basePrice.amountUsd'].$gte = Number(query.minPrice);
     }
-    ids = (await ResortPackage.distinct('resort', price)).map(String);
+    ids = hasStay ? await resortIdsForStay(query, price) : (await ResortPackage.distinct('resort', price)).map(String);
   }
   if (query.hasAvailability === 'true' || query.availableOnly === 'true' || query.availability || query.freshness || query.availabilitySource || query.conflict === 'true' || query.override === 'true') {
     const availabilityFilter = {};
@@ -198,7 +207,7 @@ const baseProductFilter = async ({ productType, query, publicOnly }) => {
 const searchProducts = async ({ productType, query = {}, publicOnly = false, populateOrganisation = false }) => {
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
-  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query) : await vesselIdsFromOperationalFilters(query, { publicOnly });
+  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly }) : await vesselIdsFromOperationalFilters(query, { publicOnly });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
   if (publicOnly && query.activeOffer === 'true' && ids?.length !== 0) {

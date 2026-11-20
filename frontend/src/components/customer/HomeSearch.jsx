@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { stayDateError } from '@/src/lib/customer/searchDates';
+import DepartureWindow from './DepartureWindow';
+import StayDateFields from './StayDateFields';
 import HomeIcon from './HomeIcon';
 import EmbarkationSelect from './EmbarkationSelect';
 import DestinationPicker from './DestinationPicker';
@@ -6,7 +9,7 @@ import baseStyles from './HomePage.module.css';
 import searchStyles from './HomeSearch.module.css';
 const styles = { ...baseStyles, ...searchStyles };
 
-const empty = { destination: '', startDate: '', endDate: '', minPrice: '', maxPrice: '', minNights: '', maxNights: '', embarkation: '', veganRatingMin: '', attributes: [] };
+const empty = { destination: '', startDate: '', endDate: '', checkIn: '', checkOut: '', minPrice: '', maxPrice: '', minNights: '', maxNights: '', embarkation: '', veganRatingMin: '', attributes: [] };
 const groups = { dietary: 'Dietary needs', accessibility: 'Accessibility', facility: 'Facilities & amenities', diving: 'Diving preferences', accommodation: 'Accommodation', sustainability: 'Sustainability', other: 'Other preferences' };
 
 export default function HomeSearch({ definitions = [], definitionsError = false, ports = [], portsError = false }) {
@@ -50,10 +53,10 @@ export default function HomeSearch({ definitions = [], definitionsError = false,
   const chooseKind = next => {
     if (next === kind) return;
     setKind(next); setError('');
-    setCriteria(previous => ({ ...previous, startDate: '', endDate: '', minNights: '', maxNights: '', embarkation: '', attributes: previous.attributes.filter(item => definitions.some(def => def.key === item.key && (def.applicableTo || []).some(type => type === next || type === 'both'))) }));
+    setCriteria(previous => ({ ...previous, minNights: '', maxNights: '', embarkation: '', attributes: previous.attributes.filter(item => definitions.some(def => def.key === item.key && (def.applicableTo || []).some(type => type === next || type === 'both'))) }));
   };
   const submit = event => {
-    const message = validate(criteria);
+    const message = (resort && stayDateError(criteria.checkIn, criteria.checkOut)) || validate(criteria);
     if (message) { event.preventDefault(); setError(message); }
   };
   const changeAttribute = (definition, value) => setDraft(previous => ({ ...previous, attributes: [...previous.attributes.filter(item => item.key !== definition.key), ...(value === '' || value === false || (Array.isArray(value) && !value.length) ? [] : [{ key: definition.key, op: Array.isArray(value) ? 'all' : 'eq', value }])] }));
@@ -63,7 +66,9 @@ export default function HomeSearch({ definitions = [], definitionsError = false,
     <form action={resort ? '/explore/resorts' : '/explore/liveaboards'} method="get" onSubmit={submit}>
       <div className={`${styles.searchFields} ${resort ? styles.resortSearch : ''}`}>
         <DestinationPicker className={styles.field} value={criteria.destination} onChange={value => set('destination', value)} />
-        {!resort && <><label className={styles.field}><span><HomeIcon name="calendar" size={20} />From</span><input aria-label="From · departure date" type="date" name="startDate" value={criteria.startDate} onChange={event => set('startDate', event.target.value)} /></label><label className={styles.field}><span><HomeIcon name="calendar" size={20} />To</span><input aria-label="To · departure date" type="date" name="endDate" min={criteria.startDate || undefined} value={criteria.endDate} onChange={event => set('endDate', event.target.value)} /></label></>}
+        {resort
+          ? <StayDateFields className={styles.field} checkIn={criteria.checkIn} checkOut={criteria.checkOut} onChange={set} />
+          : <DepartureWindow className={styles.field} label="Departure Window" startDate={criteria.startDate} endDate={criteria.endDate} onChange={range => setCriteria(previous => ({ ...previous, ...range }))} />}
         {ratingSelect(criteria.veganRatingMin, value => set('veganRatingMin', value), styles.field)}
         <button className={styles.searchButton} type="submit"><HomeIcon name="search" size={20} />Search</button>
       </div>
