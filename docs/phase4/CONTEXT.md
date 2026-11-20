@@ -4,7 +4,7 @@ Last updated: 2026-11-21 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–03 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 04 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–04 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 05 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -19,14 +19,14 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 ### Current code to build on
 
 - [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
-- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage still derives its featured selection from sampled catalogue results and offers. Current search controls include separate liveaboard dates, primary price fields in the finder and unsupported availability controls.
+- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured link temporarily opens a paginated homepage listing until Step 08 adds dedicated discovery routes. Current search controls include separate liveaboard dates, primary price fields in the finder and unsupported availability controls.
 - [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) includes Freediving, Photography, Nitrox and Rebreather.
 - [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
 - The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–03 have local verification. Step 04 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–04 have local verification. Step 05 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -54,6 +54,13 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
 ### Work log — 2026-11-21 (Asia/Dhaka)
+
+
+- Step 04 applied the exact Rev5 homepage copy, retained four shallow desktop Explore Deeparture tiles, hid those tiles on mobile, and retained the six agreed destinations and existing art. The homepage defaults to Liveaboards, uses the documented shortcut order for each viewport, keeps price inputs in All Filters, and removes Available only.
+- Featured Trips and Special Offers read independent mixed-product catalogue feeds. The temporary View all link opens paginated featured results on the homepage. Dedicated discovery routes are Step 08. Resort offer cards show pricing on request and a confirmed offer badge. Final destination imagery is still a client input.
+- Frontend production build, 10 frontend tests and diff check passed. Chromium passed at 320, 390, 700, 701, 768, 1024 and 1440 px with a synthetic local API, covering approved copy, controls, mixed-product cards, featured pagination and empty/error states. Restarted port 3000 and confirmed HTTP 200 with sample offer cards and an empty featured state because no local listings are flagged.
+- Next: Step 05 departure window, resort check-in/check-out and date matching.
+
 
 
 - Step 03 added shared Freediving and Photography definitions for both product types. Search keeps existing AND matching for selected requirements and respects definition eligibility. Structured embarkation choices use active itineraries on published liveaboards, with canonical port records and legacy stored slugs supported. Harbour labels in fixtures reflect their synthetic data.
