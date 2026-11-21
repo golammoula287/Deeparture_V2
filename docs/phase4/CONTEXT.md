@@ -4,7 +4,7 @@ Last updated: 2026-11-22 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–08 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 09 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–09 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 10 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -26,7 +26,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–08 have local verification. Step 09 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–09 have local verification. Step 10 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -54,6 +54,8 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
 ### Work log — 2026-11-22 (Asia/Dhaka)
+
+- 2026-11-22 (Asia/Dhaka) — Phase 4 Step 09 Contact page and form are implemented and locally verified. Added the approved compact hero and form copy, required and optional fields, desktop/mobile FAQ placement, and direct Email, WhatsApp and Phone strip. Next: Step 10 exact FAQ content. The current form opens a draft in the visitor’s email app and does not claim receipt. In-app persistence and receipt emails are Step 11. Existing FAQ entries remain pending the approved six-entry replacement in Step 10. Existing artwork fills the hero until the client supplies its final image. Frontend production build and diff check passed. Chromium passed at 320, 390, 768 and 1440 px for layout, copy, active header, required fields, optional fields, special-offer preselection and draft link. No emails were sent. Local port 3000 serves the latest build. No commit or deployment.
 
 
 - Step 08 added `/featured-trips`, `/special-offers`, `/destinations`, six destination guides and `/why-deeparture`. Homepage and shared navigation point to the dedicated routes. Product details preserve the return link. The Why page uses approved copy and the supplied icons while expanded approved copy and final destination imagery remain client inputs.

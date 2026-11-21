@@ -92,24 +92,10 @@
 .principles p { color: var(--slate); line-height: 1.85; font-size:14px; margin: 0; }
 .action { display: inline-flex; min-height: 48px; justify-content: center; align-items: center; margin-top: 24px; padding: 12px 24px; background: var(--night); color: #fff; border-radius: 24px; font-weight: 500; font-size:12px; text-decoration: none; }
 .action:hover { background: var(--teal); }
-.contactGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 48px; align-items: start; }
-.contactCard { background: #fff; border: 1px solid #dce5e9; border-radius: 12px; padding: 32px; }
-.contactCard h2 { font-size:24px; font-weight: 400; letter-spacing: -.025em; line-height: 1.2; margin: 0 0 16px; }
-.contactCard p { color: var(--slate); line-height: 1.85; margin: 0; }
-.contactChannel { display: block; padding: 24px 0; border-bottom: 1px solid #e2e9ed; text-decoration: none; color: var(--night); overflow-wrap: anywhere; }
-.contactChannel span { display: block; font-size:12px; color: var(--slate); margin-bottom: 4px; }
-.contactChannel strong { font-size:20px; font-weight: 400; font-family: 'Deeparture Manrope', sans-serif; }
-.contactChannel:hover strong { text-decoration: underline; }
-.questionList h2 { margin: 0 0 16px; font-size:24px; font-weight: 400; letter-spacing: -.025em; }
-.questionList details { border-bottom: 1px solid #d9e3e7; padding: 24px 0; }
-.questionList summary { cursor: pointer; font-weight: 500; font-size:14px; }
-.questionList details p { color: var(--slate); font-size:14px; line-height: 1.85; margin: 16px 0 0; }
-.notice { font-size:12px; color: var(--slate); margin: 16px 0 0; }
 @media (max-width: 1000px) {
  .headerInner { gap: 24px; }
  .desktopNavigation { gap: 24px; }
  .introduction { gap: 40px; }
- .contactGrid { gap: 32px; }
  .footerInner { gap: 24px; }
 }
 @media (max-width: 700px) {
@@ -130,9 +116,6 @@
  .statement { margin-top: 40px; padding-top: 24px; grid-template-columns: 1fr; gap: 16px; }
  .principles { grid-template-columns: 1fr; margin-top: 32px; gap: 24px; }
  .principles article { padding-top: 24px; }
- .contactGrid { grid-template-columns: 1fr; gap: 32px; margin-top: 32px; }
- .contactCard { padding: 24px; }
- .contactChannel strong { font-size:18px; }
 }
 @media (max-width: 360px) { .shell { --customer-gutter: 18px; } .logo img { width: 145px; } .findTrip { padding: 8px 12px; } }
 @media (prefers-reduced-motion: reduce) { .shell *, .shell *::before, .shell *::after { scroll-behavior: auto !important; transition: none !important; } }
@@ -143,7 +126,7 @@
 .title {font:var(--type-heading-2);letter-spacing:-.04em;}
 .lead {font:var(--type-body-3);max-width:65ch;}
 .page p {text-wrap:pretty;}
-.principles h2,.contactCard h2,.questionList h2 {font:var(--type-heading-5);}
+.principles h2 {font:var(--type-heading-5);}
 .footer p,.footer nav a,.footerBottom {font:var(--type-body-6);}
 .footer nav h2 {font:var(--type-button-sm);}
 @media(max-width:700px){.title{font:var(--type-heading-3);}}
