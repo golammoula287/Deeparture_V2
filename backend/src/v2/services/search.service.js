@@ -131,8 +131,8 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false, find
     departureFilter.startDate = { ...departureFilter.startDate, ...end };
     useDepartures = true;
   }
-  if (query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
-  if (query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
+  if (!finder?.activeOffer && query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
+  if (!finder?.activeOffer && query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
   if (query.hasPricing === 'true') { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $exists: true, $ne: null }; useDepartures = true; }
   if (query.hasAvailability === 'true') { departureFilter['availability.0'] = { $exists: true }; useDepartures = true; }
   if (query.availableOnly === 'true' || query.availability) { departureFilter['availability.status'] = query.availability ? query.availability : { $in: ['available','limited','on_request'] }; useDepartures = true; }
@@ -152,8 +152,8 @@ const resortIdsFromOperationalFilters = async (query, { publicOnly, finder }) =>
   let ids = null;
   const hasStay = publicOnly && (query.checkIn !== undefined || query.checkOut !== undefined);
   const price = { active: true };
-  if (hasStay || query.maxPrice || query.minPrice || query.hasPricing === 'true') {
-    if (query.maxPrice || query.minPrice) {
+  if (hasStay || (!finder?.activeOffer && (query.maxPrice || query.minPrice)) || query.hasPricing === 'true') {
+    if (!finder?.activeOffer && (query.maxPrice || query.minPrice)) {
       price['basePrice.amountUsd'] = {};
       if (query.maxPrice) price['basePrice.amountUsd'].$lte = Number(query.maxPrice);
       if (query.minPrice) price['basePrice.amountUsd'].$gte = Number(query.minPrice);
@@ -214,10 +214,11 @@ const searchProducts = async ({ productType, query = {}, publicOnly = false, pop
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
   const finder = publicOnly && query.view === 'finder' ? {} : null;
+  if (finder) Object.assign(finder, { activeOffer: query.activeOffer === 'true', checkIn: query.checkIn, checkOut: query.checkOut, minPrice: query.minPrice, maxPrice: query.maxPrice });
   let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly, finder }) : await vesselIdsFromOperationalFilters(query, { publicOnly, finder });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
-  if (publicOnly && query.activeOffer === 'true' && ids?.length !== 0) {
+  if (publicOnly && !finder && query.activeOffer === 'true' && ids?.length !== 0) {
     ids = intersect(ids, await activeOfferProductIds(productType));
   }
   if (ids !== null) filter._id = { $in: ids };

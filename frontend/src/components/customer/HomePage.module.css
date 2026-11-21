@@ -106,5 +106,5 @@
 @media(max-width:700px){.referenceHeroArt{opacity:.85;background-position:right center;mask-image:linear-gradient(90deg,transparent,#000 45%)}}
 .cardPrice del{font-size:11px;color:var(--muted);text-decoration-thickness:1px}.offerTerms{padding:7px 10px;background:var(--pale);color:var(--sea);font-size:10px;line-height:1.4}
 
-.featuredPagination { display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-top:14px; font-size:13px; }
-.featuredPagination a { color:var(--sea); text-decoration:underline; }
+
+.offerLinks { display:flex; flex-wrap:wrap; gap:6px 14px; }

@@ -6,28 +6,19 @@ import HomeSearch from '@/src/components/customer/HomeSearch';
 import HomeIcon from '@/src/components/customer/HomeIcon';
 import HomeCatalogueCard from '@/src/components/customer/HomeCatalogueCard';
 import { catalogueRead, noStore } from '@/src/lib/customer/publicCatalogue';
+import { destinations, values } from '@/src/lib/customer/destinations';
 import { departureOffer } from '@/src/lib/customer/specialOffers';
 import styles from '@/src/components/customer/HomePage.module.css';
 
 const explore = [
   { title: 'Liveaboards', href: '/explore/liveaboards', image: '/phase4/vessel.jpg' },
   { title: 'Resorts', href: '/explore/resorts', image: '/phase4/hero-island.jpg' },
-  { title: 'Special Offers', href: '#special-offers', image: '/phase4/hero-underwater.jpg' },
-  { title: 'Destinations', href: '#destinations', image: '/phase4/reef.jpg' },
+  { title: 'Special Offers', href: '/special-offers', image: '/phase4/hero-underwater.jpg' },
+  { title: 'Destinations', href: '/destinations', image: '/phase4/reef.jpg' },
 ];
-const destinations = [
-  { name: 'Raja Ampat', slug: 'raja-ampat', caption: 'Indonesia' },
-  { name: 'Maldives', slug: 'maldives', caption: 'Indian Ocean' },
-  { name: 'Komodo', slug: 'komodo', caption: 'Indonesia' },
-  { name: 'Red Sea', slug: 'red-sea', caption: 'Northeast Africa & Arabia' },
-  { name: 'Galápagos', slug: 'galapagos', caption: 'Ecuador' },
-  { name: 'Philippines', slug: 'philippines', caption: 'Southeast Asia' },
-];
-
-export default function Home({ featured = [], specialOffers = [], featuredPage = 0, featuredPages = 0, catalogueError = false, offersError = false, definitions = [], definitionsError = false, ports = [], portsError = false, palette = 'coral', colourPreview = false }) {
-  const featuredHref = page => `/?${new URLSearchParams({ ...(colourPreview && { palette }), featuredPage: String(page) })}#featured-trips`;
+export default function Home({ featured = [], specialOffers = [], catalogueError = false, offersError = false, definitions = [], definitionsError = false, ports = [], portsError = false, palette = 'coral', colourPreview = false }) {
   return <CustomerShell homepage homePalette={palette} title="Inclusive dive adventures start here" description="Find liveaboards and dive resorts around your destination, budget, dietary needs, accessibility and diving preferences. Explore the details, then enquire.">
-    {(colourPreview || featuredPage > 0) && <Head><meta name="robots" content="noindex,follow" /></Head>}
+    {colourPreview && <Head><meta name="robots" content="noindex,follow" /></Head>}
     <main className={styles.home}>
       {colourPreview && <nav className={styles.paletteComparison} aria-label="Homepage colour comparison"><span>Compare colours</span>{[['coral', '01 · Ocean & Coral'], ['midnight', '02 · Midnight & Champagne']].map(([value, label]) => <Link key={value} href={`/?palette=${value}`} aria-current={palette === value ? 'page' : undefined}><span className={styles.paletteSwatch} data-palette={value} aria-hidden="true" />{label}</Link>)}</nav>}
       <section className={styles.hero} aria-labelledby="home-title">
@@ -37,24 +28,14 @@ export default function Home({ featured = [], specialOffers = [], featuredPage =
       <div className={styles.body}>
         <HomeSearch definitions={definitions} definitionsError={definitionsError} ports={ports} portsError={portsError} />
         <section className={styles.discovery} aria-labelledby="explore-title"><h2 id="explore-title">Explore Deeparture</h2><div className={styles.exploreGrid}>{explore.map(tile => <Link key={tile.title} href={tile.href} className={styles.exploreTile}><Image src={tile.image} alt="" fill sizes="(max-width: 700px) 45vw, 23vw" quality={75} /><h3>{tile.title}</h3><HomeIcon size={19} /></Link>)}</div></section>
-        <section className={styles.benefits} id="why-deeparture" aria-labelledby="why-title"><h2 id="why-title">Why Deeparture</h2>{[
-          ['inclusivity', 'Inclusivity', 'Dive travel customised for the individual.'],
-          ['trust', 'Trust', 'Industry professionals trusted by thousands of divers for more than two decades.'],
-          ['experience', 'Experience', 'Experience across dive education, liveaboards, resorts and ocean conservation.'],
-          ['best-price', 'Best price', 'Found a better deal? Let us match it.'],
-        ].map(([icon, title, text]) => <article key={title}><img src={`/brand/pictographs/${icon}.svg`} alt="" width="32" height="32" /><div><h3>{title}</h3><p>{text}</p></div></article>)}</section>
-        <section id="featured-trips" className={styles.section} aria-labelledby="featured-title"><div className={styles.sectionHeading}><h2 id="featured-title">Featured trips</h2>{!featuredPage && <Link href={featuredHref(1)} className={styles.textLink}>View all featured trips<HomeIcon size={18} /></Link>}</div>
+        <section className={styles.benefits} id="why-deeparture" aria-labelledby="why-title"><h2 id="why-title">Why Deeparture</h2>{values.map(([icon, title, text]) => <article key={title}><img src={`/brand/pictographs/${icon}.svg`} alt="" width="32" height="32" /><div><h3>{title}</h3><p>{text}</p></div></article>)}</section>
+        <section id="featured-trips" className={styles.section} aria-labelledby="featured-title"><div className={styles.sectionHeading}><h2 id="featured-title">Featured trips</h2><Link href="/featured-trips" className={styles.textLink}>View all featured trips<HomeIcon size={18} /></Link></div>
           {featured.length ? <div className={styles.catalogueGrid}>{featured.map(({ item, departure, type, offer }) => <HomeCatalogueCard key={`${type}-${item._id}`} item={item} departure={departure} type={type} offer={offer} />)}</div> : <div className={styles.catalogueEmpty}><HomeIcon name="compass" size={34} /><div><h3>{catalogueError ? 'Featured trips couldn’t load.' : 'No featured trips to show.'}</h3><p>{catalogueError ? 'We couldn’t load the catalogue just now. Your next destination can still start with a little inspiration below.' : 'There are no featured listings to show right now. Explore the catalogue or browse by destination.'}</p></div>{catalogueError ? <a href="/">Retry catalogue<HomeIcon size={17} /></a> : <Link href="/explore/liveaboards">Explore trips<HomeIcon size={17} /></Link>}</div>}
           {catalogueError && featured.length > 0 && <p className={styles.sectionNote} role="status">Some featured trips couldn’t load. <a href="/">Retry catalogue</a></p>}
-          {featuredPage > 0 && featuredPages > 1 && <nav className={styles.featuredPagination} aria-label="Featured trips pages">
-            {featuredPage > 1 && <Link href={featuredHref(featuredPage - 1)}>Previous</Link>}
-            <span>Page {featuredPage} of {featuredPages}</span>
-            {featuredPage < featuredPages && <Link href={featuredHref(featuredPage + 1)}>Next</Link>}
-          </nav>}
           <p className={styles.sectionNote}>Every journey starts with an enquiry. Prices, dates and availability are confirmed before a booking is agreed.</p>
         </section>
-        <section id="special-offers" className={styles.section} aria-labelledby="offers-title"><div className={styles.sectionHeading}><h2 id="offers-title">Special Offers</h2><Link href="/contact?subject=special-offers" className={styles.textLink}>Enquire about special offers.<HomeIcon size={16} /></Link></div>{specialOffers.length ? <><div className={styles.catalogueGrid}>{specialOffers.map(({ item, departure, type, offer, activeOffer }) => <HomeCatalogueCard key={`offer-${type}-${item._id}`} item={item} departure={departure} type={type} offer={offer} activeOffer={activeOffer} />)}</div><p className={styles.sectionNote}>Confirm offer eligibility and final pricing by enquiry.</p></> : !offersError && <p className={styles.sectionNote}>No current offers to show. Ask our team about your preferred destination and dates.</p>}{offersError && <p className={styles.sectionNote} role="status">Some offers couldn’t load. <a href="/?retry=offers#special-offers">Retry offers</a></p>}</section>
-        <section className={styles.destinations} id="destinations" aria-labelledby="destinations-title"><div><h2 id="destinations-title">Popular destinations</h2><p>Explore leading dive destinations around the world.</p></div><div className={styles.destinationGrid}>{destinations.map((destination, index) => <Link key={destination.slug} className={styles.destination} href={`/explore/liveaboards?destination=${destination.slug}`}><Image src={['/phase4/hero-island.jpg', '/phase4/ocean.jpg', '/phase4/reef.jpg', '/phase4/hero-underwater.jpg', '/phase4/hero-scuba.jpg', '/phase4/hero-clear-water-diver.jpg'][index]} alt="" fill sizes="(max-width: 700px) 90vw, 13vw" /><h3>{destination.name}</h3><HomeIcon size={17} /></Link>)}</div></section>
+        <section id="special-offers" className={styles.section} aria-labelledby="offers-title"><div className={styles.sectionHeading}><h2 id="offers-title">Special Offers</h2><div className={styles.offerLinks}><Link href="/special-offers" className={styles.textLink}>View all special offers<HomeIcon size={16} /></Link><Link href="/contact?subject=special-offers" className={styles.textLink}>Enquire about special offers.<HomeIcon size={16} /></Link></div></div>{specialOffers.length ? <><div className={styles.catalogueGrid}>{specialOffers.map(({ item, departure, type, offer, activeOffer }) => <HomeCatalogueCard key={`offer-${type}-${item._id}`} item={item} departure={departure} type={type} offer={offer} activeOffer={activeOffer} />)}</div><p className={styles.sectionNote}>Confirm offer eligibility and final pricing by enquiry.</p></> : !offersError && <p className={styles.sectionNote}>No current offers to show. Ask our team about your preferred destination and dates.</p>}{offersError && <p className={styles.sectionNote} role="status">Some offers couldn’t load. <a href="/?retry=offers#special-offers">Retry offers</a></p>}</section>
+        <section className={styles.destinations} id="destinations" aria-labelledby="destinations-title"><div><h2 id="destinations-title">Popular destinations</h2><p>Explore leading dive destinations around the world.</p></div><div className={styles.destinationGrid}>{destinations.map(destination => <Link key={destination.slug} className={styles.destination} href={`/destinations/${destination.slug}`}><Image src={destination.image} alt="" fill sizes="(max-width: 700px) 90vw, 13vw" /><h3>{destination.name}</h3><HomeIcon size={17} /></Link>)}</div></section>
       </div>
     </main>
   </CustomerShell>;
@@ -63,10 +44,10 @@ Home.customerPage = true;
 
 export async function getServerSideProps({ res, query = {} }) {
   noStore(res);
-  const featuredPage = Math.max(0, Math.min(10000, Number.parseInt(query.featuredPage, 10) || 0));
+  if (query.featuredPage !== undefined) return { redirect: { destination: "/featured-trips", permanent: false } };
   const [vessels, resorts, vesselOffers, resortOffers, definitions, ports] = await Promise.all([
-    catalogueRead('liveaboards', { featured: true, limit: featuredPage ? 12 : 3, page: featuredPage || 1 }),
-    catalogueRead('resorts', { featured: true, limit: featuredPage ? 12 : 1, page: featuredPage || 1 }),
+    catalogueRead('liveaboards', { featured: true, limit: 3 }),
+    catalogueRead('resorts', { featured: true, limit: 1 }),
     catalogueRead('liveaboards', { activeOffer: true, limit: 3 }),
     catalogueRead('resorts', { activeOffer: true, limit: 1 }),
     catalogueRead('attributes'),
@@ -100,8 +81,6 @@ export async function getServerSideProps({ res, query = {} }) {
   return { props: {
     featured,
     specialOffers,
-    featuredPage,
-    featuredPages: Math.max(vessels.data?.pages || 0, resorts.data?.pages || 0),
     catalogueError: Boolean(vessels.error || resorts.error),
     offersError: Boolean(vesselOffers.error || resortOffers.error || promotedVessels.some(({ item }) => details.get(item.slug)?.error)),
     definitions: definitions.data || [],

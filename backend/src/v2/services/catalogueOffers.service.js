@@ -10,43 +10,70 @@ const offerWindow = (now, prefix = '') => ({
   ],
 });
 
-const vesselOfferIds = async (now) => {
+const vesselPromotions = async (now, filter = {}, vesselIds) => {
+  const earliest = filter.startDate?.$gte;
   const departures = await Departure.find({
-    startDate: { $gte: now },
+    ...filter,
+    ...(vesselIds && { vessel: { $in: vesselIds } }),
+    startDate: { ...filter.startDate, $gte: earliest > now ? earliest : now },
     status: { $nin: ['sold_out', 'cancelled'] },
     offers: { $elemMatch: { ...offerWindow(now), active: { $ne: false } } },
-  }).select('vessel itinerary offers priceOverrides')
-    .populate({ path: 'itinerary', match: { status: 'active' }, select: 'basePrices vessel' })
-    .lean();
+  }).select('vessel itinerary startDate endDate offers priceOverrides')
+    .populate({ path: 'itinerary', match: { status: 'active' }, select: 'basePrices vessel name numberOfNights' })
+    .sort({ startDate: 1, _id: 1 }).lean();
 
-  return departures.filter(({ itinerary, vessel, ...departure }) =>
-    itinerary && String(itinerary.vessel) === String(vessel) &&
-    calculateEffectivePrices(itinerary, departure, now).some(price => price.offerName)
-  ).map(({ vessel }) => vessel);
+  return departures.flatMap(({ vessel, itinerary, _id, startDate, endDate, ...departure }) => {
+    if (!itinerary || String(itinerary.vessel) !== String(vessel)) return [];
+    const offers = calculateEffectivePrices(itinerary, departure, now).filter(price => price.offerName);
+    return offers.map(price => ({
+      vessel,
+      departure: { _id, startDate, endDate, itinerary: { name: itinerary.name, numberOfNights: itinerary.numberOfNights } },
+      promotion: {
+        name: price.offerName,
+        amount: price.effectiveAmount,
+        amountUsd: price.effectiveAmountUsd,
+        currency: price.currency,
+        pricingBasis: itinerary.basePrices?.find(base => String(base.cabinType) === String(price.cabinType))?.pricingBasis,
+      },
+    }));
+  });
 };
 
-const resortOfferIds = async (now) => {
+const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, checkIn, checkOut } = {}) => {
+  const lastNight = checkOut ? new Date(new Date(checkOut).getTime() - 86_400_000) : null;
+  const firstDay = new Date(now);
+  firstDay.setUTCHours(0, 0, 0, 0);
   const rates = await ResortRatePeriod.find({
     active: true,
-    endDate: { $gte: now },
+    ...(resortIds && { resort: { $in: resortIds } }),
+    ...(packages && { package: { $in: packages.map(item => item._id) } }),
+    ...(checkIn && { startDate: { $lte: new Date(new Date(checkIn).getTime() + 86_399_999) } }),
+    endDate: { $gte: lastNight || firstDay },
     ...offerWindow(now, 'offer.'),
-  }).select('resort package offer priceOverride')
-    .populate({ path: 'package', match: { active: true }, select: 'resort basePrice' })
-    .lean();
+  }).select('resort package offer priceOverride minimumStayNights')
+    .populate({ path: 'package', match: { ...packageFilter, active: true }, select: 'resort basePrice' })
+    .sort({ _id: 1 }).lean();
 
-  return rates.filter(rate => {
-    if (!rate.package || String(rate.package.resort) !== String(rate.resort)) return false;
+  return rates.flatMap(rate => {
+    if (!rate.package || String(rate.package.resort) !== String(rate.resort)) return [];
+    if (checkIn && (new Date(checkOut) - new Date(checkIn)) / 86_400_000 < (rate.minimumStayNights || 0)) return [];
     const base = rate.package.basePrice || {};
     const override = rate.priceOverride;
     const price = Number.isFinite(override?.amount) ? { ...override, currency: override.currency || base.currency } : base;
-    if (!Number.isFinite(price.amount) || !price.currency) return false;
+    if (!Number.isFinite(price.amount) || !price.currency) return [];
     const discounted = applyOffer(price, rate.offer, now);
-    if (discounted.currency === price.currency) return discounted.amount < price.amount;
-    return Number.isFinite(discounted.amountUsd) && Number.isFinite(price.amountUsd) && discounted.amountUsd < price.amountUsd;
-  }).map(({ resort }) => resort);
+    const lower = discounted.currency === price.currency
+      ? discounted.amount < price.amount
+      : Number.isFinite(discounted.amountUsd) && Number.isFinite(price.amountUsd) && discounted.amountUsd < price.amountUsd;
+    return lower ? [{
+      resort: rate.resort,
+      promotion: { amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency, name: rate.offer.name, pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights },
+    }] : [];
+  });
 };
 
-const activeOfferProductIds = (productType, now = new Date()) =>
-  productType === 'resort' ? resortOfferIds(now) : vesselOfferIds(now);
+const activeOfferProductIds = async (productType, now = new Date()) => productType === 'resort'
+  ? (await resortPromotions(now)).map(entry => entry.resort)
+  : (await vesselPromotions(now)).map(entry => entry.vessel);
 
-module.exports = { activeOfferProductIds };
+module.exports = { activeOfferProductIds, resortPromotions, vesselPromotions };

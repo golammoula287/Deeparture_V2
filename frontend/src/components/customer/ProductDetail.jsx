@@ -77,7 +77,9 @@ export default function ProductDetail({ product, type = 'vessel' }) {
   const location = list(product.destinationSlugs).map(words).join(' · ') || [product.region, product.country].filter(Boolean).join(', ');
   const baseFinder = resort ? '/explore/resorts' : '/explore/liveaboards';
   const returnTo = router.query.returnTo;
-  const finder = typeof returnTo === 'string' && (returnTo === baseFinder || returnTo.startsWith(`${baseFinder}?`)) ? returnTo : baseFinder;
+  const returnPath = typeof returnTo === 'string' ? returnTo.split('?')[0] : '';
+  const allowedReturn = [baseFinder, '/featured-trips', '/special-offers'].includes(returnPath) || /^\/destinations\/[a-z0-9-]+$/.test(returnPath);
+  const finder = allowedReturn ? returnTo : baseFinder;
   const choose = id => { setSelectedId(id); document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   const selectionDate = selected && !resort ? `${date(selected.startDate)} – ${date(selected.endDate)}` : '';
   return <CustomerShell title={`${product.name} ${resort ? 'dive resort' : 'liveaboard'}`} description={product.summary || `Explore ${product.name} and enquire about your next dive journey.`}>

@@ -57,7 +57,7 @@ export default function HomeSearch({ definitions = [], definitionsError = false,
   };
   const changeAttribute = (definition, value) => setDraft(previous => ({ ...previous, attributes: withAttribute(previous.attributes, definition, value) }));
   return <section className={styles.search} id="find-your-trip" aria-label="Find your dive adventure">
-    <div className={styles.searchTop}><div className={styles.productSwitch} role="group" aria-label="Search product type"><button type="button" aria-pressed={!resort} onClick={() => chooseKind('vessel')}><HomeIcon name="boat" size={20} />Liveaboards</button><button type="button" aria-pressed={resort} onClick={() => chooseKind('resort')}><HomeIcon name="resort" size={20} />Resorts</button><a href="#special-offers"><HomeIcon name="tag" size={20} />Special Offers</a></div></div>
+    <div className={styles.searchTop}><div className={styles.productSwitch} role="group" aria-label="Search product type"><button type="button" aria-pressed={!resort} onClick={() => chooseKind('vessel')}><HomeIcon name="boat" size={20} />Liveaboards</button><button type="button" aria-pressed={resort} onClick={() => chooseKind('resort')}><HomeIcon name="resort" size={20} />Resorts</button><a href="/special-offers"><HomeIcon name="tag" size={20} />Special Offers</a></div></div>
     <form action={resort ? '/explore/resorts' : '/explore/liveaboards'} method="get" onSubmit={submit}>
       <div className={`${styles.searchFields} ${resort ? styles.resortSearch : ''}`}>
         <DestinationPicker className={styles.field} value={criteria.destination} onChange={value => set('destination', value)} />

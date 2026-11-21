@@ -4,7 +4,7 @@ Last updated: 2026-11-22 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–07 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 08 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–08 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 09 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -18,15 +18,15 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Current code to build on
 
-- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
-- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured link temporarily opens a paginated homepage listing until Step 08 adds dedicated discovery routes. Liveaboards now have a shared departure range and Resorts have required stay dates. Finder prices are secondary and legacy availability-only controls have been removed from the customer flow.
+- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use dedicated public routes. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
+- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured and Special Offers links open dedicated paginated discovery pages. Liveaboards now have a shared departure range and Resorts have required stay dates. Finder prices are secondary and legacy availability-only controls have been removed from the customer flow.
 - [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) includes Freediving, Photography, Nitrox and Rebreather.
 - [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
 - The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–07 have local verification. Step 08 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–08 have local verification. Step 09 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -54,6 +54,12 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
 ### Work log — 2026-11-22 (Asia/Dhaka)
+
+
+- Step 08 added `/featured-trips`, `/special-offers`, `/destinations`, six destination guides and `/why-deeparture`. Homepage and shared navigation point to the dedicated routes. Product details preserve the return link. The Why page uses approved copy and the supplied icons while expanded approved copy and final destination imagery remain client inputs.
+- Discovery defaults to both product types without destination constraints. Featured reads the managed flag. Offers read qualifying promotions and match the specific departure or resort package, travel dates, rate window and promotional price. Product-specific dates are available after selecting Liveaboards or Resorts. Distinct no-match, no-active-offer and API failure states are verified. Booking and availability remain on enquiry.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. Chromium verified four widths (320, 390, 768 and 1440) using the isolated sample API. API fixture checks covered Featured-only, Offer-only, both and neither for each product and matching travel dates, expiry, minimum stay and budget. Temporary sample changes were restored. Synthetic 503 and empty fixtures covered the page states. Local port 3000 serves the latest build. Next: Step 09 Contact page and form.
+
 
 - Step 07 applied the Rev5 finder copy and field order, product-specific compact heroes using replaceable existing artwork, and active-product-first tabs. Desktop has a left secondary filter accordion and removable chips. Mobile has a compact search summary, Modify Search, full-screen Filters and separate Sort.
 - Finder API results order eligible products before slicing pages. Liveaboards default to earliest qualifying upcoming departure. Resort Recommended uses existing listing completeness, then starting USD price and stable name/ID ties. Both support price in either direction and Vegan Rating, with missing numeric values last. Cards link to the qualifying departure or resort package and show starting pricing and enquiry wording. Earlier API consumers retain their existing default sort.

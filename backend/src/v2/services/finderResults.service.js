@@ -1,5 +1,6 @@
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
+const { resortPromotions, vesselPromotions } = require('./catalogueOffers.service');
 const { pagedResult } = require('./pagination.service');
 
 function usdPrice(price) {
@@ -51,17 +52,34 @@ async function resortSummaries(ids, finder) {
   return summaries;
 }
 
+async function promotionSummaries(ids, finder, resort) {
+  const now = new Date();
+  const entries = resort
+    ? await resortPromotions(now, { ...finder, resortIds: ids })
+    : await vesselPromotions(now, finder.departureFilter, ids);
+  const summaries = new Map();
+  for (const { vessel, resort: resortId, ...summary } of entries) {
+    const price = usdPrice(summary.promotion);
+    if ((finder.minPrice || finder.maxPrice) && (!Number.isFinite(price) ||
+      (finder.minPrice && price < Number(finder.minPrice)) ||
+      (finder.maxPrice && price > Number(finder.maxPrice)))) continue;
+    retainBest(summaries, String(vessel || resortId), { ...summary, price },
+      (left, right) => numericOrder(left.price, right.price));
+  }
+  return summaries;
+}
+
 async function finderResults({ Model, filter, finder, productType, requestedSort, page, limit, skip }) {
   let products = await Model.find(filter).select('_id name veganRating completenessScore').lean();
   if (!products.length) return pagedResult({ items: [], total: 0, page, limit });
   const ids = products.map(item => item._id);
   const resort = productType === 'resort';
   const priceSort = requestedSort === 'price' || requestedSort === '-price';
-  const summaries = resort
-    ? await resortSummaries(ids, finder)
-    : await departureSummaries(ids, finder.departureFilter, priceSort);
+  const summaries = finder.activeOffer
+    ? await promotionSummaries(ids, finder, resort)
+    : resort ? await resortSummaries(ids, finder) : await departureSummaries(ids, finder.departureFilter, priceSort);
   const summaryFor = item => summaries.get(String(item._id));
-  if (finder.requiresDeparture) products = products.filter(item => summaryFor(item));
+  if (finder.requiresDeparture || finder.activeOffer) products = products.filter(item => summaryFor(item));
   products.sort((left, right) => {
     const a = summaryFor(left), b = summaryFor(right);
     let order;

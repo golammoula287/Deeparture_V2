@@ -7,14 +7,13 @@ import HomeIcon from './HomeIcon';
 import styles from './CustomerShell.module.css';
 import design from './CustomerDesign.module.css';
 
-// Discovery links point to the homepage sections until the dedicated pages ship in Step 08.
 const exploreNavigation = [
   { href: '/explore/liveaboards', label: 'Liveaboards' },
   { href: '/explore/resorts', label: 'Resorts' },
-  { href: '/#special-offers', label: 'Special Offers' },
-  { href: '/#destinations', label: 'Destinations' },
+  { href: '/special-offers', label: 'Special Offers' },
+  { href: '/destinations', label: 'Destinations' },
 ];
-const whyDeeparture = { href: '/#why-deeparture', label: 'Why Deeparture' };
+const whyDeeparture = { href: '/why-deeparture', label: 'Why Deeparture' };
 const mainNavigation = [...exploreNavigation, whyDeeparture];
 const logoSrc = '/brand/logo.svg';
 
@@ -30,7 +29,7 @@ export default function CustomerShell({ children, title = 'Dive beyond the every
     element.showModal(); document.body.style.overflow = 'hidden';
     return () => { element.close(); document.body.style.overflow = overflow; previous?.focus({ preventScroll: true }); };
   }, [menuOpen]);
-  const currentSection = pathname.replace(/^\/(liveaboards|resorts)\/\[slug\]$/, '/explore/$1');
+  const currentSection = pathname.replace('/destinations/[slug]', '/destinations').replace(/^\/(liveaboards|resorts)\/\[slug\]$/, '/explore/$1');
   const navigationLink = ({ href, label }, mobile = false) => (
     <Link
       key={href}
@@ -66,6 +65,7 @@ export default function CustomerShell({ children, title = 'Dive beyond the every
         <nav aria-label="Explore">
           <h2>Explore</h2>
           {exploreNavigation.map(({ href, label }) => <Link key={href} href={href}>{label}</Link>)}
+          <Link href="/featured-trips">Featured Trips</Link>
           <a href={contactLinks.groups}>Groups or Charters</a>
         </nav>
         <nav aria-label="About">
