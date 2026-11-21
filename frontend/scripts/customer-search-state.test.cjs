@@ -13,7 +13,14 @@ test('Unsupported sorts fall back to a real API sort rather than an invented ran
 test('Homepage price range and embarkation reach the shared search URL without losing the lower bound', async()=>{const {searchState,finderUrl}=await loaded;for(const resort of [false,true]){const {state,invalid}=searchState({minPrice:'1500',maxPrice:'4000',embarkation:'sorong'},resort);assert.equal(invalid,false);assert.equal(state.minPrice,'1500');assert.equal(state.maxPrice,'4000');assert.equal(state.embarkation,resort?undefined:'sorong');const params=new URL(finderUrl('/explore/liveaboards',state),'https://test.invalid').searchParams;assert.equal(params.get('minPrice'),'1500');assert.equal(params.get('maxPrice'),'4000');}});
 test('Reversed or invalid price bounds do not become silent partial filters',async()=>{const {searchState}=await loaded;const reversed=searchState({minPrice:'4000',maxPrice:'1500'});assert.equal(reversed.invalid,true);assert.equal(reversed.state.minPrice,'');assert.equal(reversed.state.maxPrice,'');for(const value of ['-10','Infinity','not-a-price']){const {state,invalid}=searchState({minPrice:value});assert.equal(invalid,true);assert.equal(state.minPrice,'');}});
 
-test('Available-only selection survives finder URLs and rejects arbitrary values', async()=>{const {searchState,finderUrl}=await loaded;for(const resort of [false,true]){const {state}=searchState({availableOnly:'true'},resort);assert.equal(state.availableOnly,'true');assert.equal(new URL(finderUrl('/explore/liveaboards',state),'https://test.invalid').searchParams.get('availableOnly'),'true');assert.equal(searchState({availableOnly:'false'},resort).state.availableOnly,undefined);assert.equal(searchState({availableOnly:{$ne:false}},resort).state.availableOnly,undefined);}});
+test('Legacy availability-only URLs no longer activate a customer filter', async () => {
+  const { searchState, finderUrl } = await loaded;
+  for (const resort of [false, true]) {
+    const { state } = searchState({ availableOnly: 'true' }, resort);
+    assert.equal(state.availableOnly, undefined);
+    assert(!finderUrl('/explore/liveaboards', state).includes('availableOnly'));
+  }
+});
 
 
 test('Resort stay dates survive URL changes only as a valid pair', async () => {

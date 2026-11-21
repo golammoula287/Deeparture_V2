@@ -4,7 +4,6 @@ const scalar = value => typeof value === 'string' ? value.trim().slice(0, 250) :
 export const sorts = [['name', 'Name A–Z'], ['-name', 'Name Z–A'], ['-veganRating', 'Vegan Rating']];
 export function searchState(query = {}, resort = false) {
   const state = { destination: scalar(query.destination), minPrice: scalar(query.minPrice), maxPrice: scalar(query.maxPrice), veganRatingMin: scalar(query.veganRatingMin), sort: sorts.some(([key]) => key === query.sort) ? query.sort : 'name', page: String(Math.max(1, parseInt(query.page, 10) || 1)) };
-  if (query.availableOnly === 'true') state.availableOnly = 'true';
   if (!resort) for (const key of ['startDate', 'endDate', 'minNights', 'maxNights', 'embarkation']) state[key] = scalar(query[key]);
   let invalid = false;
   if (resort && (query.checkIn !== undefined || query.checkOut !== undefined)) {

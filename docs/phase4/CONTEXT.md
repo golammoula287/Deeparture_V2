@@ -4,7 +4,7 @@ Last updated: 2026-11-21 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–05 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 06 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–06 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 07 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -19,14 +19,14 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 ### Current code to build on
 
 - [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use homepage sections until the dedicated pages in Step 08. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
-- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured link temporarily opens a paginated homepage listing until Step 08 adds dedicated discovery routes. Liveaboards now have a shared departure range and Resorts have required stay dates. Finder price and legacy availability controls are still Step 06 work.
+- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured link temporarily opens a paginated homepage listing until Step 08 adds dedicated discovery routes. Liveaboards now have a shared departure range and Resorts have required stay dates. Finder prices are secondary and legacy availability-only controls have been removed from the customer flow.
 - [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) includes Freediving, Photography, Nitrox and Rebreather.
 - [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
 - The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–05 have local verification. Step 06 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–06 have local verification. Step 07 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -54,6 +54,14 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
 ### Work log — 2026-11-21 (Asia/Dhaka)
+
+2026-11-21 (Asia/Dhaka) — Polished the shared All Filters panel with an ocean header, visible coral Apply action, card groups, selected counts and a default-open price slider. Frontend unit tests (11), final build, diff check and Chromium filter regressions at four widths passed. Local app refreshed. Follow-up Chromium verification on port 3000 passed across the homepage and both finders at 320, 390, 768 and 1440 px, including visible actions after scrolling and Escape focus restoration. Next: Step 07 results pages.
+
+
+- Step 06 moved prices into shared collapsible secondary filters and added two draggable price handles with exact USD inputs. Shared groups render the API taxonomy with multi-select controls. Vegan Rating remains primary and the filter panel explains what it measures. Clearing secondary filters preserves destination, dates, primary duration and Vegan Rating. Removed the availability-only control and ignored it in legacy customer finder URLs. The backend contract remains available to its existing consumers.
+- Frontend production build, 11 frontend tests, and diff check passed. Chromium passed at 320, 390, 768 and 1440 px against the isolated local catalogue, covering combined Wi-Fi/Nitrox/accessibility/dietary and USD price filters, result counts, focused slider changes, Clear and independent chip removal, and a valid zero-match resort search. A separate browser check dragged both price handles and verified the legacy preview controls. Local frontend restarted and left running on port 3000.
+- Next: Step 07 results pages. Hosted Gate 1 review and earlier hosted API verification remain open.
+
 
 
 - Step 05 added the shared Departure Window/Departure dates control with exact dates, full calendar month shortcuts, Clear and Apply. Public Liveaboard matching applies the range to departure start, includes the entire final UTC day and ignores return date.

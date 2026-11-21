@@ -8,7 +8,7 @@ export const previewTrips = [
   { slug: 'ocean-nomad', name: 'Ocean Nomad', destination: 'Raja Ampat', country: 'Indonesia', route: 'Sorong · Waigeo · Dampier Strait', date: '2027-04-10', end: '2027-04-17', nights: 7, price: 2790, availability: 'available', spaces: 6, vegan: 4, attributes: ['Vegan-friendly', 'Nitrox'], image: 'boat.jpg', alt: 'diver exploring a tropical reef', dietary: ['vegan'], accessibility: [], diving: ['nitrox'], facilities: ['air-conditioning'], guests: 14, cabins: 7 },
 ];
 
-export const defaultFilters = { destination: '', from: '', to: '', nights: '', maxPrice: '', vegan: '', dietary: [], accessibility: [], diving: [], facilities: [], availableOnly: false, offersOnly: false };
+export const defaultFilters = { destination: '', from: '', to: '', nights: '', maxPrice: '', vegan: '', dietary: [], accessibility: [], diving: [], facilities: [], offersOnly: false };
 
 export const filterGroups = [
   { key: 'dietary', title: 'Dietary preferences', items: [['vegan', 'Vegan meals'], ['vegetarian', 'Vegetarian meals'], ['gluten-free', 'Gluten-free options']] },
@@ -26,7 +26,6 @@ export function selectPreviewTrips(filters, sort = 'recommended') {
     (!filters.nights || (filters.nights === '7' ? trip.nights <= 7 : trip.nights >= 8)) &&
     (!filters.maxPrice || trip.price <= Number(filters.maxPrice)) &&
     (!filters.vegan || trip.vegan >= Number(filters.vegan)) &&
-    (!filters.availableOnly || ['available', 'limited'].includes(trip.availability)) &&
     (!filters.offersOnly || trip.offer) &&
     filterGroups.every(({ key }) => filters[key].every(value => trip[key].includes(value)))
   );
