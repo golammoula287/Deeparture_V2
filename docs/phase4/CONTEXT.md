@@ -1,10 +1,10 @@
 # Phase 4 — Customer marketplace redesign and PWA
 
-Last updated: 2026-11-21 (Asia/Dhaka)
+Last updated: 2026-11-22 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–06 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 07 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–07 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 08 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
 
 ### Source order and precedence
 
@@ -26,7 +26,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–06 have local verification. Step 07 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–07 have local verification. Step 08 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -52,6 +52,12 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Brett will provide final colours, real imagery and the receiving inbox. Preserve agreed hero proportions and the same overall hero treatment on Contact, Liveaboards and Resorts. Track final homepage logo placement separately from the instruction to use the current header logo in the footer. The public mailto and the enquiry notification recipient are separate settings.
 - Incomplete inventory is expected during development. Use clearly identified test records to exercise behaviour and preserve graceful empty states. Verify existing taxonomy combination rules, resort stay/rate semantics, offer validity, ranking if Recommended is chosen, and existing legal/Groups/Charters routes before fixing those contracts in code.
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
+
+### Work log — 2026-11-22 (Asia/Dhaka)
+
+- Step 07 applied the Rev5 finder copy and field order, product-specific compact heroes using replaceable existing artwork, and active-product-first tabs. Desktop has a left secondary filter accordion and removable chips. Mobile has a compact search summary, Modify Search, full-screen Filters and separate Sort.
+- Finder API results order eligible products before slicing pages. Liveaboards default to earliest qualifying upcoming departure. Resort Recommended uses existing listing completeness, then starting USD price and stable name/ID ties. Both support price in either direction and Vegan Rating, with missing numeric values last. Cards link to the qualifying departure or resort package and show starting pricing and enquiry wording. Earlier API consumers retain their existing default sort.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. The isolated sample catalogue verified API sort order across pages, matching prices/dates and correct package links. Chromium passed both finders at 320, 390, 768, 1024 and 1440 px, plus sidebar submission and independent chip removal. An isolated synthetic 503 confirmed retry status and usable preference definitions. Local port 3000 serves Step 07. Final hero imagery and hosted review remain pending. No commit or deployment. Next: Step 08.
 
 ### Work log — 2026-11-21 (Asia/Dhaka)
 

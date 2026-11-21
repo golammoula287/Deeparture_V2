@@ -4,7 +4,7 @@ const Itinerary = require('../models/itinerary.model');
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
 const ResortAvailability = require('../models/resortAvailability.model');
-const { parseDay, resortIdsForStay } = require('./resortStay.service');
+const { parseDay, resortIdsForStay, eligibleStayPackages } = require('./resortStay.service');
 const { activeOfferProductIds } = require('./catalogueOffers.service');
 const RoomType = require('../models/roomType.model');
 const Organisation = require('../models/organisation.model');
@@ -13,6 +13,7 @@ const AttributeDefinition = require('../models/attributeDefinition.model');
 const ProductAttribute = require('../models/productAttribute.model');
 const slugify = require('../utilities/slugify');
 const AppError = require('../../error/appError');
+const { finderResults } = require('./finderResults.service');
 const { parsePagination, pagedResult } = require('./pagination.service');
 
 const normalizeFacet = (value) => String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
@@ -90,7 +91,7 @@ const canonicalLocationAndDescendants = async (value) => {
   return ids;
 };
 
-const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {}) => {
+const vesselIdsFromOperationalFilters = async (query, { publicOnly = false, finder } = {}) => {
   let ids = null;
   let eligibleItineraryIds = null;
   const itineraryFilter = {};
@@ -139,25 +140,30 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {
   if (query.availabilitySource) { departureFilter['availability.sourceType'] = query.availabilitySource; useDepartures = true; }
   if (query.conflict === 'true') { departureFilter['availability.conflictState'] = true; useDepartures = true; }
   if (query.override === 'true') { departureFilter['availability.manualOverride'] = true; useDepartures = true; }
+  if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
+  if (finder) Object.assign(finder, { departureFilter, requiresDeparture: useDepartures });
   if (useDepartures) {
-    if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
     ids = intersect(ids, (await Departure.distinct('vessel', departureFilter)).map(String));
   }
   return ids;
 };
 
-const resortIdsFromOperationalFilters = async (query, { publicOnly }) => {
+const resortIdsFromOperationalFilters = async (query, { publicOnly, finder }) => {
   let ids = null;
   const hasStay = publicOnly && (query.checkIn !== undefined || query.checkOut !== undefined);
+  const price = { active: true };
   if (hasStay || query.maxPrice || query.minPrice || query.hasPricing === 'true') {
-    const price = { active: true };
     if (query.maxPrice || query.minPrice) {
       price['basePrice.amountUsd'] = {};
       if (query.maxPrice) price['basePrice.amountUsd'].$lte = Number(query.maxPrice);
       if (query.minPrice) price['basePrice.amountUsd'].$gte = Number(query.minPrice);
     }
-    ids = hasStay ? await resortIdsForStay(query, price) : (await ResortPackage.distinct('resort', price)).map(String);
+    if (hasStay && finder) {
+      finder.packages = await eligibleStayPackages(query, price);
+      ids = [...new Set(finder.packages.map(item => String(item.resort)))];
+    } else ids = hasStay ? await resortIdsForStay(query, price) : (await ResortPackage.distinct('resort', price)).map(String);
   }
+  if (finder) finder.packageFilter = price;
   if (query.hasAvailability === 'true' || query.availableOnly === 'true' || query.availability || query.freshness || query.availabilitySource || query.conflict === 'true' || query.override === 'true') {
     const availabilityFilter = {};
     if (query.availableOnly === 'true') availabilityFilter.status = { $in: ['available','limited','on_request'] };
@@ -207,7 +213,8 @@ const baseProductFilter = async ({ productType, query, publicOnly }) => {
 const searchProducts = async ({ productType, query = {}, publicOnly = false, populateOrganisation = false }) => {
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
-  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly }) : await vesselIdsFromOperationalFilters(query, { publicOnly });
+  const finder = publicOnly && query.view === 'finder' ? {} : null;
+  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly, finder }) : await vesselIdsFromOperationalFilters(query, { publicOnly, finder });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
   if (publicOnly && query.activeOffer === 'true' && ids?.length !== 0) {
@@ -216,6 +223,7 @@ const searchProducts = async ({ productType, query = {}, publicOnly = false, pop
   if (ids !== null) filter._id = { $in: ids };
 
   const { page, limit, skip, sort } = parsePagination(query, { defaultLimit: publicOnly ? 24 : 25, maxLimit: 100, allowedSort: ['name','updatedAt','createdAt','completenessScore','veganRating'], defaultSort: publicOnly ? 'name' : '-updatedAt' });
+  if (finder) return finderResults({ Model, filter, finder, productType, requestedSort: query.sort, page, limit, skip });
   let find = Model.find(filter).sort(sort).skip(skip).limit(limit);
   if (populateOrganisation) find = find.populate('organisation', 'name status primaryEmail website');
   const [items, total] = await Promise.all([find.lean(), Model.countDocuments(filter)]);

@@ -26,13 +26,13 @@ const coversStay = (periods, checkIn, checkOut) => {
   return false;
 };
 
-const resortIdsForStay = async (query, packageFilter) => {
+const eligibleStayPackages = async (query, packageFilter) => {
   const checkIn = parseDay(query.checkIn);
   const checkOut = parseDay(query.checkOut);
   if (!checkIn || !checkOut || checkOut <= checkIn) {
     throw new AppError(400, 'Use valid check-in and check-out dates, with check-out after check-in.');
   }
-  const packages = await ResortPackage.find(packageFilter).select('_id resort roomType').lean();
+  const packages = await ResortPackage.find(packageFilter).select('_id resort roomType basePrice').lean();
   const packageIds = packages.map(item => item._id);
   const roomIds = packages.flatMap(item => item.roomType ? [item.roomType] : []);
   const [periods, rooms, blockedRooms] = await Promise.all([
@@ -53,10 +53,12 @@ const resortIdsForStay = async (query, packageFilter) => {
   }
   const resortsByRoom = new Map(rooms.map(room => [String(room._id), String(room.resort)]));
   const blocked = new Set(blockedRooms.map(String));
-  return [...new Set(packages.filter(item => {
+  return packages.filter(item => {
     if (item.roomType && (resortsByRoom.get(String(item.roomType)) !== String(item.resort) || blocked.has(String(item.roomType)))) return false;
     return coversStay(periodsByPackage.get(String(item._id)) || [], checkIn, checkOut);
-  }).map(item => String(item.resort)))];
+  });
 };
 
-module.exports = { parseDay, resortIdsForStay };
+const resortIdsForStay = async (query, filter) => [...new Set((await eligibleStayPackages(query, filter)).map(item => String(item.resort)))];
+
+module.exports = { parseDay, resortIdsForStay, eligibleStayPackages };

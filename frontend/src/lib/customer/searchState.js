@@ -1,9 +1,14 @@
 import { isDateOnly, stayDateError } from './searchDates';
 
 const scalar = value => typeof value === 'string' ? value.trim().slice(0, 250) : '';
-export const sorts = [['name', 'Name A–Z'], ['-name', 'Name Z–A'], ['-veganRating', 'Vegan Rating']];
+export const defaultSort = resort => resort ? 'recommended' : 'departureDate';
+export const finderSorts = resort => [
+  resort ? ['recommended', 'Recommended'] : ['departureDate', 'Departure date'],
+  ['price', 'Price low–high'], ['-price', 'Price high–low'], ['-veganRating', 'Vegan Rating'],
+  ['name', 'Name A–Z'], ['-name', 'Name Z–A'],
+];
 export function searchState(query = {}, resort = false) {
-  const state = { destination: scalar(query.destination), minPrice: scalar(query.minPrice), maxPrice: scalar(query.maxPrice), veganRatingMin: scalar(query.veganRatingMin), sort: sorts.some(([key]) => key === query.sort) ? query.sort : 'name', page: String(Math.max(1, parseInt(query.page, 10) || 1)) };
+  const state = { destination: scalar(query.destination), minPrice: scalar(query.minPrice), maxPrice: scalar(query.maxPrice), veganRatingMin: scalar(query.veganRatingMin), sort: finderSorts(resort).some(([key]) => key === query.sort) ? query.sort : defaultSort(resort), page: String(Math.max(1, parseInt(query.page, 10) || 1)) };
   if (!resort) for (const key of ['startDate', 'endDate', 'minNights', 'maxNights', 'embarkation']) state[key] = scalar(query[key]);
   let invalid = false;
   if (resort && (query.checkIn !== undefined || query.checkOut !== undefined)) {
@@ -24,6 +29,6 @@ export function searchState(query = {}, resort = false) {
 }
 export function finderUrl(path, state) {
   const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(state)) if (value !== undefined && value !== '' && !(key === 'page' && String(value) === '1') && !(key === 'sort' && value === 'name')) params.set(key, String(value));
+  for (const [key, value] of Object.entries(state)) if (value !== undefined && value !== '' && !(key === 'page' && String(value) === '1') && !(key === 'sort' && value === defaultSort(path === '/explore/resorts'))) params.set(key, String(value));
   return `${path}${params.size ? `?${params}` : ''}`;
 }
