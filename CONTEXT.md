@@ -203,6 +203,10 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 
 ## Work log
 
+### 2026-11-23 — Phase 4 client progress report
+
+Recorded the client-facing summary of the first six Phase 4 work areas and the reported 9.5 development hours in the [Phase 4 tracker](docs/phase4/CONTEXT.md#client-progress-report--23-november-2026). The report is ready for the client. Hosted checks, legal URLs and client review remain pending.
+
 ### 2026-11-23 — Phase 4 Step 12 core SEO and PWA
 
 Added canonical URLs, distinct customer metadata, filter and sample listing noindex rules, robots and a sitemap of public core pages and published non-synthetic products. Indexing requires `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_ALLOW_INDEXING=true` at build time. Reused the package manifest, icons and offline page. The worker fetches customer navigations from the network and caches only the offline fallback and installation assets. Improved enquiry focus, detail anchors, image fallback and sold-out copy in the shared product detail. Frontend production builds with indexing enabled for the local test and with default indexing disabled passed, as did 11 frontend tests, worker syntax and diff check. Local Chromium verified SEO rules, responsive liveaboard and resort details at 390/768/1440 px, contextual selection, install eligibility, static-only caching, offline fallback and reconnection. Default preview on port 3000 was restored and smoke-tested with the isolated API. No commit or deployment. Remaining: hosted SEO, actual installed launch and worker updates, wider detail/offer acceptance and Step 13. No new verified cumulative hour total.

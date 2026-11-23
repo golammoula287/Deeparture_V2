@@ -64,6 +64,23 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Backend syntax check (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. On the isolated local search database, confirmed general, liveaboard and resort records, rejected invalid input and mismatched offers, and verified persistence and customer acknowledgement after a simulated Deeparture email failure. Chromium covered Contact at 390, 768 and 1440 px, a connection error and retry, homepage offer links for both product types, and one Special Offers to confirmed-enquiry flow. Verified both email actions in JSON transport using synthetic recipients. Cleaned up synthetic records after the run. The approved final inbox and staging verification remain pending.
 - Step 12 baseline review confirmed reusable product details, gallery dialog, jump navigation, itineraries, and embedded departure/package options. Review standalone departure/package/offer routes against the agreed architecture, then prioritise core SEO checks and PWA integration against the remaining approved hours. Cumulative development hours remain unreconciled.
 
+#### Client progress report — 23 November 2026
+
+Hi Brett,
+
+A quick Phase 4 progress update. The work below took **9.5 development hours** and has been verified locally.
+
+| Work area | Completed |
+|---|---|
+| **Customer navigation** | Standardised the header and navigation across customer pages on desktop and mobile. |
+| **Footer and contact** | Added a shared footer with direct contact links, Operator login, and a floating WhatsApp button. |
+| **Catalogue and preferences** | Added Freediving and Photography to the shared preferences and made embarkation ports selectable in liveaboard search. |
+| **Homepage search** | Applied the approved copy, set Liveaboards as the default, and updated the desktop and mobile search shortcuts. Featured Trips and Special Offers now load independently. |
+| **Travel dates** | Added a departure date range with full-month shortcuts for liveaboards and separate check-in and check-out fields for resorts. |
+| **Filters and pricing** | Added collapsible preference filters and a price slider with editable minimum and maximum values. Vegan Rating stays in the main search, and clearing secondary filters preserves the main search selections. |
+
+Hosted catalogue and preference checks, the final Terms, Privacy and Cookie Policy links, and your review are still pending.
+
 ### Work log — 2026-11-22 (Asia/Dhaka)
 
 - 2026-11-22 (Asia/Dhaka) — Phase 4 Step 10 is implemented and locally verified. Replaced the provisional Contact FAQs with all six Rev5 section 7 question-and-answer pairs in the approved order. Preserved the existing secondary panel and Operator login link. Next: Step 11 enquiry persistence and receipt emails. Frontend production build and diff check passed. Chromium verified all six exact text pairs against the extracted approved guide, Enter/Space accordion toggling, no horizontal overflow and secondary placement at 320, 390, 768 and 1440 px. Restarted the local frontend and left it running at port 3000. No commit or deployment.
