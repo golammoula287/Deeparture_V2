@@ -1,8 +1,10 @@
 # Project context and work tracker
 
-Last updated: 2026-11-15 (Asia/Dhaka)
+Last updated: 2026-11-23 (Asia/Dhaka)
 
 ## Current task
+
+2026-11-23 (Asia/Dhaka) — Phase 4 Step 11 is implemented and locally verified. Contact enquiries now save in V2, and enquiries from offer links retain their listing and departure or package context plus the offer. The Deeparture recipient can be set with `ENQUIRY_NOTIFICATION_EMAIL`. Next: Step 12 customer journey checks, core SEO, and PWA work within the remaining approved hours. Review gates, the final receiving inbox, and the cumulative hours reconciliation are open.
 
 Owner authorized publishing staging seed scripts and merging to main. Backend syntax111 files and46/46 tests passed; prior hosted18 search groups and desktop/mobile browser evidence retained. Publication selects only seed/verifier scripts, npm command, sample documentation and related evidence/context. Unrelated local files preserved. Previous fetch blocked by approval-review usage limit; user resumed, retry in progress. Next: commit/push Phase4, merge/push main and verify remote refs.
 
@@ -198,6 +200,10 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-23 — Phase 4 Step 11
+
+Reused V2 persistence, Admin review, catalogue offer resolution and test email transport. The Contact form reports receipt after the API saves the record. The homepage and Special Offers links preserve offer context. Local API checks covered bad input, a mismatched offer, liveaboard and resort offer records, and persistence plus acknowledgement when the Deeparture email action was deliberately failed. Chromium verified Contact at 390, 768 and 1440 px, connection failure and retry, homepage contextual links, and submission from a Special Offers detail link. Verified both email actions independently in JSON transport. Removed the synthetic test records after verification. Backend syntax check (114 files), 49 backend tests, 11 frontend tests, frontend production build, and diff check passed. No commit or deployment. Step 12 baseline review found shared product detail, gallery and jump navigation in place, with standalone departure/package/offer routes and public SEO/PWA assets still open. Cumulative development hours remain unreconciled.
 
 ### 2026-11-13 — Removed vertical hero caption
 

@@ -49,9 +49,9 @@ const calculateEffectivePrices = (itinerary, departure, at = new Date()) => {
       const sameCurrency = candidate.currency === effective.currency;
       const candidateComparable = useUsd ? candidate.amountUsd : sameCurrency ? candidate.amount : Infinity;
       const currentComparable = useUsd ? effective.amountUsd : effective.amount;
-      if (candidateComparable < currentComparable) effective = candidate;
+      if (candidateComparable < currentComparable) effective = { ...candidate, offerId: offer._id };
     }
-    prices.push({ cabinType: base.cabinType, rackAmount, rackAmountUsd, effectiveAmount: Number(effective.amount.toFixed(2)), effectiveAmountUsd: Number.isFinite(effective.amountUsd) ? Number(effective.amountUsd.toFixed(2)) : undefined, currency: effective.currency, offerName: effective.offerName });
+    prices.push({ cabinType: base.cabinType, rackAmount, rackAmountUsd, effectiveAmount: Number(effective.amount.toFixed(2)), effectiveAmountUsd: Number.isFinite(effective.amountUsd) ? Number(effective.amountUsd.toFixed(2)) : undefined, currency: effective.currency, offerName: effective.offerName, ...(effective.offerId && { offerId: effective.offerId }) });
   }
   return prices;
 };

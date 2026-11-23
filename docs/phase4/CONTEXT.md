@@ -1,10 +1,10 @@
 # Phase 4 — Customer marketplace redesign and PWA
 
-Last updated: 2026-11-22 (Asia/Dhaka)
+Last updated: 2026-11-23 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
-The client approved implementation of the consolidated corrections. Steps 01–09 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks remain open. Step 10 is next. Review gates remain open. The branch is `phase4-customer-ux-implementation`. Preserve the existing local shared-header changes and other working-tree files.
+The client approved implementation of the consolidated corrections. Steps 01–11 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks and review gates remain open. Step 12 is next. The branch is `phase4-customer-ux-implementation`.
 
 ### Source order and precedence
 
@@ -26,7 +26,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–09 have local verification. Step 10 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–11 have local verification. Step 12 is next.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -52,6 +52,12 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Brett will provide final colours, real imagery and the receiving inbox. Preserve agreed hero proportions and the same overall hero treatment on Contact, Liveaboards and Resorts. Track final homepage logo placement separately from the instruction to use the current header logo in the footer. The public mailto and the enquiry notification recipient are separate settings.
 - Incomplete inventory is expected during development. Use clearly identified test records to exercise behaviour and preserve graceful empty states. Verify existing taxonomy combination rules, resort stay/rate semantics, offer validity, ranking if Recommended is chosen, and existing legal/Groups/Charters routes before fixing those contracts in code.
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
+
+### Work log — 2026-11-23 (Asia/Dhaka)
+
+- Step 11 routes general Contact and contextual enquiries through V2. General records appear in Admin review. Listing, departure, package and offer relationships are validated server-side. The configurable `ENQUIRY_NOTIFICATION_EMAIL` overrides active Admin email recipients for new enquiry notices, while the customer acknowledgement is attempted independently.
+- Backend syntax check (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. On the isolated local search database, confirmed general, liveaboard and resort records, rejected invalid input and mismatched offers, and verified persistence and customer acknowledgement after a simulated Deeparture email failure. Chromium covered Contact at 390, 768 and 1440 px, a connection error and retry, homepage offer links for both product types, and one Special Offers to confirmed-enquiry flow. Verified both email actions in JSON transport using synthetic recipients. Cleaned up synthetic records after the run. The approved final inbox and staging verification remain pending.
+- Step 12 baseline review confirmed reusable product details, gallery dialog, jump navigation, itineraries, and embedded departure/package options. Review standalone departure/package/offer routes against the agreed architecture, then prioritise core SEO checks and PWA integration against the remaining approved hours. Cumulative development hours remain unreconciled.
 
 ### Work log — 2026-11-22 (Asia/Dhaka)
 

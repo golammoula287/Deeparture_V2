@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { contactLinks } from '@/src/lib/customer/contactLinks';
+import { useRef, useState } from 'react';
+import { v2BaseUrl } from '@/src/config/serverConfig';
 import HomeIcon from './HomeIcon';
 import styles from './ContactPage.module.css';
 
@@ -8,11 +8,14 @@ const interests = ['Liveaboard', 'Resort', 'Special Offer', 'Other'];
 export default function ContactForm({ initialInterest = '' }) {
   const [interest, setInterest] = useState(null);
   const [error, setError] = useState('');
-  const [draftUrl, setDraftUrl] = useState('');
+  const [status, setStatus] = useState('idle');
+  const submitting = useRef(false);
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
-    const fields = new FormData(event.currentTarget);
+    if (submitting.current) return;
+    const form = event.currentTarget;
+    const fields = new FormData(form);
     const field = key => String(fields.get(key) || '').trim();
     const name = field('name');
     const enquiryType = field('interest');
@@ -21,22 +24,37 @@ export default function ContactForm({ initialInterest = '' }) {
       setError('Enter your name, what you’re interested in, and a message.');
       return;
     }
-    const lines = [
-      `Name: ${name}`,
-      `Email: ${field('email')}`,
-      field('phone') && `WhatsApp / Phone: ${field('phone')}`,
-      `Interested in: ${enquiryType}`,
-      field('destination') && `Destination or trip name: ${field('destination')}`,
-    ].filter(Boolean);
-    const subject = encodeURIComponent(`Deeparture enquiry — ${enquiryType}`);
-    const body = encodeURIComponent([`${lines.join('\r\n')}`, '', message].join('\r\n'));
-    const url = `${contactLinks.email.href}?subject=${subject}&body=${body}`;
+    submitting.current = true;
     setError('');
-    setDraftUrl(url);
-    window.location.href = url;
+    setStatus('pending');
+    try {
+      const response = await fetch(`${v2BaseUrl}/enquiries/general`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer: { name, email: field('email'), phone: field('phone') },
+          interest: enquiryType,
+          destination: field('destination'),
+          message,
+        }),
+        signal: AbortSignal.timeout(20000),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || !result?.success) throw new Error(result?.message || 'We couldn’t receive your enquiry. Please try again.');
+      form.reset();
+      setInterest(null);
+      setStatus('received');
+    } catch (error) {
+      setStatus('idle');
+      setError(error.name === 'TimeoutError'
+        ? 'We couldn’t confirm receipt. Please contact us if you’re unsure whether your enquiry was received.'
+        : error.message);
+    } finally {
+      submitting.current = false;
+    }
   }
 
-  return <form className={styles.form} onSubmit={submit} onChange={() => { setError(''); setDraftUrl(''); }}>
+  return <form className={styles.form} onSubmit={submit} onChange={() => { setError(''); if (status === 'received') setStatus('idle'); }}>
     <div className={styles.formFields}>
       <label>Name<input name="name" autoComplete="name" maxLength={150} required /></label>
       <label>Email<input name="email" type="email" autoComplete="email" maxLength={254} required /></label>
@@ -50,9 +68,8 @@ export default function ContactForm({ initialInterest = '' }) {
       <label className={styles.fullWidth}><span>Destination or trip name <small>(optional)</small></span><input name="destination" maxLength={200} /></label>
       <label className={styles.fullWidth}>Your message<textarea name="message" rows={5} maxLength={5000} required /></label>
     </div>
-    <p className={styles.formNote}>Send enquiry opens an email draft for you to send.</p>
-    <button type="submit" className={styles.submit}>Send enquiry<HomeIcon name="arrow" size={18} /></button>
+    <button type="submit" className={styles.submit} disabled={status === 'pending'}>{status === 'pending' ? 'Sending…' : 'Send enquiry'}<HomeIcon name="arrow" size={18} /></button>
     {error && <p className={styles.formError} role="alert">{error}</p>}
-    {draftUrl && <p className={styles.draftStatus} role="status">Send the draft from your email app. <a href={draftUrl}>Open the email draft again</a></p>}
+    {status === 'received' && <p className={styles.draftStatus} role="status">Enquiry received. The Deeparture team will review your message and get back to you.</p>}
   </form>;
 }

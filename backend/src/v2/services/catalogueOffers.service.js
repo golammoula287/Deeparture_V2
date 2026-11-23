@@ -29,10 +29,15 @@ const vesselPromotions = async (now, filter = {}, vesselIds) => {
       vessel,
       departure: { _id, startDate, endDate, itinerary: { name: itinerary.name, numberOfNights: itinerary.numberOfNights } },
       promotion: {
+        offerId: price.offerId,
         name: price.offerName,
         amount: price.effectiveAmount,
         amountUsd: price.effectiveAmountUsd,
         currency: price.currency,
+        originalPrice: price.rackAmount,
+        originalCurrency: departure.priceOverrides?.find(override => String(override.cabinType) === String(price.cabinType))?.currency
+          || itinerary.basePrices?.find(base => String(base.cabinType) === String(price.cabinType))?.currency,
+        validUntil: departure.offers.find(offer => String(offer._id) === String(price.offerId))?.validUntil,
         pricingBasis: itinerary.basePrices?.find(base => String(base.cabinType) === String(price.cabinType))?.pricingBasis,
       },
     }));
@@ -67,7 +72,7 @@ const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, 
       : Number.isFinite(discounted.amountUsd) && Number.isFinite(price.amountUsd) && discounted.amountUsd < price.amountUsd;
     return lower ? [{
       resort: rate.resort,
-      promotion: { amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency, name: rate.offer.name, pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights },
+      promotion: { offerId: rate._id, amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency, name: rate.offer.name, pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights },
     }] : [];
   });
 };

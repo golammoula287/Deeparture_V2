@@ -2,18 +2,18 @@ import { useRef, useState } from 'react';
 import { v2BaseUrl } from '@/src/config/serverConfig';
 import styles from './EnquiryForm.module.css';
 
-export default function EnquiryForm({ productType, productId, itineraryId, departureId, packageId }) {
+export default function EnquiryForm({ productType, productId, itineraryId, departureId, packageId, offerId }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', guests: 2, message: '' });
   const [state, setState] = useState({ status: 'idle', message: '' });
   const submitting = useRef(false);
-  const context = JSON.stringify([productType, productId, itineraryId, departureId, packageId]);
+  const context = JSON.stringify([productType, productId, itineraryId, departureId, packageId, offerId]);
   const submit = async event => {
     event.preventDefault();
     if (submitting.current) return;
     submitting.current = true;
     setState({ status: 'pending', message: '' });
     try {
-      const response = await fetch(`${v2BaseUrl}/enquiries`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productType, product: productId, itinerary: itineraryId, departure: departureId, package: packageId, customer: form, message: form.message }), signal: AbortSignal.timeout(20000) });
+      const response = await fetch(`${v2BaseUrl}/enquiries`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productType, product: productId, itinerary: itineraryId, departure: departureId, package: packageId, offer: offerId, customer: form, message: form.message }), signal: AbortSignal.timeout(20000) });
       const json = await response.json().catch(() => null);
       if (!response.ok || !json?.success) throw new Error(json?.message || 'We couldn’t receive your enquiry. Please check your connection and try again.');
       setState({ status: 'success', message: 'Our team will review your enquiry and contact you about the next steps. Space and pricing are not confirmed.', context });

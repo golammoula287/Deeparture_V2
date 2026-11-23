@@ -7,7 +7,6 @@ import HomeIcon from '@/src/components/customer/HomeIcon';
 import HomeCatalogueCard from '@/src/components/customer/HomeCatalogueCard';
 import { catalogueRead, noStore } from '@/src/lib/customer/publicCatalogue';
 import { destinations, values } from '@/src/lib/customer/destinations';
-import { departureOffer } from '@/src/lib/customer/specialOffers';
 import styles from '@/src/components/customer/HomePage.module.css';
 
 const explore = [
@@ -48,8 +47,8 @@ export async function getServerSideProps({ res, query = {} }) {
   const [vessels, resorts, vesselOffers, resortOffers, definitions, ports] = await Promise.all([
     catalogueRead('liveaboards', { featured: true, limit: 3 }),
     catalogueRead('resorts', { featured: true, limit: 1 }),
-    catalogueRead('liveaboards', { activeOffer: true, limit: 3 }),
-    catalogueRead('resorts', { activeOffer: true, limit: 1 }),
+    catalogueRead('liveaboards', { activeOffer: true, view: 'finder', limit: 3 }),
+    catalogueRead('resorts', { activeOffer: true, view: 'finder', limit: 1 }),
     catalogueRead('attributes'),
     catalogueRead('embarkation-ports'),
   ]);
@@ -59,7 +58,7 @@ export async function getServerSideProps({ res, query = {} }) {
   const featuredResorts = entries(resorts, 'resort');
   const promotedVessels = entries(vesselOffers, 'vessel');
   const promotedResorts = entries(resortOffers, 'resort');
-  const vesselSlugs = [...new Set([...featuredVessels, ...promotedVessels].map(({ item }) => item.slug))];
+  const vesselSlugs = [...new Set([...featuredVessels].map(({ item }) => item.slug))];
   const details = new Map(await Promise.all(vesselSlugs.map(async slug => [slug, await catalogueRead(`liveaboards/${encodeURIComponent(slug)}`)])));
   const eligibleDepartures = slug => (details.get(slug)?.data?.departures || []).filter(departure => departure.status !== 'cancelled' && departure.status !== 'sold_out');
 
@@ -67,22 +66,20 @@ export async function getServerSideProps({ res, query = {} }) {
     ...featuredVessels.map(entry => ({ ...entry, departure: eligibleDepartures(entry.item.slug)[0] || null })),
     ...featuredResorts,
   ];
-  const specialOffers = [
-    ...promotedVessels.map(entry => {
-      for (const departure of eligibleDepartures(entry.item.slug)) {
-        const offer = departureOffer(departure);
-        if (offer) return { ...entry, departure, offer, activeOffer: true };
-      }
-      return { ...entry, activeOffer: true };
-    }),
-    ...promotedResorts.map(entry => ({ ...entry, activeOffer: true })),
-  ];
+  const specialOffers = [...promotedVessels, ...promotedResorts].map(entry => ({
+    ...entry,
+    departure: entry.item.departure || null,
+    offer: entry.item.promotion?.originalPrice > entry.item.promotion?.amount && entry.item.promotion.originalCurrency === entry.item.promotion.currency
+      ? { ...entry.item.promotion, percent: Math.round(100 * (1 - entry.item.promotion.amount / entry.item.promotion.originalPrice)) }
+      : null,
+    activeOffer: true,
+  }));
 
   return { props: {
     featured,
     specialOffers,
     catalogueError: Boolean(vessels.error || resorts.error),
-    offersError: Boolean(vesselOffers.error || resortOffers.error || promotedVessels.some(({ item }) => details.get(item.slug)?.error)),
+    offersError: Boolean(vesselOffers.error || resortOffers.error),
     definitions: definitions.data || [],
     definitionsError: Boolean(definitions.error),
     ports: ports.data || [],

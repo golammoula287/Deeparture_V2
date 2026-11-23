@@ -66,12 +66,15 @@ export default function ProductDetail({ product, type = 'vessel' }) {
   const router = useRouter();
   const choices = list(resort ? product.packages : product.departures).filter(item => item.status !== 'cancelled');
   const [selectedId, setSelectedId] = useState('');
+  const [offerId, setOfferId] = useState('');
   const selected = choices.find(item => idOf(item) === selectedId);
   useEffect(() => {
     const requested = resort ? router.query.package : router.query.departure;
-    setSelectedId('');
-    if (typeof requested === 'string' && choices.some(item => idOf(item) === requested && item.status !== 'sold_out')) setSelectedId(requested);
-  }, [router.query.package, router.query.departure, resort, product]);
+    const offer = router.query.offer;
+    const validChoice = typeof requested === 'string' && choices.some(item => idOf(item) === requested && item.status !== 'sold_out');
+    setSelectedId(validChoice ? requested : '');
+    setOfferId(validChoice && typeof offer === 'string' && /^[a-f0-9]{24}$/i.test(offer) ? offer : '');
+  }, [router.query.package, router.query.departure, router.query.offer, resort, product]);
   const images = [...new Set([product.featuredImage, ...list(product.gallery)].map(mediaUrl).filter(Boolean))];
   const cabins = resort ? list(product.roomTypes) : [...new Map(list(product.itineraries).flatMap(item => list(item.basePrices).map(price => price.cabinType)).filter(cabin => cabin && typeof cabin === 'object' && cabin.name).map(cabin => [idOf(cabin) || cabin.name, cabin])).values()];
   const location = list(product.destinationSlugs).map(words).join(' · ') || [product.region, product.country].filter(Boolean).join(', ');
@@ -80,7 +83,7 @@ export default function ProductDetail({ product, type = 'vessel' }) {
   const returnPath = typeof returnTo === 'string' ? returnTo.split('?')[0] : '';
   const allowedReturn = [baseFinder, '/featured-trips', '/special-offers'].includes(returnPath) || /^\/destinations\/[a-z0-9-]+$/.test(returnPath);
   const finder = allowedReturn ? returnTo : baseFinder;
-  const choose = id => { setSelectedId(id); document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const choose = id => { if (id !== selectedId) setOfferId(''); setSelectedId(id); document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   const selectionDate = selected && !resort ? `${date(selected.startDate)} – ${date(selected.endDate)}` : '';
   return <CustomerShell title={`${product.name} ${resort ? 'dive resort' : 'liveaboard'}`} description={product.summary || `Explore ${product.name} and enquire about your next dive journey.`}>
     <main className={styles.page}>
@@ -100,7 +103,7 @@ export default function ProductDetail({ product, type = 'vessel' }) {
             {choices.length ? <div className={styles.options}>{choices.map(item => <article key={idOf(item)} className={`${styles.option} ${selectedId === idOf(item) ? styles.selected : ''}`}><div><h3>{resort ? item.name : `${date(item.startDate)} – ${date(item.endDate)}`}</h3><p className={styles.muted}>{resort ? [item.roomType?.name, item.numberOfNights ? `${item.numberOfNights} nights` : '', item.numberOfDives ? `${item.numberOfDives} dives` : ''].filter(Boolean).join(' · ') : item.itinerary?.name || 'Itinerary details on request'}</p>{item.description && <p>{item.description}</p>}{resort && list(item.inclusions).length > 0 && <p>Includes: {item.inclusions.join(' · ')}</p>}<p className={styles.status}>Enquire for availability</p></div><div className={styles.optionAction}><strong>{money(resort ? item.basePrice?.amount : item.effectiveMinPrice, resort ? item.basePrice?.currency : item.effectiveCurrency)}</strong><span>{resort && item.basePrice?.pricingBasis ? words(item.basePrice.pricingBasis) : 'Starting price · confirm pricing basis'}</span><button type="button" disabled={item.status === 'sold_out'} onClick={() => choose(idOf(item))}>{item.status === 'sold_out' ? 'Sold out' : selectedId === idOf(item) ? 'Selected · Enquire' : resort ? 'Enquire about package' : 'Enquire about departure'}</button></div></article>)}</div> : <div className={styles.empty}><h3>{resort ? 'Packages on request' : 'Dates on request'}</h3><p>Send a general enquiry and tell us when you would like to travel.</p><a href="#enquire">Enquire about {product.name}</a></div>}
           </section>
         </div>
-        <aside id="enquire" className={styles.enquiry}><p className={styles.eyebrow}>Start with a question</p><h2>Your next deeparture</h2><p className={styles.muted}>Tell us what you have in mind. An enquiry does not reserve space or confirm a price.</p><div className={styles.selection}><strong>{product.name}</strong>{selected ? <><p>{resort ? selected.name : selected.itinerary?.name || 'Selected departure'}</p>{selectionDate && <p>{selectionDate}</p>}<button type="button" onClick={() => setSelectedId('')}>Change to general enquiry</button></> : <p>General enquiry · dates flexible</p>}</div><EnquiryForm productType={type} productId={product._id} itineraryId={selected && !resort ? idOf(selected.itinerary) : undefined} departureId={selected && !resort ? idOf(selected) : undefined} packageId={selected && resort ? idOf(selected) : undefined} /></aside>
+        <aside id="enquire" className={styles.enquiry}><p className={styles.eyebrow}>Start with a question</p><h2>Your next deeparture</h2><p className={styles.muted}>Tell us what you have in mind. An enquiry does not reserve space or confirm a price.</p><div className={styles.selection}><strong>{product.name}</strong>{selected ? <><p>{resort ? selected.name : selected.itinerary?.name || 'Selected departure'}</p>{selectionDate && <p>{selectionDate}</p>}{offerId && <p>Special offer enquiry</p>}<button type="button" onClick={() => { setSelectedId(''); setOfferId(''); }}>Change to general enquiry</button></> : <p>General enquiry · dates flexible</p>}</div><EnquiryForm productType={type} productId={product._id} itineraryId={selected && !resort ? idOf(selected.itinerary) : undefined} departureId={selected && !resort ? idOf(selected) : undefined} packageId={selected && resort ? idOf(selected) : undefined} offerId={selected && offerId ? offerId : undefined} /></aside>
       </div>
     </main>
   </CustomerShell>;

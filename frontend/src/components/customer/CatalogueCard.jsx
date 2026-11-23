@@ -10,6 +10,7 @@ export default function CatalogueCard({ item, type = 'vessel', departure, starti
   if (departure?._id) query.set('departure', departure._id);
   const packageId = promotion?.packageId || startingRate?.packageId;
   if (packageId) query.set('package', packageId);
+  if (promotion?.offerId) query.set('offer', promotion.offerId);
   if (returnTo) query.set('returnTo', returnTo);
   const href = `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
   const departureUsd = departure?.effectiveMinPriceUsd ?? (departure?.effectiveCurrency === 'USD' ? departure.effectiveMinPrice : undefined);
