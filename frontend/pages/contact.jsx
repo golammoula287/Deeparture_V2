@@ -33,19 +33,27 @@ export default function Contact() {
             <h2 id="questions-title">Frequently asked questions</h2>
             <details>
               <summary>How do I ask about a specific trip?<HomeIcon name="chevron" size={18} /></summary>
-              <p>Open the liveaboard or resort you are interested in and use its enquiry form. Include the departure or package that interests you and any questions you would like to discuss.</p>
+              <p>Open the liveaboard or resort you’re interested in and use its enquiry form. Include the specific departure or stay you’re interested in, along with any questions you’d like to ask.</p>
             </details>
             <details>
-              <summary>Can I ask about dietary or accessibility needs?<HomeIcon name="chevron" size={18} /></summary>
-              <p>Yes. Review the information on the product page and include your particular requirements in your enquiry. Missing information does not mean support has been confirmed, so ask before making travel arrangements.</p>
+              <summary>Can you help with dietary or accessibility requirements?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Yes. Please include any dietary or accessibility requirements in your enquiry so we can confirm what can be accommodated before you make your travel arrangements.</p>
             </details>
             <details>
               <summary>Does sending an enquiry confirm a booking?<HomeIcon name="chevron" size={18} /></summary>
-              <p>No. An enquiry is a request for information. Availability, prices and any particular requirements still need to be confirmed before a booking is agreed.</p>
+              <p>No. An enquiry does not confirm a booking. Availability, pricing and any specific requirements must be confirmed before your booking is finalised.</p>
             </details>
             <details>
               <summary>Are you a liveaboard or resort operator?<HomeIcon name="chevron" size={18} /></summary>
-              <p>Use the <Link href="/login">operator sign-in</Link> to access your account, or email the team if you need help with access.</p>
+              <p>Yes. Operators can use the <Link href="/login">Operator login</Link> to sign in or sign up. If you need help accessing your account, please contact us.</p>
+            </details>
+            <details>
+              <summary>Can you help me choose the right trip?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Yes. If you’re unsure which liveaboard, resort or destination suits you, tell us what you’re looking for and we’ll help you explore the options.</p>
+            </details>
+            <details>
+              <summary>Do you only arrange scuba diving trips?<HomeIcon name="chevron" size={18} /></summary>
+              <p>No. We can also help with resorts, snorkelling, freediving and other dive-related travel experiences where available.</p>
             </details>
           </section>
         </div>
