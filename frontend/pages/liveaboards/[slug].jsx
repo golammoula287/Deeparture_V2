@@ -8,7 +8,7 @@ LiveaboardPage.customerPage = true;
 
 import CustomerShell from '@/src/components/customer/CustomerShell';
 function UnavailablePage() {
-  return <CustomerShell title="Unable to load this liveaboard"><main className="max-w-3xl mx-auto px-6 py-20"><h1 className="text-3xl mb-4">This journey is temporarily unavailable</h1><p className="mb-6">We couldn’t load the latest trip information. Please try again shortly.</p><a href="" className="underline mr-6">Try again</a><a href="/explore/liveaboards" className="underline">Explore liveaboards</a></main></CustomerShell>;
+  return <CustomerShell noIndex title="Unable to load this liveaboard"><main className="max-w-3xl mx-auto px-6 py-20"><h1 className="text-3xl mb-4">This journey is temporarily unavailable</h1><p className="mb-6">We couldn’t load the latest trip information. Please try again shortly.</p><a href="" className="underline mr-6">Try again</a><a href="/explore/liveaboards" className="underline">Explore liveaboards</a></main></CustomerShell>;
 }
 
 export async function getServerSideProps({ params, res }) {

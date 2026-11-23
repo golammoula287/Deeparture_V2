@@ -64,7 +64,7 @@ export default function DiscoveryPage({ offers, state, invalid, results, definit
   const noOffers = offers && (catalogueHasOffers === false || (catalogueHasOffers === null && !state.type &&
     !Object.entries(state).some(([key, value]) => key !== 'page' && Boolean(value))));
 
-  return <CustomerShell title={title}>
+  return <CustomerShell title={title} description={offers ? 'Browse current offers for dive resorts and liveaboard departures, then enquire about your preferred trip.' : 'Explore a selection of featured liveaboards and dive resorts, with details to help plan your next trip.'}>
     <main>
       <section className={styles.finderHero} aria-labelledby="discovery-title">
         <div className={styles.finderHeroInner}><h1 id="discovery-title">{title}</h1></div>

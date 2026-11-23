@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Head from 'next/head';
 import Image from 'next/image';
 import CustomerShell from '@/src/components/customer/CustomerShell';
 import HomeSearch from '@/src/components/customer/HomeSearch';
@@ -16,8 +15,7 @@ const explore = [
   { title: 'Destinations', href: '/destinations', image: '/phase4/reef.jpg' },
 ];
 export default function Home({ featured = [], specialOffers = [], catalogueError = false, offersError = false, definitions = [], definitionsError = false, ports = [], portsError = false, palette = 'coral', colourPreview = false }) {
-  return <CustomerShell homepage homePalette={palette} title="Inclusive dive adventures start here" description="Find liveaboards and dive resorts around your destination, budget, dietary needs, accessibility and diving preferences. Explore the details, then enquire.">
-    {colourPreview && <Head><meta name="robots" content="noindex,follow" /></Head>}
+  return <CustomerShell homepage noIndex={colourPreview} homePalette={palette} title="Inclusive dive adventures start here" description="Find liveaboards and dive resorts around your destination, budget, dietary needs, accessibility and diving preferences. Explore the details, then enquire.">
     <main className={styles.home}>
       {colourPreview && <nav className={styles.paletteComparison} aria-label="Homepage colour comparison"><span>Compare colours</span>{[['coral', '01 · Ocean & Coral'], ['midnight', '02 · Midnight & Champagne']].map(([value, label]) => <Link key={value} href={`/?palette=${value}`} aria-current={palette === value ? 'page' : undefined}><span className={styles.paletteSwatch} data-palette={value} aria-hidden="true" />{label}</Link>)}</nav>}
       <section className={styles.hero} aria-labelledby="home-title">

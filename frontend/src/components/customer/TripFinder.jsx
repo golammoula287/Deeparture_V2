@@ -93,7 +93,7 @@ export default function TripFinder({ resort = false, state, data, definitions = 
     !resort && (state.minNights || state.maxNights) && (state.minNights && state.maxNights ? `${state.minNights}–${state.maxNights} nights` : state.minNights ? `${state.minNights}+ nights` : `Up to ${state.maxNights} nights`),
     state.veganRatingMin && `Vegan Rating ${state.veganRatingMin}+`,
   ].filter(Boolean);
-  return <CustomerShell title={resort ? 'Find a dive resort' : 'Find a liveaboard trip'} description="Explore diving journeys by destination and preferences. Find the details that matter, then enquire about your trip.">
+  return <CustomerShell title={resort ? 'Find a dive resort' : 'Find a liveaboard trip'} description={resort ? 'Find dive resorts by destination, stay dates and diving preferences. Compare packages and enquire about your stay.' : 'Find liveaboard journeys by destination, departure dates and trip length. Explore itineraries and enquire about your trip.'}>
     {pending && <div className={styles.loading} role="status" aria-label="Updating trips" />}
     <main>
       <section className={styles.finderHero} data-product={resort ? 'resort' : 'vessel'} aria-labelledby="finder-title">

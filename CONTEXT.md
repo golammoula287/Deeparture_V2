@@ -4,6 +4,8 @@ Last updated: 2026-11-23 (Asia/Dhaka)
 
 ## Current task
 
+2026-11-23 (Asia/Dhaka) — Step 12 core SEO, PWA install eligibility and offline fallback, and detail-page navigation improvements are implemented and locally verified. Port 3000 serves the latest build. Step 12 continues with the wider departure/package/offer journey, public-origin SEO verification and installed-app/update checks. Cumulative hours remain unreconciled.
+
 2026-11-23 (Asia/Dhaka) — Phase 4 Step 11 is implemented and locally verified. Contact enquiries now save in V2, and enquiries from offer links retain their listing and departure or package context plus the offer. The Deeparture recipient can be set with `ENQUIRY_NOTIFICATION_EMAIL`. Next: Step 12 customer journey checks, core SEO, and PWA work within the remaining approved hours. Review gates, the final receiving inbox, and the cumulative hours reconciliation are open.
 
 Owner authorized publishing staging seed scripts and merging to main. Backend syntax111 files and46/46 tests passed; prior hosted18 search groups and desktop/mobile browser evidence retained. Publication selects only seed/verifier scripts, npm command, sample documentation and related evidence/context. Unrelated local files preserved. Previous fetch blocked by approval-review usage limit; user resumed, retry in progress. Next: commit/push Phase4, merge/push main and verify remote refs.
@@ -200,6 +202,10 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-23 — Phase 4 Step 12 core SEO and PWA
+
+Added canonical URLs, distinct customer metadata, filter and sample listing noindex rules, robots and a sitemap of public core pages and published non-synthetic products. Indexing requires `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_ALLOW_INDEXING=true` at build time. Reused the package manifest, icons and offline page. The worker fetches customer navigations from the network and caches only the offline fallback and installation assets. Improved enquiry focus, detail anchors, image fallback and sold-out copy in the shared product detail. Frontend production builds with indexing enabled for the local test and with default indexing disabled passed, as did 11 frontend tests, worker syntax and diff check. Local Chromium verified SEO rules, responsive liveaboard and resort details at 390/768/1440 px, contextual selection, install eligibility, static-only caching, offline fallback and reconnection. Default preview on port 3000 was restored and smoke-tested with the isolated API. No commit or deployment. Remaining: hosted SEO, actual installed launch and worker updates, wider detail/offer acceptance and Step 13. No new verified cumulative hour total.
 
 ### 2026-11-23 — Phase 4 Step 11
 

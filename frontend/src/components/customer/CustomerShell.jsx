@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+import { allowIndexing, canonicalPath, searchPaths, siteOrigin } from '@/src/lib/customer/siteSeo';
 import { contactLinks, socialLinks } from '@/src/lib/customer/contactLinks';
 import HomeIcon from './HomeIcon';
 import styles from './CustomerShell.module.css';
@@ -17,8 +18,11 @@ const whyDeeparture = { href: '/why-deeparture', label: 'Why Deeparture' };
 const mainNavigation = [...exploreNavigation, whyDeeparture];
 const logoSrc = '/brand/logo.svg';
 
-export default function CustomerShell({ children, title = 'Dive beyond the everyday', description = 'Explore liveaboard journeys and dive resorts with Deeparture. Find the trip that feels right for you.', hero = false, homepage = false, homePalette = 'coral' }) {
-  const { pathname } = useRouter();
+export default function CustomerShell({ children, title = 'Dive beyond the everyday', description = 'Explore liveaboard journeys and dive resorts with Deeparture. Find the trip that feels right for you.', hero = false, homepage = false, homePalette = 'coral', noIndex = false }) {
+  const { pathname, query } = useRouter();
+  const canonical = canonicalPath(pathname, query.slug);
+  const filteredSearch = searchPaths.includes(pathname) && Object.keys(query).length > 0;
+  const hideFromSearch = noIndex || filteredSearch || !canonical || !allowIndexing;
   const [menuOpen, setMenuOpen] = useState(false);
   const menu = useRef(null);
   useEffect(() => {
@@ -29,6 +33,12 @@ export default function CustomerShell({ children, title = 'Dive beyond the every
     element.showModal(); document.body.style.overflow = 'hidden';
     return () => { element.close(); document.body.style.overflow = overflow; previous?.focus({ preventScroll: true }); };
   }, [menuOpen]);
+  useEffect(() => {
+    if (!canonical || !navigator.serviceWorker) return;
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Online navigation remains available if registration fails.
+    });
+  }, [canonical]);
   const currentSection = pathname.replace('/destinations/[slug]', '/destinations').replace(/^\/(liveaboards|resorts)\/\[slug\]$/, '/explore/$1');
   const navigationLink = ({ href, label }, mobile = false) => (
     <Link
@@ -42,7 +52,14 @@ export default function CustomerShell({ children, title = 'Dive beyond the every
     </Link>
   );
   return <div className={`${styles.shell} ${styles.unifiedNavigation} ${design.system} ${hero ? styles.withHero : ''} ${homepage ? styles.clientHome : ''}`} data-home-palette={homePalette}>
-    <Head><title>{`${title} | Deeparture`}</title><meta name="description" content={description} /><meta name="theme-color" content={homepage ? homePalette === 'midnight' ? '#101d34' : '#0b3038' : '#123749'} /></Head>
+    <Head>
+      <title>{`${title} | Deeparture`}</title>
+      <meta name="description" content={description} />
+      <meta name="theme-color" content={homepage ? homePalette === 'midnight' ? '#101d34' : '#0b3038' : '#123749'} />
+      {canonical && siteOrigin && <link rel="canonical" href={siteOrigin + canonical} />}
+      {canonical && <link rel="manifest" href="/manifest.webmanifest" />}
+      {hideFromSearch && <meta name="robots" content="noindex,follow" />}
+    </Head>
     <a className={styles.skip} href="#customer-content">Skip to content</a>
     <header className={styles.header}>
       <div className={styles.headerInner}>

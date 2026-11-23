@@ -9,7 +9,7 @@ const types = [{ kind: 'vessel', route: 'liveaboards', label: 'Liveaboards' }, {
 
 export default function DestinationGuide({ destination, results }) {
   const path = `/destinations/${destination.slug}`;
-  return <CustomerShell title={destination.name}>
+  return <CustomerShell title={destination.name} description={destination.description || `Explore liveaboards and dive resorts in ${destination.name} with Deeparture.`}>
     <main>
       <section className={styles.finderHero} aria-labelledby="guide-title">
         <div className={styles.finderHeroInner}><p>{destination.region}</p><h1 id="guide-title">{destination.name}</h1></div>

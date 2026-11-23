@@ -5,7 +5,7 @@ import { destinations } from '@/src/lib/customer/destinations';
 import styles from '@/src/components/customer/Marketplace.module.css';
 
 export default function Destinations() {
-  return <CustomerShell title="Destinations">
+  return <CustomerShell title="Destinations" description="Explore Deeparture’s destination guides for liveaboards and dive resorts around the world.">
     <main>
       <section className={styles.finderHero} aria-labelledby="destinations-title">
         <div className={styles.finderHeroInner}><h1 id="destinations-title">Destinations</h1><p>Explore leading dive destinations around the world.</p></div>

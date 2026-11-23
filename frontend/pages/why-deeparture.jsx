@@ -4,7 +4,7 @@ import { values } from '@/src/lib/customer/destinations';
 import styles from '@/src/components/customer/Marketplace.module.css';
 
 export default function WhyDeeparture() {
-  return <CustomerShell title="Why Deeparture">
+  return <CustomerShell title="Why Deeparture" description="Explore how Deeparture helps you find dive travel that suits your dietary, accessibility and diving needs.">
     <main>
       <section className={styles.finderHero} aria-labelledby="why-title">
         <div className={styles.finderHeroInner}><h1 id="why-title">Why Deeparture</h1></div>

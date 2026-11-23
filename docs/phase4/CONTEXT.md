@@ -55,6 +55,9 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 
 ### Work log — 2026-11-23 (Asia/Dhaka)
 
+- Step 12 core increment added page metadata, clean canonicals, filter/sample noindex rules, robots and a published-inventory sitemap. Set `NEXT_PUBLIC_SITE_URL` to the approved public origin and enable `NEXT_PUBLIC_ALLOW_INDEXING` only on the public build. Reused the supplied manifest, icons and offline page. The worker caches only the offline and installation assets. Updated shared detail navigation, enquiry focus and pricing/status display.
+- Both production builds and 11 frontend tests passed. Chromium verified SEO rules against a temporary localhost indexable build, sample product details at 390/768/1440 px, contextual selection, manifest install eligibility, cache contents, offline fallback and reconnection. The default local preview is back on port 3000 with indexing disabled. Next: wider departure/package/offer checks, installed launch and worker update testing, and hosted SEO acceptance. Step 12 remains open. Cumulative development hours are still pending reconciliation.
+
 - 2026-11-23 (Asia/Dhaka) — Rebuilt the frontend successfully and prepared the Step 10 FAQ as a separate local commit.
 
 - Step 11 routes general Contact and contextual enquiries through V2. General records appear in Admin review. Listing, departure, package and offer relationships are validated server-side. The configurable `ENQUIRY_NOTIFICATION_EMAIL` overrides active Admin email recipients for new enquiry notices, while the customer acknowledgement is attempted independently.

@@ -2,7 +2,7 @@ import ProductDetail from '@/src/components/customer/ProductDetail';
 import CustomerShell from '@/src/components/customer/CustomerShell';
 
 export default function ResortPage({ resort, unavailable = false }) {
-  if (unavailable) return <CustomerShell title="Unable to load this resort"><main className="max-w-3xl mx-auto px-6 py-20"><h1 className="text-3xl mb-4">This resort is temporarily unavailable</h1><p className="mb-6">We couldn’t load the latest resort information. Please try again shortly.</p><a href="" className="underline mr-6">Try again</a><a href="/explore/resorts" className="underline">Explore resorts</a></main></CustomerShell>;
+  if (unavailable) return <CustomerShell noIndex title="Unable to load this resort"><main className="max-w-3xl mx-auto px-6 py-20"><h1 className="text-3xl mb-4">This resort is temporarily unavailable</h1><p className="mb-6">We couldn’t load the latest resort information. Please try again shortly.</p><a href="" className="underline mr-6">Try again</a><a href="/explore/resorts" className="underline">Explore resorts</a></main></CustomerShell>;
   return <ProductDetail product={resort} type="resort" />;
 }
 ResortPage.customerPage = true;
