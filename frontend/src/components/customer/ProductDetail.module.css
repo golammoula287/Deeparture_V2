@@ -86,3 +86,5 @@
 .optionAction strong {font:var(--type-heading-5);font-variant-numeric:tabular-nums;}
 .primary,.optionAction button,.galleryButton {font:var(--type-button-sm);padding:8px 12px;}
 @media(max-width:700px){.identity h1{font:var(--type-heading-3);}.description,.muted{font:var(--type-body-6);}}
+
+.optionLink { text-decoration: underline; text-underline-offset: 3px; color: #294e5c; font-size: 12px; }

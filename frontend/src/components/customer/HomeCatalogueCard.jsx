@@ -11,8 +11,9 @@ export default function HomeCatalogueCard({ item, departure, type = 'vessel', of
   const query = new URLSearchParams();
   if (departure?._id) query.set('departure', departure._id);
   if (promotion?.packageId) query.set('package', promotion.packageId);
-  if (promotion?.offerId) query.set('offer', promotion.offerId);
-  const href = `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
+  const href = promotion?.offerId
+    ? `/offers/${encodeURIComponent(promotion.offerId)}${query.get('returnTo') ? `?${new URLSearchParams({ returnTo: query.get('returnTo') })}` : ''}`
+    : `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
   return <article className={styles.catalogueCard}>
     <div className={styles.cardVisual}><Link href={href} className={styles.catalogueImage} aria-hidden="true" tabIndex={-1}>{image && !imageFailed ? <img src={image} alt="" width="600" height="400" loading="lazy" onError={() => setImageFailed(true)} /> : <span>Photos on request</span>}<span className={styles.cardType}>{offer ? `${item.metadata?.synthetic ? 'Sample · ' : ''}Save ${offer.percent}%` : activeOffer ? (item.metadata?.synthetic ? 'Sample offer' : 'Special offer') : type === 'resort' ? 'Dive resort' : 'Liveaboard'}</span></Link>{Number.isFinite(item.veganRating) && <span className={styles.imageBadge}>Vegan Rating {'★'.repeat(Math.max(0, Math.min(5, Math.floor(item.veganRating))))}</span>}</div>
     {offer && <p className={styles.offerTerms}>{offer.validUntil ? `Offer ends ${dateLabel(offer.validUntil)}` : offer.name}</p>}

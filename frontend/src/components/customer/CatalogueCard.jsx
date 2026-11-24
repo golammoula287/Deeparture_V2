@@ -10,9 +10,10 @@ export default function CatalogueCard({ item, type = 'vessel', departure, starti
   if (departure?._id) query.set('departure', departure._id);
   const packageId = promotion?.packageId || startingRate?.packageId;
   if (packageId) query.set('package', packageId);
-  if (promotion?.offerId) query.set('offer', promotion.offerId);
   if (returnTo) query.set('returnTo', returnTo);
-  const href = `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
+  const href = promotion?.offerId
+    ? `/offers/${encodeURIComponent(promotion.offerId)}${query.get('returnTo') ? `?${new URLSearchParams({ returnTo: query.get('returnTo') })}` : ''}`
+    : `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
   const departureUsd = departure?.effectiveMinPriceUsd ?? (departure?.effectiveCurrency === 'USD' ? departure.effectiveMinPrice : undefined);
   const hasUsd = Number.isFinite(departureUsd);
   const rate = promotion ? priceLabel(promotion.amount, promotion.currency) : departure ? priceLabel(departureUsd, 'USD') : startingRate ? priceLabel(startingRate.amount, startingRate.currency) : 'Price on request';

@@ -44,18 +44,19 @@ const vesselPromotions = async (now, filter = {}, vesselIds) => {
   });
 };
 
-const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, checkIn, checkOut } = {}) => {
+const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, checkIn, checkOut, rateId } = {}) => {
   const lastNight = checkOut ? new Date(new Date(checkOut).getTime() - 86_400_000) : null;
   const firstDay = new Date(now);
   firstDay.setUTCHours(0, 0, 0, 0);
   const rates = await ResortRatePeriod.find({
     active: true,
+    ...(rateId && { _id: rateId }),
     ...(resortIds && { resort: { $in: resortIds } }),
     ...(packages && { package: { $in: packages.map(item => item._id) } }),
     ...(checkIn && { startDate: { $lte: new Date(new Date(checkIn).getTime() + 86_399_999) } }),
     endDate: { $gte: lastNight || firstDay },
     ...offerWindow(now, 'offer.'),
-  }).select('resort package offer priceOverride minimumStayNights')
+  }).select('resort package offer priceOverride minimumStayNights startDate endDate')
     .populate({ path: 'package', match: { ...packageFilter, active: true }, select: 'resort basePrice' })
     .sort({ _id: 1 }).lean();
 
@@ -72,7 +73,12 @@ const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, 
       : Number.isFinite(discounted.amountUsd) && Number.isFinite(price.amountUsd) && discounted.amountUsd < price.amountUsd;
     return lower ? [{
       resort: rate.resort,
-      promotion: { offerId: rate._id, amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency, name: rate.offer.name, pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights },
+      promotion: {
+        offerId: rate._id, amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency,
+        name: rate.offer.name, originalPrice: price.amount, originalCurrency: price.currency, validUntil: rate.offer.validUntil,
+        pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights,
+        stayFrom: rate.startDate, stayTo: rate.endDate,
+      },
     }] : [];
   });
 };

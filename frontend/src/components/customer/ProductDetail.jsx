@@ -48,7 +48,7 @@ function Gallery({ images, name }) {
   </>;
 }
 
-export default function ProductDetail({ product, type = 'vessel' }) {
+export default function ProductDetail({ product, type = 'vessel', promotion = null }) {
   const resort = type === 'resort';
   const router = useRouter();
   const choices = list(resort ? product.packages : product.departures).filter(item => item.status !== 'cancelled');
@@ -57,11 +57,10 @@ export default function ProductDetail({ product, type = 'vessel' }) {
   const selected = choices.find(item => idOf(item) === selectedId);
   useEffect(() => {
     const requested = resort ? router.query.package : router.query.departure;
-    const offer = router.query.offer;
     const validChoice = typeof requested === 'string' && choices.some(item => idOf(item) === requested && item.status !== 'sold_out');
     setSelectedId(validChoice ? requested : '');
-    setOfferId(validChoice && typeof offer === 'string' && /^[a-f0-9]{24}$/i.test(offer) ? offer : '');
-  }, [router.query.package, router.query.departure, router.query.offer, resort, product]);
+    setOfferId(validChoice ? promotion?.offerId || '' : '');
+  }, [router.query.package, router.query.departure, resort, product, promotion]);
   const images = [...new Set([product.featuredImage, ...list(product.gallery)].map(mediaUrl).filter(Boolean))];
   const cabins = resort ? list(product.roomTypes) : [...new Map(list(product.itineraries).flatMap(item => list(item.basePrices).map(price => price.cabinType)).filter(cabin => cabin && typeof cabin === 'object' && cabin.name).map(cabin => [idOf(cabin) || cabin.name, cabin])).values()];
   const location = list(product.destinationSlugs).map(words).join(' · ') || [product.region, product.country].filter(Boolean).join(', ');
@@ -75,6 +74,7 @@ export default function ProductDetail({ product, type = 'vessel' }) {
     const enquiry = document.getElementById('enquire');
     enquiry?.focus({ preventScroll: true });
     enquiry?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' }); };
+  const showPromotion = selected && offerId && offerId === promotion?.offerId;
   const selectionDate = selected && !resort ? `${date(selected.startDate)} – ${date(selected.endDate)}` : '';
   return <CustomerShell noIndex={product.metadata?.synthetic === true} title={`${product.name} ${resort ? 'dive resort' : 'liveaboard'}`} description={product.summary || `Explore ${product.name} and enquire about your next dive journey.`}>
     <main className={styles.page}>
@@ -91,7 +91,24 @@ export default function ProductDetail({ product, type = 'vessel' }) {
           {!resort && <section id="itineraries" className={styles.section}><p className={styles.eyebrow}>Explore further</p><h2>Itineraries</h2>{list(product.itineraries).length ? list(product.itineraries).map(item => <article key={idOf(item) || item.name} className={styles.infoCard}><h3>{item.name}</h3><p className={styles.muted}>{[item.numberOfNights ? `${item.numberOfNights} nights` : '', item.numberOfDives ? `${item.numberOfDives} dives` : '', item.embarkation?.name && item.disembarkation?.name ? `${item.embarkation.name} to ${item.disembarkation.name}` : ''].filter(Boolean).join(' · ')}</p>{item.routeSummary && <p>{item.routeSummary}</p>}{item.description && <p className={styles.description}>{item.description}</p>}{item.minimumCertification && <p>Minimum certification: {item.minimumCertification}</p>}{item.minimumLoggedDives > 0 && <p>Minimum logged dives: {item.minimumLoggedDives}</p>}</article>) : <p className={styles.empty}>Ask us about current routes and itineraries.</p>}</section>}
           <section id="accommodation" className={styles.section}><p className={styles.eyebrow}>Rest between dives</p><h2>{resort ? 'Rooms' : 'Cabins'}</h2>{cabins.length ? <div className={styles.accommodation}>{cabins.map(cabin => <article key={idOf(cabin) || cabin.name} className={styles.room}>{mediaUrl(cabin.image || list(cabin.images)[0]) && <Photo src={mediaUrl(cabin.image || list(cabin.images)[0])} alt={cabin.name} />}<div><h3>{cabin.name}</h3>{cabin.description && <p>{cabin.description}</p>}<p className={styles.muted}>{[cabin.maxOccupancy > 0 ? `Up to ${cabin.maxOccupancy} guests` : '', cabin.ensuite === true ? 'Ensuite bathroom' : '', cabin.airConditioned === true ? 'Air conditioning' : ''].filter(Boolean).join(' · ')}</p></div></article>)}</div> : <p className={styles.empty}>Room and cabin details are available on enquiry.</p>}</section>
           <section id="trip-options" className={styles.section}><p className={styles.eyebrow}>{resort ? 'Plan your stay' : 'Find your dates'}</p><h2>{resort ? 'Packages' : 'Upcoming departures'}</h2><p className={styles.muted}>{resort ? 'Package starting prices are shown where provided. Ask us to confirm the rate for your preferred dates.' : 'Choose a departure to include its details in your enquiry. Prices and availability will be confirmed by the team.'}</p>
-            {choices.length ? <div className={styles.options}>{choices.map(item => <article key={idOf(item)} className={`${styles.option} ${selectedId === idOf(item) ? styles.selected : ''}`}><div><h3>{resort ? item.name : `${date(item.startDate)} – ${date(item.endDate)}`}</h3><p className={styles.muted}>{resort ? [item.roomType?.name, item.numberOfNights ? `${item.numberOfNights} nights` : '', item.numberOfDives ? `${item.numberOfDives} dives` : ''].filter(Boolean).join(' · ') : item.itinerary?.name || 'Itinerary details on request'}</p>{item.description && <p>{item.description}</p>}{resort && list(item.inclusions).length > 0 && <p>Includes: {item.inclusions.join(' · ')}</p>}<p className={styles.status}>{item.status === 'sold_out' ? 'Sold out' : 'Enquire for availability'}</p></div><div className={styles.optionAction}><strong>{priceLabel(resort ? item.basePrice?.amount : item.effectiveMinPrice, resort ? item.basePrice?.currency : item.effectiveCurrency)}</strong><span>{resort && item.basePrice?.pricingBasis ? words(item.basePrice.pricingBasis) : 'Starting price · confirm pricing basis'}</span><button type="button" disabled={item.status === 'sold_out'} onClick={() => choose(idOf(item))}>{item.status === 'sold_out' ? 'Sold out' : selectedId === idOf(item) ? 'Selected · Enquire' : resort ? 'Enquire about package' : 'Enquire about departure'}</button></div></article>)}</div> : <div className={styles.empty}><h3>{resort ? 'Packages on request' : 'Dates on request'}</h3><p>Send a general enquiry and tell us when you would like to travel.</p><a href="#enquire">Enquire about {product.name}</a></div>}
+            {showPromotion && <article className={styles.infoCard}>
+              <h3>{promotion.name || 'Special offer'}</h3>
+              <p>
+                {promotion.originalCurrency === promotion.currency && promotion.originalPrice > promotion.amount &&
+                  <del>{priceLabel(promotion.originalPrice, promotion.originalCurrency)}</del>}{' '}
+                <strong>{priceLabel(promotion.amount, promotion.currency)}</strong>{promotion.currency && ` ${promotion.currency}`}
+              </p>
+              <p className={styles.muted}>{[
+                promotion.pricingBasis && words(promotion.pricingBasis),
+                promotion.minimumStayNights > 0 && `Minimum stay: ${promotion.minimumStayNights} nights`,
+                promotion.validUntil && `Offer ends ${date(promotion.validUntil)}`,
+              ].filter(Boolean).join(' · ')}</p>
+              {promotion.stayFrom && promotion.stayTo && <p className={styles.muted}>Stay dates: {date(promotion.stayFrom)} – {date(promotion.stayTo)}</p>}
+              <p>Enquire to confirm eligibility, final pricing and availability.</p>
+              <button className={styles.primary} type="button" onClick={() => choose(selectedId)}>Enquire about this offer</button>
+            </article>}
+            {router.query.offer && !promotion && <p role="status">This offer is no longer available. You can still enquire about the trip.</p>}
+            {choices.length ? <div className={styles.options}>{choices.map(item => <article key={idOf(item)} className={`${styles.option} ${selectedId === idOf(item) ? styles.selected : ''}`}><div><h3>{resort ? item.name : `${date(item.startDate)} – ${date(item.endDate)}`}</h3><p className={styles.muted}>{resort ? [item.roomType?.name, item.numberOfNights ? `${item.numberOfNights} nights` : '', item.numberOfDives ? `${item.numberOfDives} dives` : ''].filter(Boolean).join(' · ') : item.itinerary?.name || 'Itinerary details on request'}</p>{item.description && <p>{item.description}</p>}{resort && list(item.inclusions).length > 0 && <p>Includes: {item.inclusions.join(' · ')}</p>}<p className={styles.status}>{item.status === 'sold_out' ? 'Sold out' : 'Enquire for availability'}</p></div><div className={styles.optionAction}><strong>{priceLabel(resort ? item.basePrice?.amount : item.effectiveMinPrice, resort ? item.basePrice?.currency : item.effectiveCurrency)}</strong><span>{resort && item.basePrice?.pricingBasis ? words(item.basePrice.pricingBasis) : 'Starting price · confirm pricing basis'}</span><button type="button" disabled={item.status === 'sold_out'} onClick={() => choose(idOf(item))}>{item.status === 'sold_out' ? 'Sold out' : selectedId === idOf(item) ? 'Selected · Enquire' : resort ? 'Enquire about package' : 'Enquire about departure'}</button><Link className={styles.optionLink} href={`/${resort ? 'packages' : 'departures'}/${idOf(item)}`}>{resort ? 'Package link' : 'Departure link'}</Link></div></article>)}</div> : <div className={styles.empty}><h3>{resort ? 'Packages on request' : 'Dates on request'}</h3><p>Send a general enquiry and tell us when you would like to travel.</p><a href="#enquire">Enquire about {product.name}</a></div>}
           </section>
         </div>
         <aside id="enquire" tabIndex={-1} aria-labelledby="enquiry-title" className={styles.enquiry}><p className={styles.eyebrow}>Start with a question</p><h2 id="enquiry-title">Your next deeparture</h2><p className={styles.muted}>Tell us what you have in mind. An enquiry does not reserve space or confirm a price.</p><div className={styles.selection}><strong>{product.name}</strong>{selected ? <><p>{resort ? selected.name : selected.itinerary?.name || 'Selected departure'}</p>{selectionDate && <p>{selectionDate}</p>}{offerId && <p>Special offer enquiry</p>}<button type="button" onClick={() => { setSelectedId(''); setOfferId(''); }}>Change to general enquiry</button></> : <p>General enquiry · dates flexible</p>}</div><EnquiryForm productType={type} productId={product._id} itineraryId={selected && !resort ? idOf(selected.itinerary) : undefined} departureId={selected && !resort ? idOf(selected) : undefined} packageId={selected && resort ? idOf(selected) : undefined} offerId={selected && offerId ? offerId : undefined} /></aside>

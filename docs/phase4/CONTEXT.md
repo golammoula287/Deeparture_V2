@@ -1,6 +1,6 @@
 # Phase 4 — Customer marketplace redesign and PWA
 
-Last updated: 2026-11-23 (Asia/Dhaka)
+Last updated: 2026-11-24 (Asia/Dhaka)
 
 ## Current handoff — client corrections, 20 November 2026
 
@@ -26,7 +26,7 @@ The local client source pack is in [Phase 4 Full implementations Details](<../..
 
 ### Implementation sequence
 
-2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections. Steps 01–11 have local verification. Step 12 is next.
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections.
 
 | Step | Work and completion check |
 | --- | --- |
@@ -53,10 +53,21 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 - Incomplete inventory is expected during development. Use clearly identified test records to exercise behaviour and preserve graceful empty states. Verify existing taxonomy combination rules, resort stay/rate semantics, offer validity, ranking if Recommended is chosen, and existing legal/Groups/Charters routes before fixing those contracts in code.
 - Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
 
+### Work log — 2026-11-24 (Asia/Dhaka)
+
+- Matched the shared customer header's side padding to the homepage. Chromium confirmed identical logo size and position and identical header gutters at eight widths across ten customer routes. Production build and diff check passed. Local port 3000 serves the refreshed build.
+
 ### Work log — 2026-11-23 (Asia/Dhaka)
+
+- Step 13 local acceptance captured 13 passing desktop and mobile browser groups and screenshots. Homepage filter and both finder checks passed. Updated the legacy Phase 1 verifier to match the approved Operator login and finder flow, then passed all five Phase 1–3 regression suites with fresh local fixtures. Backend syntax, static checks and 49 unit tests passed. See the [local acceptance report](LOCAL_ACCEPTANCE_2026-11-23.md) for evidence, deployment keys and remaining checks. Hosted acceptance, installed PWA launch and worker updates, and mapping the original full checklist remain open.
+
+- Step 12 trip and offer journey added `/departures/[id]`, `/packages/[id]`, and `/offers/[slug]` using stable V2 IDs for the offers. The routes redirect to the selected context on the shared listing page. Published inventory and active offers are resolved by V2. The product page displays validated offer price, pricing basis, expiry and resort stay terms where provided. Expired offers return 404 from the direct link and show an explanatory message on older contextual listing links.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build, worker syntax and diff checks passed. Local Chromium verified liveaboard and resort offers at 390/768/1440 px, enquiry context, expired offers, and direct offer link offline/reconnection. The temporary sample resort offer was removed. The frontend and test-mode API remain running locally. Remaining Step 12 checks include installed PWA launch, worker updates and hosted SEO. Cumulative hours remain unreconciled.
 
 - Step 12 core increment added page metadata, clean canonicals, filter/sample noindex rules, robots and a published-inventory sitemap. Set `NEXT_PUBLIC_SITE_URL` to the approved public origin and enable `NEXT_PUBLIC_ALLOW_INDEXING` only on the public build. Reused the supplied manifest, icons and offline page. The worker caches only the offline and installation assets. Updated shared detail navigation, enquiry focus and pricing/status display.
 - Both production builds and 11 frontend tests passed. Chromium verified SEO rules against a temporary localhost indexable build, sample product details at 390/768/1440 px, contextual selection, manifest install eligibility, cache contents, offline fallback and reconnection. The default local preview is back on port 3000 with indexing disabled. Next: wider departure/package/offer checks, installed launch and worker update testing, and hosted SEO acceptance. Step 12 remains open. Cumulative development hours are still pending reconciliation.
+
+- Started the local preview on port 3000 with the isolated sample API on port 5028. Homepage, Contact with the approved FAQ, API health in test email mode, and both sample catalogue endpoints returned HTTP 200. Left the services running for review.
 
 - 2026-11-23 (Asia/Dhaka) — Rebuilt the frontend successfully and prepared the Step 10 FAQ as a separate local commit.
 

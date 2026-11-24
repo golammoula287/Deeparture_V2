@@ -1,5 +1,5 @@
 const express = require("express");
-const { vessels, vessel, resorts, resort, embarkationPorts } = require("../controllers/public.controller");
+const { vessels, vessel, resorts, resort, embarkationPorts, departureLink, packageLink, offerLink } = require("../controllers/public.controller");
 const { create: createEnquiry, createGeneral } = require("../controllers/enquiry.controller");
 const { listDefinitions, getProductAttributes } = require("../controllers/attribute.controller");
 const router = express.Router();
@@ -8,6 +8,9 @@ router.get("/embarkation-ports", embarkationPorts);
 router.get("/liveaboards/:slug", vessel);
 router.get("/resorts", resorts);
 router.get("/resorts/:slug", resort);
+router.get("/departures/:id", departureLink);
+router.get("/packages/:id", packageLink);
+router.get("/offers/:id", offerLink);
 router.post("/enquiries", createEnquiry);
 router.post("/enquiries/general", createGeneral);
 router.get("/attributes", listDefinitions);

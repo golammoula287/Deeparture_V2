@@ -1,6 +1,6 @@
 # Project context and work tracker
 
-Last updated: 2026-11-23 (Asia/Dhaka)
+Last updated: 2026-11-24 (Asia/Dhaka)
 
 ## Current task
 
@@ -202,6 +202,18 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-24 — Customer header alignment
+
+Matched the shared customer header's horizontal padding to the approved homepage. The logo already had the same measured width, but moved 28 px sideways on wide screens. Chromium verified matching logo size and position, header height and left/right padding across ten customer routes at eight widths (320–1920 px), including navigation from Home to Liveaboards. Frontend production build and diff check passed. The refreshed local preview is running on port 3000 for review.
+
+### 2026-11-23 — Phase 4 Step 13 local acceptance
+
+Captured local desktop and mobile browser evidence and reran the existing Phase 1–3 regression in a separate source copy using fresh local fixtures and test email. The first run stopped at an obsolete Operator link selector. Updated the verifier for the approved sign-in link and finder flow, then passed Phase 1 (34), Phase 2A (27), Phase 2B API (10), Phase 2B extended (19) and Phase 3 (14). Backend syntax, static checks and 49 unit tests passed. Production frontend build passed in the regression copy. Local customer browser groups (13), four-width homepage filter checks and five-width finder checks passed. Evidence links and diff check passed. No commit or deployment. Hosted verification, deferred installed-PWA checks and final acceptance mapping remain open. No new verified cumulative hours total.
+
+### 2026-11-23 — Phase 4 Step 12 trip and offer links
+
+Added stable departure, package and offer URLs backed by V2. The new routes resolve published inventory and redirect temporarily to the relevant context on the existing detail page. Offer links use stable V2 identifiers and reuse catalogue pricing to show current rates and terms. Expired offer URLs return 404. An earlier product URL with an expired offer still allows a trip enquiry. Extended the offline fallback to the new routes. Backend syntax (114 files), 49 backend tests, 11 frontend tests, frontend production build, worker syntax and diff checks passed. Verified API lookups and redirects, unavailable IDs, liveaboard and resort offer journeys at 390/768/1440 px, minimum stay and date terms, expired offer behaviour, and offline/reconnection for a direct offer link. Removed the temporary resort offer from the isolated test database. Left port 3000 and the test-mode API running. No commit or deployment. Next: installed PWA launch and worker update checks, hosted SEO and Phase 4 acceptance.
 
 ### 2026-11-23 — Phase 4 client progress report
 
