@@ -19,6 +19,7 @@ const matches = (item, filter) => Object.entries(filter).every(([key, expected])
       if (op === '$nin') return !value.map(String).includes(String(actual));
       if (op === '$gte') return actual >= value;
       if (op === '$lte') return actual <= value;
+      if (op === '$lt') return actual < value;
       throw new Error(`Unsupported fixture operator ${op}`);
     });
   }
@@ -70,4 +71,22 @@ test('departure-only and itinerary-only searches keep independent filtering beha
   const before = departureQuery.mock.callCount();
   assert.deepEqual((await listVessels({ minNights: '12' })).items.map(item => item._id), ['long']);
   assert.equal(departureQuery.mock.callCount(), before);
+});
+
+
+test('public departures match the whole final day and ignore the return date', async t => {
+  const dates = [
+    ['early', '2027-01-30T00:00:00Z', '2027-02-06'],
+    ['first', '2027-02-01T00:00:00Z', '2027-02-08'],
+    ['cross-month', '2027-02-25T00:00:00Z', '2027-03-05'],
+    ['last', '2027-02-28T23:59:59.999Z', '2027-03-08'],
+    ['late', '2027-03-01T00:00:00Z', '2027-03-08'],
+  ];
+  fixture(t, {
+    vessels: dates.map(([id]) => vessel(id)),
+    itineraries: [],
+    departures: dates.map(([id, starts, ends]) => departure(id, id, 'itinerary', 1000, { startDate: new Date(starts), endDate: new Date(ends) })),
+  });
+  const result = await listVessels({ startDate: '2027-02-01', endDate: '2027-02-28' });
+  assert.deepEqual(result.items.map(item => item._id), ['first', 'cross-month', 'last']);
 });

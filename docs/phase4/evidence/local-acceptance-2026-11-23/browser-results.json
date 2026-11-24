@@ -1,0 +1,84 @@
+{
+  "date": "2026-11-23",
+  "environment": "Local production frontend; isolated sample API with test email",
+  "base": "http://127.0.0.1:3000",
+  "results": [
+    {
+      "name": "home",
+      "url": "/",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "liveaboard-search",
+      "url": "/explore/liveaboards",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "resort-search",
+      "url": "/explore/resorts",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "liveaboard-detail",
+      "url": "/liveaboards/sample-liveaboard-galapagos-01",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "resort-detail",
+      "url": "/resorts/sample-resort-galapagos-01",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "contact",
+      "url": "/contact",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile filter overlay",
+      "width": 390,
+      "status": "PASS"
+    },
+    {
+      "name": "home",
+      "url": "/",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "liveaboard-search",
+      "url": "/explore/liveaboards",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "resort-search",
+      "url": "/explore/resorts",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "liveaboard-detail",
+      "url": "/liveaboards/sample-liveaboard-galapagos-01",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "resort-detail",
+      "url": "/resorts/sample-resort-galapagos-01",
+      "width": 1440,
+      "status": "PASS"
+    },
+    {
+      "name": "contact",
+      "url": "/contact",
+      "width": 1440,
+      "status": "PASS"
+    }
+  ]
+}

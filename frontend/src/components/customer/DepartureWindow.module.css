@@ -1,0 +1,45 @@
+.trigger {
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.trigger:hover { color: var(--home-sea); }
+.dialog {
+  width: min(520px, calc(100% - 28px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--home-line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--home-ink);
+}
+.dialog::backdrop { background: rgba(var(--home-deep-rgb), .62); }
+.panel { display: grid; gap: 16px; padding: 20px; }
+.heading, .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.heading h2 { margin: 0; font-size: 20px; }
+.panel p { margin: 0; font-size: 13px; }
+.dates, .months { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.months { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dates label { display: grid; gap: 5px; min-width: 0; }
+.panel button, .dates input {
+  min-height: 44px;
+  min-width: 0;
+  border: 1px solid var(--home-border);
+  border-radius: 7px;
+  background: #fff;
+  color: inherit;
+}
+.panel button { padding: 4px 8px; }
+.panel button[aria-pressed='true'] { background: var(--home-pale); border-color: var(--home-sea); }
+.actions button { min-width: 90px; }
+.actions button:last-child { background: var(--home-accent); color: var(--home-on-accent); border-color: var(--home-action-border); }
+.close { display: grid; place-items: center; width: 44px; flex-shrink: 0; }
+@media (max-width: 400px) {
+  .months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

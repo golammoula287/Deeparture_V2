@@ -1,8 +1,12 @@
 # Project context and work tracker
 
-Last updated: 2026-11-15 (Asia/Dhaka)
+Last updated: 2026-11-24 (Asia/Dhaka)
 
 ## Current task
+
+2026-11-23 (Asia/Dhaka) — Step 12 core SEO, PWA install eligibility and offline fallback, and detail-page navigation improvements are implemented and locally verified. Port 3000 serves the latest build. Step 12 continues with the wider departure/package/offer journey, public-origin SEO verification and installed-app/update checks. Cumulative hours remain unreconciled.
+
+2026-11-23 (Asia/Dhaka) — Phase 4 Step 11 is implemented and locally verified. Contact enquiries now save in V2, and enquiries from offer links retain their listing and departure or package context plus the offer. The Deeparture recipient can be set with `ENQUIRY_NOTIFICATION_EMAIL`. Next: Step 12 customer journey checks, core SEO, and PWA work within the remaining approved hours. Review gates, the final receiving inbox, and the cumulative hours reconciliation are open.
 
 Owner authorized publishing staging seed scripts and merging to main. Backend syntax111 files and46/46 tests passed; prior hosted18 search groups and desktop/mobile browser evidence retained. Publication selects only seed/verifier scripts, npm command, sample documentation and related evidence/context. Unrelated local files preserved. Previous fetch blocked by approval-review usage limit; user resumed, retry in progress. Next: commit/push Phase4, merge/push main and verify remote refs.
 
@@ -198,6 +202,30 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-24 — Customer header alignment
+
+Matched the shared customer header's horizontal padding to the approved homepage. The logo already had the same measured width, but moved 28 px sideways on wide screens. Chromium verified matching logo size and position, header height and left/right padding across ten customer routes at eight widths (320–1920 px), including navigation from Home to Liveaboards. Frontend production build and diff check passed. The refreshed local preview is running on port 3000 for review.
+
+### 2026-11-23 — Phase 4 Step 13 local acceptance
+
+Captured local desktop and mobile browser evidence and reran the existing Phase 1–3 regression in a separate source copy using fresh local fixtures and test email. The first run stopped at an obsolete Operator link selector. Updated the verifier for the approved sign-in link and finder flow, then passed Phase 1 (34), Phase 2A (27), Phase 2B API (10), Phase 2B extended (19) and Phase 3 (14). Backend syntax, static checks and 49 unit tests passed. Production frontend build passed in the regression copy. Local customer browser groups (13), four-width homepage filter checks and five-width finder checks passed. Evidence links and diff check passed. No commit or deployment. Hosted verification, deferred installed-PWA checks and final acceptance mapping remain open. No new verified cumulative hours total.
+
+### 2026-11-23 — Phase 4 Step 12 trip and offer links
+
+Added stable departure, package and offer URLs backed by V2. The new routes resolve published inventory and redirect temporarily to the relevant context on the existing detail page. Offer links use stable V2 identifiers and reuse catalogue pricing to show current rates and terms. Expired offer URLs return 404. An earlier product URL with an expired offer still allows a trip enquiry. Extended the offline fallback to the new routes. Backend syntax (114 files), 49 backend tests, 11 frontend tests, frontend production build, worker syntax and diff checks passed. Verified API lookups and redirects, unavailable IDs, liveaboard and resort offer journeys at 390/768/1440 px, minimum stay and date terms, expired offer behaviour, and offline/reconnection for a direct offer link. Removed the temporary resort offer from the isolated test database. Left port 3000 and the test-mode API running. No commit or deployment. Next: installed PWA launch and worker update checks, hosted SEO and Phase 4 acceptance.
+
+### 2026-11-23 — Phase 4 client progress report
+
+Recorded the client-facing summary of the first six Phase 4 work areas and the reported 9.5 development hours in the [Phase 4 tracker](docs/phase4/CONTEXT.md#client-progress-report--23-november-2026). The report is ready for the client. Hosted checks, legal URLs and client review remain pending.
+
+### 2026-11-23 — Phase 4 Step 12 core SEO and PWA
+
+Added canonical URLs, distinct customer metadata, filter and sample listing noindex rules, robots and a sitemap of public core pages and published non-synthetic products. Indexing requires `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_ALLOW_INDEXING=true` at build time. Reused the package manifest, icons and offline page. The worker fetches customer navigations from the network and caches only the offline fallback and installation assets. Improved enquiry focus, detail anchors, image fallback and sold-out copy in the shared product detail. Frontend production builds with indexing enabled for the local test and with default indexing disabled passed, as did 11 frontend tests, worker syntax and diff check. Local Chromium verified SEO rules, responsive liveaboard and resort details at 390/768/1440 px, contextual selection, install eligibility, static-only caching, offline fallback and reconnection. Default preview on port 3000 was restored and smoke-tested with the isolated API. No commit or deployment. Remaining: hosted SEO, actual installed launch and worker updates, wider detail/offer acceptance and Step 13. No new verified cumulative hour total.
+
+### 2026-11-23 — Phase 4 Step 11
+
+Reused V2 persistence, Admin review, catalogue offer resolution and test email transport. The Contact form reports receipt after the API saves the record. The homepage and Special Offers links preserve offer context. Local API checks covered bad input, a mismatched offer, liveaboard and resort offer records, and persistence plus acknowledgement when the Deeparture email action was deliberately failed. Chromium verified Contact at 390, 768 and 1440 px, connection failure and retry, homepage contextual links, and submission from a Special Offers detail link. Verified both email actions independently in JSON transport. Removed the synthetic test records after verification. Backend syntax check (114 files), 49 backend tests, 11 frontend tests, frontend production build, and diff check passed. No commit or deployment. Step 12 baseline review found shared product detail, gallery and jump navigation in place, with standalone departure/package/offer routes and public SEO/PWA assets still open. Cumulative development hours remain unreconciled.
 
 ### 2026-11-13 — Removed vertical hero caption
 
@@ -761,3 +789,7 @@ Validation: backend syntax111 files PASS;46/46 backend tests PASS;18 hosted publ
 ### 2026-11-15 — Publish staging seed tools
 
 Owner authorized publishing staging seed scripts and merging to main. Backend syntax111 files and46/46 tests passed; prior hosted18 search groups and desktop/mobile browser evidence retained. Publication selects only seed/verifier scripts, npm command, sample documentation and related evidence/context. Unrelated local files preserved. Previous fetch blocked by approval-review usage limit; user resumed, retry in progress. Next: commit/push Phase4, merge/push main and verify remote refs.
+
+### 2026-11-22 — Phase 4 Step 102026-11-22 (Asia/Dhaka) — Phase 4 Step 10 is implemented and locally verified. Replaced the provisional Contact FAQs with all six Rev5 section 7 question-and-answer pairs in the approved order. Preserved the existing secondary panel and Operator login link. Next: Step 11 enquiry persistence and receipt emails. Frontend production build and diff check passed. Chromium verified all six exact text pairs against the extracted approved guide, Enter/Space accordion toggling, no horizontal overflow and secondary placement at 320, 390, 768 and 1440 px. Restarted the local frontend and left it running at port 3000. No commit or deployment.
+
+2026-11-23 (Asia/Dhaka) — Rebuilt the frontend successfully and prepared the Step 10 FAQ as a separate local commit.

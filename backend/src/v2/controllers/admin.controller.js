@@ -71,7 +71,7 @@ const syncDestinationLocations = async (payload) => {
   return payload;
 };
 
-const PRODUCT_FIELDS = ["name", "slug", "listingStatus", "verificationStatus", "summary", "description", "featuredImage", "gallery", "destinationLocations", "destinationSlugs", "facilities", "dietary", "accessibility", "divingFeatures", "veganRating", "environmentalRating", "sourceUrl", "lastCheckedAt", "verifiedAt", "vesselType", "yearBuilt", "yearRefit", "lengthMeters", "beamMeters", "maxGuests", "cabinCount", "homePort", "country", "region", "district"];
+const PRODUCT_FIELDS = ["name", "slug", "listingStatus", "verificationStatus", "summary", "description", "featured", "featuredImage", "gallery", "destinationLocations", "destinationSlugs", "facilities", "dietary", "accessibility", "divingFeatures", "veganRating", "environmentalRating", "sourceUrl", "lastCheckedAt", "verifiedAt", "vesselType", "yearBuilt", "yearRefit", "lengthMeters", "beamMeters", "maxGuests", "cabinCount", "homePort", "country", "region", "district"];
 
 const createProduct = (Model, type) => catchAsync(async (req, res) => {
   const organisation = await Organisation.findById(req.body.organisation);
@@ -243,6 +243,7 @@ const listEnquiries = catchAsync(async (req, res) => {
 const approveEnquiry = catchAsync(async (req, res) => {
   const enquiry = await Enquiry.findById(req.params.id).populate("product").populate("organisation");
   if (!enquiry) throw new AppError(httpStatus.NOT_FOUND, "Enquiry not found");
+  if (enquiry.productType === "general" || !enquiry.organisation || !enquiry.product) throw new AppError(400, "This enquiry has no operator to notify.");
   if (!["new", "admin_approved"].includes(enquiry.status)) throw new AppError(httpStatus.BAD_REQUEST, `Enquiry cannot be approved from ${enquiry.status}`);
   const lock = await Enquiry.findOneAndUpdate({ _id: enquiry._id, status: { $in: ['new','admin_approved'] }, notificationInFlight: { $ne: true } }, { $set: { notificationInFlight: true } });
   if (!lock) throw new AppError(409, 'Approval is already in progress or completed');

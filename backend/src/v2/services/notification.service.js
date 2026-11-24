@@ -40,24 +40,31 @@ const sendClaimInvitation = async ({ organisation, email, claimUrl }) => safeSen
   html: `<div><h2>Your Deeparture listing is ready</h2><p>We have prepared listings for <strong>${escapeHtml(organisation.name)}</strong>.</p><p><a href="${escapeHtml(claimUrl)}">Claim your operator account</a> to verify information, add departures, availability, prices and offers.</p></div>`,
 });
 
-const enquiryDetailHtml = ({ enquiry, product }) => `<div><h2>Deeparture enquiry</h2><p><strong>Product:</strong> ${escapeHtml(product?.name)}</p><p><strong>Name:</strong> ${escapeHtml(enquiry.customer.name)}</p><p><strong>Email:</strong> ${escapeHtml(enquiry.customer.email)}</p><p><strong>Phone:</strong> ${escapeHtml(enquiry.customer.phone)}</p><p><strong>Guests:</strong> ${escapeHtml(enquiry.customer.guests)}</p><p><strong>Message:</strong> ${escapeHtml(enquiry.message)}</p></div>`;
+const enquiryDetailHtml = ({ enquiry, product }) => `<div><h2>Deeparture enquiry</h2><p><strong>Product or interest:</strong> ${escapeHtml(product?.name || enquiry.interest)}</p><p><strong>Destination or trip:</strong> ${escapeHtml(enquiry.destination)}</p><p><strong>Offer:</strong> ${escapeHtml(enquiry.offerName)}</p><p><strong>Name:</strong> ${escapeHtml(enquiry.customer.name)}</p><p><strong>Email:</strong> ${escapeHtml(enquiry.customer.email)}</p><p><strong>WhatsApp / Phone:</strong> ${escapeHtml(enquiry.customer.whatsapp || enquiry.customer.phone)}</p><p><strong>Guests:</strong> ${escapeHtml(enquiry.customer.guests)}</p><p><strong>Message:</strong> ${escapeHtml(enquiry.message)}</p></div>`;
 
 const sendEnquiryReceivedNotifications = async ({ enquiry, product, operationId }) => {
-  const admins = await adminRecipients();
+  const label = product?.name || enquiry.interest || 'General';
   const detailHtml = enquiryDetailHtml({ enquiry, product });
-  await notifyAdminsInApp({
-    type: 'enquiry.received', title: `New enquiry - ${product?.name || 'listing'}`,
-    message: `${enquiry.customer.name} submitted an enquiry requiring Admin review.`, relatedRecordType: 'enquiry', relatedRecordId: enquiry._id,
-    actionTarget: `/admin/v2/enquiries?status=new`, operationId, retentionClass: 'business',
-  });
-  await Promise.all([
-    ...admins.map((to) => safeSend({ to, subject: `New Deeparture enquiry - ${product?.name || 'listing'}`, html: detailHtml })),
+  const notifyDeeparture = async () => {
+    const configured = process.env.ENQUIRY_NOTIFICATION_EMAIL?.trim();
+    const recipients = configured ? [configured] : await adminRecipients();
+    await Promise.all(recipients.map(to => safeSend({ to, subject: `New Deeparture enquiry - ${label}`, html: detailHtml })));
+  };
+  const actions = await Promise.allSettled([
+    notifyAdminsInApp({
+      type: 'enquiry.received', title: `New enquiry - ${label}`,
+      message: `${enquiry.customer.name} submitted an enquiry requiring Admin review.`, relatedRecordType: 'enquiry', relatedRecordId: enquiry._id,
+      actionTarget: '/admin/v2/enquiries?status=new', operationId, retentionClass: 'business',
+    }),
+    notifyDeeparture(),
     safeSend({
       to: enquiry.customer.email,
       subject: 'We received your Deeparture enquiry',
-      html: `<div><h2>Thank you, ${escapeHtml(enquiry.customer.name)}</h2><p>We have received your enquiry for <strong>${escapeHtml(product?.name || 'your selected property')}</strong>. The Deeparture team will review it and contact the operator as the next step.</p></div>`,
+      html: `<div><h2>Thank you, ${escapeHtml(enquiry.customer.name)}</h2><p>We have received your enquiry. The Deeparture team will review your message and contact you about the next steps. Pricing and availability are subject to confirmation.</p></div>`,
     }),
-  ].filter(Boolean));
+  ]);
+  const failures = actions.filter(action => action.status === 'rejected');
+  if (failures.length) throw new AggregateError(failures.map(action => action.reason), 'Enquiry notification failed');
 };
 
 const sendEnquiryToOperator = async ({ enquiry, product, organisation, operationId }) => {

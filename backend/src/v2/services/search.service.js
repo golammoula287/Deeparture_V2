@@ -4,6 +4,8 @@ const Itinerary = require('../models/itinerary.model');
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
 const ResortAvailability = require('../models/resortAvailability.model');
+const { parseDay, resortIdsForStay, eligibleStayPackages } = require('./resortStay.service');
+const { activeOfferProductIds } = require('./catalogueOffers.service');
 const RoomType = require('../models/roomType.model');
 const Organisation = require('../models/organisation.model');
 const Location = require('../models/location.model');
@@ -11,6 +13,7 @@ const AttributeDefinition = require('../models/attributeDefinition.model');
 const ProductAttribute = require('../models/productAttribute.model');
 const slugify = require('../utilities/slugify');
 const AppError = require('../../error/appError');
+const { finderResults } = require('./finderResults.service');
 const { parsePagination, pagedResult } = require('./pagination.service');
 
 const normalizeFacet = (value) => String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
@@ -59,7 +62,7 @@ const productIdsForAttributes = async ({ productType, filters }) => {
   const modelName = productType === 'resort' ? 'ResortV2' : 'VesselV2';
   let ids = null;
   for (const filter of filters) {
-    const definition = await AttributeDefinition.findOne({ key: normalizeFacet(filter.key), active: true, filterable: true }).lean();
+    const definition = await AttributeDefinition.findOne({ key: normalizeFacet(filter.key), active: true, filterable: true, applicableTo: { $in: [productType, 'both'] } }).lean();
     if (!definition) return [];
     const value = typedValue(definition, filter.value, filter.op || 'eq');
     let condition = value;
@@ -88,7 +91,7 @@ const canonicalLocationAndDescendants = async (value) => {
   return ids;
 };
 
-const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {}) => {
+const vesselIdsFromOperationalFilters = async (query, { publicOnly = false, finder } = {}) => {
   let ids = null;
   let eligibleItineraryIds = null;
   const itineraryFilter = {};
@@ -120,9 +123,16 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {
   const departureFilter = { status: { $nin: ['cancelled'] } };
   let useDepartures = false;
   if (query.startDate) { departureFilter.startDate = { ...(departureFilter.startDate || {}), $gte: new Date(query.startDate) }; useDepartures = true; }
-  if (query.endDate) { departureFilter.startDate = { ...(departureFilter.startDate || {}), $lte: new Date(query.endDate) }; useDepartures = true; }
-  if (query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
-  if (query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
+  if (query.endDate) {
+    const endDay = publicOnly && parseDay(query.endDate);
+    const end = endDay
+      ? { $lt: new Date(endDay.setUTCDate(endDay.getUTCDate() + 1)) }
+      : { $lte: new Date(query.endDate) };
+    departureFilter.startDate = { ...departureFilter.startDate, ...end };
+    useDepartures = true;
+  }
+  if (!finder?.activeOffer && query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
+  if (!finder?.activeOffer && query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
   if (query.hasPricing === 'true') { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $exists: true, $ne: null }; useDepartures = true; }
   if (query.hasAvailability === 'true') { departureFilter['availability.0'] = { $exists: true }; useDepartures = true; }
   if (query.availableOnly === 'true' || query.availability) { departureFilter['availability.status'] = query.availability ? query.availability : { $in: ['available','limited','on_request'] }; useDepartures = true; }
@@ -130,24 +140,30 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false } = {
   if (query.availabilitySource) { departureFilter['availability.sourceType'] = query.availabilitySource; useDepartures = true; }
   if (query.conflict === 'true') { departureFilter['availability.conflictState'] = true; useDepartures = true; }
   if (query.override === 'true') { departureFilter['availability.manualOverride'] = true; useDepartures = true; }
+  if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
+  if (finder) Object.assign(finder, { departureFilter, requiresDeparture: useDepartures });
   if (useDepartures) {
-    if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
     ids = intersect(ids, (await Departure.distinct('vessel', departureFilter)).map(String));
   }
   return ids;
 };
 
-const resortIdsFromOperationalFilters = async (query) => {
+const resortIdsFromOperationalFilters = async (query, { publicOnly, finder }) => {
   let ids = null;
-  if (query.maxPrice || query.minPrice || query.hasPricing === 'true') {
-    const price = { active: true };
-    if (query.maxPrice || query.minPrice) {
+  const hasStay = publicOnly && (query.checkIn !== undefined || query.checkOut !== undefined);
+  const price = { active: true };
+  if (hasStay || (!finder?.activeOffer && (query.maxPrice || query.minPrice)) || query.hasPricing === 'true') {
+    if (!finder?.activeOffer && (query.maxPrice || query.minPrice)) {
       price['basePrice.amountUsd'] = {};
       if (query.maxPrice) price['basePrice.amountUsd'].$lte = Number(query.maxPrice);
       if (query.minPrice) price['basePrice.amountUsd'].$gte = Number(query.minPrice);
     }
-    ids = (await ResortPackage.distinct('resort', price)).map(String);
+    if (hasStay && finder) {
+      finder.packages = await eligibleStayPackages(query, price);
+      ids = [...new Set(finder.packages.map(item => String(item.resort)))];
+    } else ids = hasStay ? await resortIdsForStay(query, price) : (await ResortPackage.distinct('resort', price)).map(String);
   }
+  if (finder) finder.packageFilter = price;
   if (query.hasAvailability === 'true' || query.availableOnly === 'true' || query.availability || query.freshness || query.availabilitySource || query.conflict === 'true' || query.override === 'true') {
     const availabilityFilter = {};
     if (query.availableOnly === 'true') availabilityFilter.status = { $in: ['available','limited','on_request'] };
@@ -166,6 +182,7 @@ const resortIdsFromOperationalFilters = async (query) => {
 const baseProductFilter = async ({ productType, query, publicOnly }) => {
   const filter = publicOnly ? { listingStatus: 'published' } : {};
   if (!publicOnly && query.status) filter.listingStatus = query.status;
+  if (query.featured === 'true') filter.featured = true;
   if (query.organisation) filter.organisation = query.organisation;
   if (!publicOnly && query.claimStatus) {
     const orgIds = await Organisation.distinct('_id', { status: query.claimStatus });
@@ -196,12 +213,18 @@ const baseProductFilter = async ({ productType, query, publicOnly }) => {
 const searchProducts = async ({ productType, query = {}, publicOnly = false, populateOrganisation = false }) => {
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
-  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query) : await vesselIdsFromOperationalFilters(query, { publicOnly });
+  const finder = publicOnly && query.view === 'finder' ? {} : null;
+  if (finder) Object.assign(finder, { activeOffer: query.activeOffer === 'true', checkIn: query.checkIn, checkOut: query.checkOut, minPrice: query.minPrice, maxPrice: query.maxPrice });
+  let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly, finder }) : await vesselIdsFromOperationalFilters(query, { publicOnly, finder });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
+  if (publicOnly && !finder && query.activeOffer === 'true' && ids?.length !== 0) {
+    ids = intersect(ids, await activeOfferProductIds(productType));
+  }
   if (ids !== null) filter._id = { $in: ids };
 
   const { page, limit, skip, sort } = parsePagination(query, { defaultLimit: publicOnly ? 24 : 25, maxLimit: 100, allowedSort: ['name','updatedAt','createdAt','completenessScore','veganRating'], defaultSort: publicOnly ? 'name' : '-updatedAt' });
+  if (finder) return finderResults({ Model, filter, finder, productType, requestedSort: query.sort, page, limit, skip });
   let find = Model.find(filter).sort(sort).skip(skip).limit(limit);
   if (populateOrganisation) find = find.populate('organisation', 'name status primaryEmail website');
   const [items, total] = await Promise.all([find.lean(), Model.countDocuments(filter)]);
@@ -225,4 +248,20 @@ const getVesselBySlug = async (slug) => {
   return { ...vessel, itineraries, departures };
 };
 
-module.exports = { listVessels, getVesselBySlug, listResorts, searchAdminProducts, searchProducts, parseAttributeFilters, productIdsForAttributes, typedValue, normalizeFacet, intersect };
+const listEmbarkationPorts = () => Itinerary.aggregate([
+  { $match: { status: 'active', $or: [{ 'embarkation.slug': { $type: 'string', $ne: '' } }, { 'embarkation.location': { $type: 'objectId' } }] } },
+  { $lookup: { from: Vessel.collection.name, localField: 'vessel', foreignField: '_id', as: 'listing' } },
+  { $match: { 'listing.listingStatus': 'published' } },
+  { $lookup: { from: Location.collection.name, localField: 'embarkation.location', foreignField: '_id', as: 'port' } },
+  { $set: { port: { $first: '$port' } } },
+  { $set: {
+    portSlug: { $cond: ['$port.active', '$port.slug', '$embarkation.slug'] },
+    portName: { $cond: ['$port.active', '$port.name', '$embarkation.name'] },
+  } },
+  { $match: { portSlug: { $type: 'string', $ne: '' } } },
+  { $group: { _id: '$portSlug', name: { $min: '$portName' } } },
+  { $project: { _id: 0, slug: '$_id', name: { $ifNull: ['$name', '$_id'] } } },
+  { $sort: { name: 1, slug: 1 } },
+]);
+
+module.exports = { listEmbarkationPorts, listVessels, getVesselBySlug, listResorts, searchAdminProducts, searchProducts, parseAttributeFilters, productIdsForAttributes, typedValue, normalizeFacet, intersect };

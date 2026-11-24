@@ -1,0 +1,50 @@
+.hero {
+  color: #fff;
+  background: linear-gradient(90deg, var(--home-deep) 12%, rgba(var(--home-deep-rgb), .85) 53%, rgba(var(--home-deep-rgb), .35)), url('/phase4/hero-underwater.jpg') center 48% / cover;
+}
+.heroInner, .content {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+.heroInner { padding-block: 38px 44px; }
+.hero h1 { margin: 0; font-size: clamp(32px, 5vw, 54px); font-weight: 750; line-height: 1.1; letter-spacing: -.045em; }
+.hero p { margin: 8px 0 0; color: var(--home-hero-copy); font-size: clamp(14px, 2vw, 17px); }
+.content { padding-block: 28px 56px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; gap: 24px; }
+.formCard, .faq { padding: clamp(16px, 3vw, 28px); border: 1px solid var(--home-line); border-radius: 14px; background: #fff; }
+.formCard h2, .faq h2 { margin: 0; color: var(--home-ink); font-size: clamp(21px, 3vw, 27px); font-weight: 750; line-height: 1.2; letter-spacing: -.025em; }
+.formCard > p { margin: 8px 0 20px; color: var(--home-muted); font-size: 14px; }
+.formFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.formFields label { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; gap: 6px; font-size: 13px; font-weight: 650; }
+.formFields small { color: var(--home-muted); font-size: 12px; font-weight: 450; }
+.formFields :is(input, select, textarea) { width: 100%; min-height: 46px; padding: 9px 11px; border: 1px solid var(--home-border); border-radius: 7px; color: var(--home-ink); background: #fff; font-size: 16px; font-weight: 400; }
+.formFields textarea { resize: vertical; }
+.fullWidth { grid-column: 1 / -1; }
+.formNote, .draftStatus, .formError { margin: 12px 0; font-size: 13px; color: var(--home-muted); }
+.formError { color: var(--customer-error); }
+.draftStatus a, .faq a { text-decoration: underline; text-underline-offset: 3px; }
+.submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 17px; border: 1px solid var(--home-action-border); border-radius: 8px; background: var(--home-accent); color: var(--home-on-accent); font-size: 14px; font-weight: 750; }
+.submit:hover { background: var(--home-accent-hover); }
+.faq { background: var(--home-canvas); }
+.faq h2 { font-size: 21px; margin-bottom: 10px; }
+.faq details + details { border-top: 1px solid var(--home-line); }
+.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 10px 0; list-style: none; cursor: pointer; color: var(--home-ink); font-size: 13px; font-weight: 700; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary svg { flex-shrink: 0; }
+.faq details[open] svg { transform: rotate(180deg); }
+.faq details p { margin: 0 0 12px; color: var(--home-muted); font-size: 13px; }
+.contacts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 20px; padding: 12px; border: 1px solid var(--home-line); border-radius: 11px; background: var(--home-pale); font-style: normal; }
+.contacts a { display: flex; flex-direction: column; min-width: 0; justify-content: center; gap: 2px; padding: 6px 10px; border-radius: 6px; color: var(--home-ink); overflow-wrap: anywhere; }
+.contacts a:hover { background: #fff; }
+.contacts span { color: var(--home-muted); font-size: 12px; }
+.contacts strong { font-size: 14px; }
+@media (max-width: 760px) {
+  .heroInner { padding-block: 26px 32px; }
+  .layout { grid-template-columns: 1fr; gap: 16px; }
+  .content { padding-block: 16px 32px; }
+}
+@media (max-width: 520px) {
+  .formFields, .contacts { grid-template-columns: 1fr; }
+  .contacts { gap: 2px; }
+  .submit { width: 100%; }
+}

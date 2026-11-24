@@ -136,7 +136,7 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
   const {chromium}=require('../../frontend/node_modules/@playwright/test');browser=await chromium.launch({headless:true,...(process.env.VERIFY_BROWSER_CHANNEL?{channel:process.env.VERIFY_BROWSER_CHANNEL}:{})});
   const context=await browser.newContext();const page=await context.newPage();let errors=[];page.on('pageerror',e=>errors.push(e.message));
   const frontend=process.env.VERIFY_FRONTEND_URL||'http://localhost:3000';
-  await page.goto(frontend+'/');await page.getByRole('link',{name:'Operator',exact:true}).click();await page.waitForURL('**/login');
+  await page.goto(frontend+'/');await page.getByRole('navigation',{name:'Operator login'}).getByRole('link',{name:'Sign in / Sign up',exact:true}).click();await page.waitForURL('**/login');
   await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');assert.equal(await page.getByText('Bulk upload',{exact:true}).count(),0);
   await page.evaluate(()=>localStorage.setItem('access-token','Bearer invalid-token'));await page.goto(frontend+'/dashboard/v2');await page.waitForURL('**/login');assert.equal(await page.evaluate(()=>localStorage.getItem('access-token')),null);
   pass('anonymous Operator link and direct dashboard access require login; invalid sessions cleared');
@@ -159,12 +159,23 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
     await page.goto(frontend+path);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,path+' overflow at '+width);
    }
   }pass('desktop and phone layouts fit viewport across starter pages');
+  await page.setViewportSize({width:1440,height:900});
   for(const [kind,name,slug] of [['liveaboards','Demo Explorer','demo-explorer'],['resorts','Demo Dive Resort','demo-dive-resort']]){
-   await page.goto(frontend+'/explore/'+kind);await page.getByText(name,{exact:true}).first().waitFor();
-   await page.getByPlaceholder('Destination',{exact:true}).fill('no-match-'+run);
-   await page.getByText('0 '+kind,{exact:true}).waitFor();
-   await page.getByPlaceholder('Destination',{exact:true}).fill('raja-ampat');await page.getByText(name,{exact:true}).first().waitFor();
-   await page.locator('a[href="/'+kind+'/'+slug+'"]').first().click();await page.waitForURL('**/'+kind+'/'+slug);
+   const path='/explore/'+kind;
+   await page.goto(frontend+path);
+   const search=page.locator('#finder-search');
+   if(kind==='resorts'){
+    const dateAfter=days=>new Date(Date.now()+days*86_400_000).toISOString().slice(0,10);
+    await search.getByLabel('Check-in').fill(dateAfter(7));
+    await search.getByLabel('Check-out').fill(dateAfter(14));
+   }
+   await search.getByLabel('Destination',{exact:true}).fill('no-match-'+run);
+   await search.getByRole('button',{name:'Search',exact:true}).click();
+   await page.getByRole('heading',{name:'No matching journeys yet.'}).waitFor();
+   await search.getByLabel('Destination',{exact:true}).fill('raja-ampat');
+   await search.getByRole('button',{name:'Search',exact:true}).click();
+   await page.getByRole('link',{name,exact:true}).click();
+   await page.waitForURL(url=>url.pathname==='/'+kind+'/'+slug);
   }pass('search controls filter results and listing links navigate');
   assert.deepEqual(errors,[]);pass('no browser JavaScript errors');
  }

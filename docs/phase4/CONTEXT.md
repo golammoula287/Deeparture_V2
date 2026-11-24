@@ -1,8 +1,162 @@
 # Phase 4 — Customer marketplace redesign and PWA
 
-Last updated: 2026-11-13 (Asia/Dhaka)
+Last updated: 2026-11-24 (Asia/Dhaka)
 
-## Current status
+## Current handoff — client corrections, 20 November 2026
+
+The client approved implementation of the consolidated corrections. Steps 01–11 are implemented and locally verified. Step 02 legal links await approved destinations. Hosted Step 03 checks and review gates remain open. Step 12 is next. The branch is `phase4-customer-ux-implementation`.
+
+### Source order and precedence
+
+The local client source pack is in [Phase 4 Full implementations Details](<../../deliverables/Phase 4  Full implementations Details />). The folder is Git-ignored. A fresh checkout needs the original client files supplied separately.
+
+1. Latest pasted client approval and the four WhatsApp references. The approved contact values and behaviour are captured below. The footer mockup supplies layout guidance. Retain the existing header logo in the footer and use the confirmed contact details.
+2. `Deeparture_Phase4_Consolidated_Developer_Checklist_FINAL_Rev5.pdf` (17 November, 7 pages). Use it for exact public copy, headers, search fields, Contact structure and all six FAQ entries in §7.
+3. `Deeparture_Phase4_Developer_Implementation_Guide.docx` (20 November). Use its 13-step sequence and developer handback. Refer to `Deeparture_Phase4_Desktop_UI_Audit_FINAL_Tile_Decision.pdf` (8 pages) and `Deeparture_Phase4_Mobile_UI_Audit_SEND_READY.pdf` (7 pages) for responsive and interaction details that Rev5 leaves in place.
+4. `Deeparture.pdf` is a visual identity concept deck. The SVG/PNG ZIPs contain logo, pictograph and social-icon artwork. Both ZIPs contain the same 19 artwork files byte for byte. They include the four original pictographs (puzzle, shield, cog and tag), two wordmarks, star graphics, a promotional diver image and social icons. The archive icons differ from the footer mockup, so verify which platforms and profile URLs the live footer actually uses. Preserve the existing site logo in both header and footer.
+5. The [original Rev 1.1 package](../Deeparture_V2_Phase4_COMPLETE_Handover_Rev1.1.zip) supplies wider API, commercial, SEO, PWA and acceptance requirements where the newer documents are silent.
+
+### Current code to build on
+
+- [CustomerShell](../../frontend/src/components/customer/CustomerShell.jsx) already shares the logo asset between header and footer. The local fixed-header work is present. The shared header and catalogue cards have removed favourites. Discovery links use dedicated public routes. The footer contains the approved Step 02 brand and contact content, with legal destinations pending.
+- [Homepage](../../frontend/pages/index.js), [HomeSearch](../../frontend/src/components/customer/HomeSearch.jsx) and [TripFinder](../../frontend/src/components/customer/TripFinder.jsx) already use V2 catalogue data. The homepage reads separate Featured and Active Offer feeds. The Featured and Special Offers links open dedicated paginated discovery pages. Liveaboards now have a shared departure range and Resorts have required stay dates. Finder prices are secondary and legacy availability-only controls have been removed from the customer flow.
+- [Search service](../../backend/src/v2/services/search.service.js) already filters liveaboards by departure start and accepts structured attributes. Verify date boundaries, resort stay eligibility, definition loading and known-port sourcing. The [attribute seed](../../backend/scripts/seed-v2-attributes.js) includes Freediving, Photography, Nitrox and Rebreather.
+- [Enquiry controller](../../backend/src/v2/controllers/enquiry.controller.js) and [notification service](../../backend/src/v2/services/notification.service.js) provide existing V2 persistence and submission notifications. Audit general Contact submission and listing/departure/offer context, central recipient selection and acknowledgement copy. Preserve the existing Admin review workflow.
+- The November 14 release and staging sample search evidence in [the evidence directory](evidence/) describes those runs. Reproduce the catalogue and preference-loading issues from the audits against the current target before diagnosing them.
+
+### Implementation sequence
+
+2026-11-21 (Asia/Dhaka) — The owner confirmed that the approved main homepage (`/`) is the final UI design reference for Phase 4. Use it to guide shared UI work and retain its design when applying the Step 04 corrections.
+
+| Step | Work and completion check |
+| --- | --- |
+| 01 | Centralize theme roles and shared header. Retain the modern layout and compact hero areas. Use the current Deeparture logo, approved pictographs and replaceable artwork. Share navigation and active states across customer routes. Desktop keeps Search and Contact us. Mobile keeps Search and hamburger. Remove deferred heart, account and agent controls throughout the customer UI. |
+| 02 | Build the shared footer with Brand, Explore, About, Contact, Follow, Operator login and legal links. Use the header logo and “Dive travel for everyone.” Keep “Sign in / Sign up” for Operator login. Verify existing legal and Groups/Charters destinations. Copy the official live-site social URLs into one shared configuration and verify each link. Add a floating direct WhatsApp action. |
+| 03 | Trace catalogue and preference-loading failures across V2 API, configuration, taxonomy and rendering. Definitions must load independently of matching inventory. Extend the shared Dietary, Accessibility, Facilities and Diving taxonomy with Freediving alongside Nitrox, Photography and Rebreather. Display supported attributes on relevant listings. Verify matching rules and structured Liveaboard embarkation ports. Define independent Featured and Active Offer contracts for both product types. |
+| 04 | Apply exact Rev5 homepage copy, including “Travel for everyone.” Keep Liveaboards as the default mode, configured shortcuts, separate Featured Trips and Special Offers, and six agreed destinations. Keep four compact “Explore Deeparture” tiles on desktop and remove the duplicate row on mobile. Mobile shortcuts are Wi-Fi, Accessible, Nitrox and All Filters. Desktop also includes Photography and Rebreather. |
+| 05 | Put one Departure Window range control on the homepage and label it Departure dates on the Liveaboard finder. Use exact dates, full-calendar-month shortcuts, Clear and Apply. Match inclusive departure-start dates. A trip departing 25 February and returning 5 March matches a February window. Resorts use separate, required Check-in and Check-out fields and validate the actual stay range. |
+| 06 | Move Price range to secondary filters with two handles synchronized with editable Min/Max. Keep Vegan Rating primary and explain vegan suitability. Use collapsible multi-select groups, usable duration fields and structured Liveaboard embarkation. Keep Apply/Clear and shortcut state in sync with counts and preserve unrelated search criteria. Remove Available only and use on-request/enquiry wording. |
+| 07 | Update `/explore/liveaboards` and `/explore/resorts` with the Contact-style compact hero, page identity and “Find your next Deeparture.” Put the active product tab first. Use Rev5 field order and wording. Liveaboards uses Destination, Departure dates, Trip length, Vegan Rating and Search. Resorts replaces departure dates and trip length with Check-in and Check-out. Desktop results use a visible left accordion and removable chips. Mobile uses a search summary, Modify Search, full-screen Filters and separate Sort. Use a travel-relevant default and verify sorting, card data and pagination. |
+| 08 | Build a dedicated mixed-product Featured Trips view and searchable `/special-offers`. Their only default restrictions are Featured = Yes and Active Offer = Yes respectively. Apply published/offer-validity rules, and test featured only, offer only, both and neither. Keep real cards, price basis, relevant detail/enquiry links and distinct no-match, no-active-offer and API-error states. Provide the dedicated `/why-deeparture` and `/destinations` routes in the customer journey. |
+| 09 | Use the compact Contact hero and exact Rev5 copy. Keep “Send us a message.” primary. Place the secondary FAQ beside it on desktop and below it on mobile, with a compact contact strip after both. Form requires Name, Email, interest and message. WhatsApp/Phone and destination/trip name are optional. Interest options are Liveaboard, Resort, Special Offer and Other. |
+| 10 | Use “Frequently asked questions” and the six exact Rev5 §7 question/answer pairs. Check structure and wording against the approved copy at phone and desktop widths. |
+| 11 | Persist general and contextual enquiries in V2, retaining relevant listing, trip, departure or offer context. Generate the Deeparture notification through a configurable server-side recipient and acknowledge receipt to the customer. Check record persistence and both email actions independently in test mode. Customer submission routes to Deeparture and avoids booking promises. |
+| 12 | Finish the wider customer journey from the original package and current V2 data, including details, galleries/lightbox, jump navigation, itineraries, cabins/rooms, departure/package detail, destination guides and offer routing. Review truthful pricing, accessibility, responsive performance, SEO and PWA. |
+| 13 | Run the guide’s acceptance checks and original-package checks against appropriate data. Record exact revision, environment, checks, screenshots, test URLs, configuration/schema changes and unresolved issues. Request review for each gate and record the outcome before marking it accepted. |
+
+Gate 1 covers shared foundations, catalogue and preferences, homepage search, dates and filters (steps 01–06). Gate 2 covers catalogue results, sorting and discovery (steps 07–08). Gate 3 covers Contact, FAQ, enquiries and the wider customer journey (steps 09–13). Approval to start is recorded. Gate approvals are pending.
+
+### Confirmed details and pending inputs
+
+- Public email `info@deeparture.travel` uses `mailto:info@deeparture.travel`. WhatsApp `+63 917 907 8121` uses `https://wa.me/639179078121`. Phone `+64 21 024 13170` uses `tel:+642102413170`. Verify official social URLs against the current footer at `deeparture.travel` during step 02.
+- Brett will provide final colours, real imagery and the receiving inbox. Preserve agreed hero proportions and the same overall hero treatment on Contact, Liveaboards and Resorts. Track final homepage logo placement separately from the instruction to use the current header logo in the footer. The public mailto and the enquiry notification recipient are separate settings.
+- Incomplete inventory is expected during development. Use clearly identified test records to exercise behaviour and preserve graceful empty states. Verify existing taxonomy combination rules, resort stay/rate semantics, offer validity, ranking if Recommended is chosen, and existing legal/Groups/Charters routes before fixing those contracts in code.
+- Start implementation with steps 01–03. Inventory the shared shell/theme and verify catalogue and taxonomy requests in an isolated environment. Record the observed baseline before changing search or data handling.
+
+### Work log — 2026-11-24 (Asia/Dhaka)
+
+- Matched the shared customer header's side padding to the homepage. Chromium confirmed identical logo size and position and identical header gutters at eight widths across ten customer routes. Production build and diff check passed. Local port 3000 serves the refreshed build.
+
+### Work log — 2026-11-23 (Asia/Dhaka)
+
+- Step 13 local acceptance captured 13 passing desktop and mobile browser groups and screenshots. Homepage filter and both finder checks passed. Updated the legacy Phase 1 verifier to match the approved Operator login and finder flow, then passed all five Phase 1–3 regression suites with fresh local fixtures. Backend syntax, static checks and 49 unit tests passed. See the [local acceptance report](LOCAL_ACCEPTANCE_2026-11-23.md) for evidence, deployment keys and remaining checks. Hosted acceptance, installed PWA launch and worker updates, and mapping the original full checklist remain open.
+
+- Step 12 trip and offer journey added `/departures/[id]`, `/packages/[id]`, and `/offers/[slug]` using stable V2 IDs for the offers. The routes redirect to the selected context on the shared listing page. Published inventory and active offers are resolved by V2. The product page displays validated offer price, pricing basis, expiry and resort stay terms where provided. Expired offers return 404 from the direct link and show an explanatory message on older contextual listing links.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build, worker syntax and diff checks passed. Local Chromium verified liveaboard and resort offers at 390/768/1440 px, enquiry context, expired offers, and direct offer link offline/reconnection. The temporary sample resort offer was removed. The frontend and test-mode API remain running locally. Remaining Step 12 checks include installed PWA launch, worker updates and hosted SEO. Cumulative hours remain unreconciled.
+
+- Step 12 core increment added page metadata, clean canonicals, filter/sample noindex rules, robots and a published-inventory sitemap. Set `NEXT_PUBLIC_SITE_URL` to the approved public origin and enable `NEXT_PUBLIC_ALLOW_INDEXING` only on the public build. Reused the supplied manifest, icons and offline page. The worker caches only the offline and installation assets. Updated shared detail navigation, enquiry focus and pricing/status display.
+- Both production builds and 11 frontend tests passed. Chromium verified SEO rules against a temporary localhost indexable build, sample product details at 390/768/1440 px, contextual selection, manifest install eligibility, cache contents, offline fallback and reconnection. The default local preview is back on port 3000 with indexing disabled. Next: wider departure/package/offer checks, installed launch and worker update testing, and hosted SEO acceptance. Step 12 remains open. Cumulative development hours are still pending reconciliation.
+
+- Started the local preview on port 3000 with the isolated sample API on port 5028. Homepage, Contact with the approved FAQ, API health in test email mode, and both sample catalogue endpoints returned HTTP 200. Left the services running for review.
+
+- 2026-11-23 (Asia/Dhaka) — Rebuilt the frontend successfully and prepared the Step 10 FAQ as a separate local commit.
+
+- Step 11 routes general Contact and contextual enquiries through V2. General records appear in Admin review. Listing, departure, package and offer relationships are validated server-side. The configurable `ENQUIRY_NOTIFICATION_EMAIL` overrides active Admin email recipients for new enquiry notices, while the customer acknowledgement is attempted independently.
+- Backend syntax check (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. On the isolated local search database, confirmed general, liveaboard and resort records, rejected invalid input and mismatched offers, and verified persistence and customer acknowledgement after a simulated Deeparture email failure. Chromium covered Contact at 390, 768 and 1440 px, a connection error and retry, homepage offer links for both product types, and one Special Offers to confirmed-enquiry flow. Verified both email actions in JSON transport using synthetic recipients. Cleaned up synthetic records after the run. The approved final inbox and staging verification remain pending.
+- Step 12 baseline review confirmed reusable product details, gallery dialog, jump navigation, itineraries, and embedded departure/package options. Review standalone departure/package/offer routes against the agreed architecture, then prioritise core SEO checks and PWA integration against the remaining approved hours. Cumulative development hours remain unreconciled.
+
+#### Client progress report — 23 November 2026
+
+Hi Brett,
+
+A quick Phase 4 progress update. The work below took **9.5 development hours** and has been verified locally.
+
+| Work area | Completed |
+|---|---|
+| **Customer navigation** | Standardised the header and navigation across customer pages on desktop and mobile. |
+| **Footer and contact** | Added a shared footer with direct contact links, Operator login, and a floating WhatsApp button. |
+| **Catalogue and preferences** | Added Freediving and Photography to the shared preferences and made embarkation ports selectable in liveaboard search. |
+| **Homepage search** | Applied the approved copy, set Liveaboards as the default, and updated the desktop and mobile search shortcuts. Featured Trips and Special Offers now load independently. |
+| **Travel dates** | Added a departure date range with full-month shortcuts for liveaboards and separate check-in and check-out fields for resorts. |
+| **Filters and pricing** | Added collapsible preference filters and a price slider with editable minimum and maximum values. Vegan Rating stays in the main search, and clearing secondary filters preserves the main search selections. |
+
+Hosted catalogue and preference checks, the final Terms, Privacy and Cookie Policy links, and your review are still pending.
+
+### Work log — 2026-11-22 (Asia/Dhaka)
+
+- 2026-11-22 (Asia/Dhaka) — Phase 4 Step 10 is implemented and locally verified. Replaced the provisional Contact FAQs with all six Rev5 section 7 question-and-answer pairs in the approved order. Preserved the existing secondary panel and Operator login link. Next: Step 11 enquiry persistence and receipt emails. Frontend production build and diff check passed. Chromium verified all six exact text pairs against the extracted approved guide, Enter/Space accordion toggling, no horizontal overflow and secondary placement at 320, 390, 768 and 1440 px. Restarted the local frontend and left it running at port 3000. No commit or deployment.
+
+- 2026-11-22 (Asia/Dhaka) — Phase 4 Step 09 Contact page and form are implemented and locally verified. Added the approved compact hero and form copy, required and optional fields, desktop/mobile FAQ placement, and direct Email, WhatsApp and Phone strip. Next: Step 10 exact FAQ content. The current form opens a draft in the visitor’s email app and does not claim receipt. In-app persistence and receipt emails are Step 11. Existing FAQ entries remain pending the approved six-entry replacement in Step 10. Existing artwork fills the hero until the client supplies its final image. Frontend production build and diff check passed. Chromium passed at 320, 390, 768 and 1440 px for layout, copy, active header, required fields, optional fields, special-offer preselection and draft link. No emails were sent. Local port 3000 serves the latest build. No commit or deployment.
+
+
+- Step 08 added `/featured-trips`, `/special-offers`, `/destinations`, six destination guides and `/why-deeparture`. Homepage and shared navigation point to the dedicated routes. Product details preserve the return link. The Why page uses approved copy and the supplied icons while expanded approved copy and final destination imagery remain client inputs.
+- Discovery defaults to both product types without destination constraints. Featured reads the managed flag. Offers read qualifying promotions and match the specific departure or resort package, travel dates, rate window and promotional price. Product-specific dates are available after selecting Liveaboards or Resorts. Distinct no-match, no-active-offer and API failure states are verified. Booking and availability remain on enquiry.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. Chromium verified four widths (320, 390, 768 and 1440) using the isolated sample API. API fixture checks covered Featured-only, Offer-only, both and neither for each product and matching travel dates, expiry, minimum stay and budget. Temporary sample changes were restored. Synthetic 503 and empty fixtures covered the page states. Local port 3000 serves the latest build. Next: Step 09 Contact page and form.
+
+
+- Step 07 applied the Rev5 finder copy and field order, product-specific compact heroes using replaceable existing artwork, and active-product-first tabs. Desktop has a left secondary filter accordion and removable chips. Mobile has a compact search summary, Modify Search, full-screen Filters and separate Sort.
+- Finder API results order eligible products before slicing pages. Liveaboards default to earliest qualifying upcoming departure. Resort Recommended uses existing listing completeness, then starting USD price and stable name/ID ties. Both support price in either direction and Vegan Rating, with missing numeric values last. Cards link to the qualifying departure or resort package and show starting pricing and enquiry wording. Earlier API consumers retain their existing default sort.
+- Backend syntax (114 files), 49 backend tests, 11 frontend tests, production build and diff check passed. The isolated sample catalogue verified API sort order across pages, matching prices/dates and correct package links. Chromium passed both finders at 320, 390, 768, 1024 and 1440 px, plus sidebar submission and independent chip removal. An isolated synthetic 503 confirmed retry status and usable preference definitions. Local port 3000 serves Step 07. Final hero imagery and hosted review remain pending. No commit or deployment. Next: Step 08.
+
+### Work log — 2026-11-21 (Asia/Dhaka)
+
+2026-11-21 (Asia/Dhaka) — Polished the shared All Filters panel with an ocean header, visible coral Apply action, card groups, selected counts and a default-open price slider. Frontend unit tests (11), final build, diff check and Chromium filter regressions at four widths passed. Local app refreshed. Follow-up Chromium verification on port 3000 passed across the homepage and both finders at 320, 390, 768 and 1440 px, including visible actions after scrolling and Escape focus restoration. Next: Step 07 results pages.
+
+
+- Step 06 moved prices into shared collapsible secondary filters and added two draggable price handles with exact USD inputs. Shared groups render the API taxonomy with multi-select controls. Vegan Rating remains primary and the filter panel explains what it measures. Clearing secondary filters preserves destination, dates, primary duration and Vegan Rating. Removed the availability-only control and ignored it in legacy customer finder URLs. The backend contract remains available to its existing consumers.
+- Frontend production build, 11 frontend tests, and diff check passed. Chromium passed at 320, 390, 768 and 1440 px against the isolated local catalogue, covering combined Wi-Fi/Nitrox/accessibility/dietary and USD price filters, result counts, focused slider changes, Clear and independent chip removal, and a valid zero-match resort search. A separate browser check dragged both price handles and verified the legacy preview controls. Local frontend restarted and left running on port 3000.
+- Next: Step 07 results pages. Hosted Gate 1 review and earlier hosted API verification remain open.
+
+
+
+- Step 05 added the shared Departure Window/Departure dates control with exact dates, full calendar month shortcuts, Clear and Apply. Public Liveaboard matching applies the range to departure start, includes the entire final UTC day and ignores return date.
+- Resorts have required Check-in and Check-out fields and reject incomplete, invalid, same-day or reversed stays. Stay eligibility uses active packages, continuous coverage when active rate periods are configured, their minimum stay rules and explicit sold-out and stop-sell records for linked rooms. Eligible base packages without active rate periods remain on request. Check-out is excluded from occupied nights. The API keeps undated browsing and does not promise room availability.
+- Backend syntax check (113 files), 49 backend tests, 11 frontend tests, frontend production build and diff check passed. Local production frontend and isolated sample API were restarted. Chromium passed at 320, 390, 768 and 1440 px for month and leap-year shortcuts, date validation, clear/apply, submitted URLs and matching resort results. Verified a partial stay returns HTTP 400 from the local API. No commit or deployment. Next: Step 06.
+
+
+- Step 04 applied the exact Rev5 homepage copy, retained four shallow desktop Explore Deeparture tiles, hid those tiles on mobile, and retained the six agreed destinations and existing art. The homepage defaults to Liveaboards, uses the documented shortcut order for each viewport, keeps price inputs in All Filters, and removes Available only.
+- Featured Trips and Special Offers read independent mixed-product catalogue feeds. The temporary View all link opens paginated featured results on the homepage. Dedicated discovery routes are Step 08. Resort offer cards show pricing on request and a confirmed offer badge. Final destination imagery is still a client input.
+- Frontend production build, 10 frontend tests and diff check passed. Chromium passed at 320, 390, 700, 701, 768, 1024 and 1440 px with a synthetic local API, covering approved copy, controls, mixed-product cards, featured pagination and empty/error states. Restarted port 3000 and confirmed HTTP 200 with sample offer cards and an empty featured state because no local listings are flagged.
+- Next: Step 05 departure window, resort check-in/check-out and date matching.
+
+
+
+- Step 03 added shared Freediving and Photography definitions for both product types. Search keeps existing AND matching for selected requirements and respects definition eligibility. Structured embarkation choices use active itineraries on published liveaboards, with canonical port records and legacy stored slugs supported. Harbour labels in fixtures reflect their synthetic data.
+- Both catalogue APIs accept `featured=true` for the admin-managed listing flag and `activeOffer=true` for an actual current discount on eligible departure cabin pricing or an active resort package and rate period. The filters can be combined. Homepage selection and dedicated discovery views are scheduled for Steps 04 and 08.
+- Before changes, the local catalogue and preference endpoints succeeded with 120 listings per type and six definitions per type. Added 31 standard definitions only to the isolated sample database. Backend syntax (112 files), all 46 tests, frontend production build and diff check passed. Verified filter combinations and port matching through the local API, all Featured/Active Offer combinations per product type using temporary fixture changes, and homepage and finder controls in Chromium at 390, 768 and 1440 px. A separate synthetic 503 verified that the frontend preserves working preferences and distinguishes catalogue/offer outages from no results. Removed temporary offer fixtures and restored prior featured flags after validation.
+- Four read-only requests to the hosted catalogue and definitions timed out at 20 seconds. The client-reported hosted failure is unresolved. Local port 3000 serves Step 03. Next implementation step: Step 04 homepage copy and search.
+
+2026-11-21 (Asia/Dhaka) — Replaced the floating WhatsApp outline with a filled white mark in a 56 px green button. The approved chat URL is retained. Production build and diff check passed. Restarted the local frontend and verified the button and link before and after scrolling at 320, 390 and 1440 px. Next: review the Step 02 button.
+
+2026-11-21 (Asia/Dhaka) — Refined the Step 02 footer grid and aligned the social icons with the heading. Icons are white with the shared coral accent on hover and keyboard focus. Production build and diff check passed. Restarted port 3000 and verified alignment, overflow and icon styles in Chromium at 320, 390, 768, 961 and 1440 px. Next: review the updated footer.
+
+2026-11-21 (Asia/Dhaka) — Restarted the local frontend on port 3000 after a report that Step 02 was missing. Chromium verified the new homepage footer, fixed WhatsApp button and successful Next.js asset loads on port 3000 at 390 and 1440 px. The local server remains running. Next: review Step 02 on the homepage.
+
+2026-11-21 (Asia/Dhaka) — Started the Phase 4 production build locally at http://127.0.0.1:3000 with the isolated test-mode API and existing sample database. Verified homepage HTTP 200 with the Step 01 pictographs and API HTTP 200 for 120 liveaboards and 120 resorts. Left the services running for review.
+
+- Implemented Step 01 on `phase4-customer-ux-implementation`. Centralized shared navigation palette and homepage hero artwork, added the four supplied brand pictographs, kept the approved homepage layout, and removed header and card favourites and customer account controls. The shared fixed header has desktop Search and Contact us, mobile Search and menu, and active links on category, detail and Contact routes.
+- Frontend production build and diff check passed. Chromium verified seven customer routes at 320, 390, 768, 901 and 1440 px using a production build and synthetic loopback API. Also verified menu Escape and focus return, homepage populated, empty and API-error states, pictograph loading, Search anchor and both palette options.
+- Step 02 added the shared footer, approved contact details and fixed direct WhatsApp link. The live footer publishes Instagram, Facebook and X. It has an empty Telegram link, no YouTube or TikTok link, plain text for Groups or Charters, Terms and Privacy, and no Cookie Policy link. Group enquiries use a subject-prefilled email. Legal links and any additional social destinations await approved URLs.
+- Frontend production build and diff check passed. Chromium passed 42 checks across seven customer routes and six widths (320, 390, 768, 960, 961 and 1440 px) using the isolated sample API and representative liveaboard and resort details. Checked footer layout, logo, icons, configured link targets, and WhatsApp before/after scrolling. The published social URLs and WhatsApp destination returned HTTP 200 after redirects. Verified Step 02 on local port 3000.
+- Next implementation step: Step 03 catalogue and taxonomy. Gate 1 review remains pending.
+
+### Work log — 2026-11-20 (Asia/Dhaka)
+
+Reviewed the client message, implementation guide, four PDFs, four visual/message references and both asset ZIP inventories. Checked the current branch and relevant source entry points, then added the scoped instructions and implementation handoff. Documentation validation covers the diff and referenced local paths. Application builds and tests were outside this documentation task.
+
+Follow-up visual review covered all 45 PDF pages, the three embedded guide mockups and all 19 unique ZIP assets. The Contact, footer and departure-window references confirm the layout and interaction details above. The alternate brand concepts and artwork remain reference material.
+
+## Historical status through 13 November 2026
 
 Removed the vertical “Beneath the surface, beyond the everyday.” homepage hero caption and its unused CSS, as requested. Frontend production build PASS; source absence and diff checks PASS. Build log: `docs/phase4/evidence/homepage-hero-polish-2026-11-13/frontend-build-caption-removal.txt`. No new tests/browser rerun/backend/deployment; known catalogue API limitation unchanged. Next: continue homepage visual review.
 

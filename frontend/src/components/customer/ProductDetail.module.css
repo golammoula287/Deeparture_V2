@@ -1,5 +1,5 @@
 .page { max-width: 1360px; margin: auto; padding: 32px 32px 80px; color: var(--customer-ink, #071925); }
-.page section, .enquiry { scroll-margin-top: 28px; }
+.page section, .enquiry { scroll-margin-top: calc(var(--home-nav-height, 0px) + 28px); }
 .back { display: inline-block; font-size:12px; color: var(--customer-muted, #50636b); text-decoration: underline; text-underline-offset: 4px; margin-bottom: 32px; }
 .identity { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
 .eyebrow { color: var(--customer-link, #527787); font-size:12px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; margin: 0 0 12px; }
@@ -54,7 +54,7 @@
 .status { color: #294e5c; font-size:12px; margin: 16px 0 0; }
 .empty { background: var(--customer-surface-soft, #edf2f4); border-radius: 8px; padding: 24px; font-size:14px; color: var(--customer-muted, #50636b); }
 .empty a { display: inline-block; margin-top: 12px; text-decoration: underline; color: #123749; }
-.enquiry { position: sticky; top: 28px; border: 1px solid var(--customer-line, #d8e2e6); border-radius: 12px; padding: 24px; background: #fff; box-shadow: 0 12px 36px #07192508; }
+.enquiry { position: sticky; top: calc(var(--home-nav-height, 0px) + 28px); border: 1px solid var(--customer-line, #d8e2e6); border-radius: 12px; padding: 24px; background: #fff; box-shadow: 0 12px 36px #07192508; }
 .enquiry h2 { font-size:24px; }
 .enquiry > .muted { margin-bottom: 24px; }
 .selection { border-top: 1px solid var(--customer-line, #d8e2e6); border-bottom: 1px solid var(--customer-line, #d8e2e6); padding: 16px 0; margin-bottom: 24px; }
@@ -86,3 +86,5 @@
 .optionAction strong {font:var(--type-heading-5);font-variant-numeric:tabular-nums;}
 .primary,.optionAction button,.galleryButton {font:var(--type-button-sm);padding:8px 12px;}
 @media(max-width:700px){.identity h1{font:var(--type-heading-3);}.description,.muted{font:var(--type-body-6);}}
+
+.optionLink { text-decoration: underline; text-underline-offset: 3px; color: #294e5c; font-size: 12px; }

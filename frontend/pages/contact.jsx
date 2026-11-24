@@ -1,21 +1,67 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { contactLinks } from '@/src/lib/customer/contactLinks';
+import ContactForm from '@/src/components/customer/ContactForm';
 import CustomerShell from '@/src/components/customer/CustomerShell';
-import styles from '@/src/components/customer/CustomerShell.module.css';
+import HomeIcon from '@/src/components/customer/HomeIcon';
+import styles from '@/src/components/customer/ContactPage.module.css';
 
-// Contact channels supplied in the owner's Deeparture footer reference screenshot
-// (Screenshot 2026-11-05 at 21.10.42.png); no general-contact submission API is assumed.
+const channels = [
+  ['Email', contactLinks.email],
+  ['WhatsApp', contactLinks.whatsapp],
+  ['Phone', contactLinks.phone],
+];
+
 export default function Contact() {
-  return <CustomerShell title="Contact" description="Get in touch with Deeparture or start an enquiry about a liveaboard journey or dive resort.">
-    <main className={styles.page}>
-      <p className={styles.eyebrow}>Contact Deeparture</p><h1 className={styles.title}>Every great journey<br />starts with a question.</h1><p className={styles.lead}>Need a little guidance, or want to talk through what matters for your next dive trip? Get in touch.</p>
-      <div className={styles.contactGrid}>
-        <section className={styles.contactCard}><h2>Let’s talk.</h2><p>For general questions, contact the Deeparture team directly.</p><a className={styles.contactChannel} href="mailto:info@deeparture.travel"><span>Email</span><strong>info@deeparture.travel</strong></a><a className={styles.contactChannel} href="tel:+642102413170"><span>Phone</span><strong>+64 21 024 13170</strong></a><p className={styles.notice}>For dates, prices or availability, send an enquiry from the relevant liveaboard or resort page so your trip details stay together.</p><Link className={styles.action} href="/explore/liveaboards">Find a trip to enquire about</Link></section>
-        <section className={styles.questionList}><h2>A few helpful answers.</h2>
-          <details><summary>How do I ask about a specific trip?</summary><p>Open the liveaboard or resort you are interested in and use its enquiry form. Include the departure or package that interests you and any questions you would like to discuss.</p></details>
-          <details><summary>Can I ask about dietary or accessibility needs?</summary><p>Yes. Review the information on the product page and include your particular requirements in your enquiry. Missing information does not mean support has been confirmed, so ask before making travel arrangements.</p></details>
-          <details><summary>Does sending an enquiry confirm a booking?</summary><p>No. An enquiry is a request for information. Availability, prices and any particular requirements still need to be confirmed before a booking is agreed.</p></details>
-          <details><summary>Are you a liveaboard or resort operator?</summary><p>Use the <Link href="/login">operator sign-in</Link> to access your account, or email the team if you need help with access.</p></details>
-        </section>
+  const { query } = useRouter();
+  return <CustomerShell title="Contact Deeparture" description="Get in touch with Deeparture or start an enquiry about a liveaboard journey or dive resort.">
+    <main>
+      <section className={styles.hero} aria-labelledby="contact-title">
+        <div className={styles.heroInner}>
+          <h1 id="contact-title">Contact Deeparture</h1>
+          <p>Every great journey begins with a question.</p>
+        </div>
+      </section>
+      <div className={styles.content}>
+        <div className={styles.layout}>
+          <section className={styles.formCard} aria-labelledby="contact-form-title">
+            <h2 id="contact-form-title">Send us a message.</h2>
+            <p>Tell us what you’re planning, exploring or curious about.</p>
+            <ContactForm initialInterest={query.subject === 'special-offers' ? 'Special Offer' : ''} />
+          </section>
+          <section className={styles.faq} aria-labelledby="questions-title">
+            <h2 id="questions-title">Frequently asked questions</h2>
+            <details>
+              <summary>How do I ask about a specific trip?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Open the liveaboard or resort you’re interested in and use its enquiry form. Include the specific departure or stay you’re interested in, along with any questions you’d like to ask.</p>
+            </details>
+            <details>
+              <summary>Can you help with dietary or accessibility requirements?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Yes. Please include any dietary or accessibility requirements in your enquiry so we can confirm what can be accommodated before you make your travel arrangements.</p>
+            </details>
+            <details>
+              <summary>Does sending an enquiry confirm a booking?<HomeIcon name="chevron" size={18} /></summary>
+              <p>No. An enquiry does not confirm a booking. Availability, pricing and any specific requirements must be confirmed before your booking is finalised.</p>
+            </details>
+            <details>
+              <summary>Are you a liveaboard or resort operator?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Yes. Operators can use the <Link href="/login">Operator login</Link> to sign in or sign up. If you need help accessing your account, please contact us.</p>
+            </details>
+            <details>
+              <summary>Can you help me choose the right trip?<HomeIcon name="chevron" size={18} /></summary>
+              <p>Yes. If you’re unsure which liveaboard, resort or destination suits you, tell us what you’re looking for and we’ll help you explore the options.</p>
+            </details>
+            <details>
+              <summary>Do you only arrange scuba diving trips?<HomeIcon name="chevron" size={18} /></summary>
+              <p>No. We can also help with resorts, snorkelling, freediving and other dive-related travel experiences where available.</p>
+            </details>
+          </section>
+        </div>
+        <address className={styles.contacts} aria-label="Direct contact">
+          {channels.map(([label, channel]) => <a href={channel.href} key={label}>
+            <span>{label}</span><strong>{channel.label}</strong>
+          </a>)}
+        </address>
       </div>
     </main>
   </CustomerShell>;
