@@ -1,0 +1,40 @@
+{
+  "api": [
+    "Resort seasonal rate, active discount, exact USD bounds, detail price and minimum stay",
+    "liveaboards destination, dates, vegan rating, combined attributes, inclusive bounds, descending sort, pagination and no matches",
+    "resorts destination, dates, vegan rating, combined attributes, inclusive bounds, descending sort, pagination and no matches",
+    "Liveaboard embarkation and trip duration combinations"
+  ],
+  "browser": [
+    {
+      "width": 390,
+      "type": "liveaboards",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    },
+    {
+      "width": 390,
+      "type": "resorts",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    },
+    {
+      "width": 768,
+      "type": "liveaboards",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    },
+    {
+      "width": 768,
+      "type": "resorts",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    },
+    {
+      "width": 1440,
+      "type": "liveaboards",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    },
+    {
+      "width": 1440,
+      "type": "resorts",
+      "checks": "price input, slider, validation, apply, linked dates or departure, matching cards, clear"
+    }
+  ]
+}

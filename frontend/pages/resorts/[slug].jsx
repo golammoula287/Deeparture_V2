@@ -1,6 +1,7 @@
 import ProductDetail from '@/src/components/customer/ProductDetail';
 import { selectedPromotion } from '@/src/lib/customer/tripSelection';
 import CustomerShell from '@/src/components/customer/CustomerShell';
+import { stayDateError } from '@/src/lib/customer/searchDates';
 
 export default function ResortPage({ resort, promotion = null, unavailable = false }) {
   if (unavailable) return <CustomerShell noIndex title="Unable to load this resort"><main className="max-w-3xl mx-auto px-6 py-20"><h1 className="text-3xl mb-4">This resort is temporarily unavailable</h1><p className="mb-6">We couldn’t load the latest resort information. Please try again shortly.</p><a href="" className="underline mr-6">Try again</a><a href="/explore/resorts" className="underline">Explore resorts</a></main></CustomerShell>;
@@ -12,7 +13,9 @@ export async function getServerSideProps({ params, query, res }) {
   const api = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   res.setHeader('Cache-Control', 'private, no-store');
   try {
-    const response = await fetch(`${api}/v2/resorts/${encodeURIComponent(params.slug)}`, { signal: AbortSignal.timeout(8000) });
+    const { checkIn, checkOut } = query;
+    const stay = !stayDateError(checkIn, checkOut) ? `?${new URLSearchParams({ checkIn, checkOut })}` : '';
+    const response = await fetch(`${api}/v2/resorts/${encodeURIComponent(params.slug)}${stay}`, { signal: AbortSignal.timeout(8000) });
     if (response.status === 404) return { notFound: true };
     if (!response.ok) throw new Error('Unavailable');
     const json = await response.json();

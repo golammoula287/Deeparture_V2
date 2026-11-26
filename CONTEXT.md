@@ -1,6 +1,6 @@
 # Project context and work tracker
 
-Last updated: 2026-11-24 (Asia/Dhaka)
+Last updated: 2026-11-27 (Asia/Dhaka)
 
 ## Current task
 
@@ -202,6 +202,14 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-27 — Price and catalogue filter verification
+
+Reproduced the dated resort mismatch on Render: a listing displayed its USD 850 base price despite a USD 925 seasonal rate and a valid discount. The public finder now resolves resort starting prices for selected dates with eligible discounts, recalculates liveaboard prices with current offers, compares inclusive USD bounds, and displays matching amounts and date context. Sidebar Apply uses the current primary inputs. Backend syntax (114 files), 50 backend tests, 11 frontend tests, production build and diff check passed. Local API and Chromium at 390, 768 and 1440 px verified both product types, date, destination, duration, embarkation, Vegan Rating, grouped attributes, price, sorting, pagination, selected rate details, and homepage/discovery filter entry points. Added missing Photography, Freediving and Vegetarian Meals definitions on Render and sample preference values on 150 listings, including Rebreather on eligible liveaboards. Hosted queries and mobile/desktop browser preference checks passed. See `docs/phase4/evidence/filter-verification-2026-11-27/`. Temporary local test rate was removed. No code commit or deployment. Next: publish the pricing fix when authorised and rerun Render price checks.
+
+### 2026-11-27 — December–April inventory on Render
+
+Seeded the deployed Render API at revision `cc17c67` through the authenticated catalogue workflow in test email mode. Published 102 new synthetic liveaboards and 102 new synthetic resorts under the dedicated Sample Dive Season 2026–27 organisation. Added 510 departures, 102 resort packages and seasonal rates, and illustrative gallery assets already hosted by the frontend. Existing records were preserved. Verified public totals of 222 per type, 102 new matching listings per type in each of the five months, 18 new offer listings per type, and mobile and desktop detail image loads. Evidence is in `docs/phase4/evidence/render-season-2026-11-27/`. No application changes or emails sent. Remaining: previously deferred PWA and formal acceptance checks.
 
 ### 2026-11-24 — Customer header alignment
 

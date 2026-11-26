@@ -3,20 +3,28 @@ import { useState } from 'react';
 import { dateLabel, mediaUrl, priceLabel, productHref, words } from '@/src/lib/customer/format';
 import styles from './Marketplace.module.css';
 
-export default function CatalogueCard({ item, type = 'vessel', departure, startingRate, promotion, horizontal = false, returnTo }) {
+export default function CatalogueCard({ item, type = 'vessel', departure, startingRate, promotion, horizontal = false, returnTo, stay }) {
   const image = mediaUrl(item.featuredImage);
   const [failedImage, setFailedImage] = useState(null);
   const query = new URLSearchParams();
   if (departure?._id) query.set('departure', departure._id);
   const packageId = promotion?.packageId || startingRate?.packageId;
   if (packageId) query.set('package', packageId);
+  if (type === 'resort' && stay?.checkIn && stay.checkOut) {
+    query.set('checkIn', stay.checkIn);
+    query.set('checkOut', stay.checkOut);
+  }
   if (returnTo) query.set('returnTo', returnTo);
   const href = promotion?.offerId
     ? `/offers/${encodeURIComponent(promotion.offerId)}${query.get('returnTo') ? `?${new URLSearchParams({ returnTo: query.get('returnTo') })}` : ''}`
     : `${productHref(item, type)}${query.size ? `?${query}` : ''}`;
-  const departureUsd = departure?.effectiveMinPriceUsd ?? (departure?.effectiveCurrency === 'USD' ? departure.effectiveMinPrice : undefined);
-  const hasUsd = Number.isFinite(departureUsd);
-  const rate = promotion ? priceLabel(promotion.amount, promotion.currency) : departure ? priceLabel(departureUsd, 'USD') : startingRate ? priceLabel(startingRate.amount, startingRate.currency) : 'Price on request';
+  const departureUsd = departure && Object.hasOwn(departure, 'startingPriceUsd') ? departure.startingPriceUsd
+    : departure?.effectiveMinPriceUsd ?? (departure?.effectiveCurrency === 'USD' ? departure.effectiveMinPrice : undefined);
+  const priced = promotion || startingRate;
+  const usd = departure && !promotion ? departureUsd : priced?.amountUsd ?? (priced?.currency === 'USD' ? priced.amount : undefined);
+  const hasUsd = Number.isFinite(usd);
+  const currency = hasUsd ? 'USD' : priced?.currency;
+  const rate = priceLabel(hasUsd ? usd : priced?.amount, currency);
   const basis = words(promotion?.pricingBasis || startingRate?.pricingBasis);
   const attributes = [...(item.dietary || []), ...(item.divingFeatures || []), ...(item.accessibility || [])].slice(0, 3);
   return <article className={`${styles.card} ${horizontal ? styles.horizontalCard : ''}`}>
@@ -31,7 +39,7 @@ export default function CatalogueCard({ item, type = 'vessel', departure, starti
       {promotion?.minimumStayNights > 0 && <p className={styles.cardDates}>Minimum stay: {promotion.minimumStayNights} nights</p>}
       <div className={styles.attributes}>{Number.isFinite(item.veganRating) ? <span>Vegan Rating {item.veganRating}/5</span> : null}{attributes.map((value, index) => <span key={`${value}-${index}`}>{words(value)}</span>)}</div>
       <div className={styles.cardFoot}>
-        <div><small>{promotion ? 'Offer price' : departure ? 'Starting departure price' : startingRate ? 'Starting rate' : ''}</small><strong>{rate}{hasUsd && !promotion ? ' USD' : ''}</strong><small>{basis ? `${basis} · ` : ''}Enquire for availability</small></div>
+        <div><small>{promotion ? 'Offer price' : departure ? 'Starting departure price' : startingRate ? 'Starting rate' : ''}</small><strong>{rate}{currency === 'USD' ? ' USD' : ''}</strong><small>{basis ? `${basis} · ` : ''}Enquire for availability</small></div>
         <Link href={href} className={styles.textLink}>{type === 'resort' ? 'View resort' : 'View liveaboard'}</Link>
       </div>
     </div>

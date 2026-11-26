@@ -29,11 +29,38 @@ const applyOffer = ({ amount, amountUsd, currency }, offer, at = new Date()) => 
   return { amount, amountUsd, currency, offerName: undefined };
 };
 
+const usdPrice = price => Number.isFinite(price?.amountUsd)
+  ? price.amountUsd
+  : price?.currency === 'USD' && Number.isFinite(price.amount) ? price.amount : null;
+
+const resortRatePrice = (base = {}, rate) => {
+  const override = rate?.priceOverride;
+  return Number.isFinite(override?.amount)
+    ? { ...override, currency: override.currency || base.currency, pricingBasis: base.pricingBasis }
+    : base;
+};
+
+const discountedRate = (price, offer, at) => {
+  if (!Number.isFinite(price.amount) || !price.currency) return null;
+  const discounted = applyOffer(price, offer, at);
+  const originalUsd = usdPrice(price);
+  const discountedUsd = usdPrice(discounted);
+  const lower = discounted.currency === price.currency
+    ? discounted.amount < price.amount
+    : Number.isFinite(discountedUsd) && Number.isFinite(originalUsd) && discountedUsd < originalUsd;
+  return lower ? {
+    ...discounted,
+    amount: Math.round(discounted.amount * 100) / 100,
+    amountUsd: Number.isFinite(discounted.amountUsd) ? Math.round(discounted.amountUsd * 100) / 100 : undefined,
+    pricingBasis: price.pricingBasis,
+  } : null;
+};
+
 const calculateEffectivePrices = (itinerary, departure, at = new Date()) => {
   const overrides = new Map((departure.priceOverrides || []).map((item) => [String(item.cabinType), item]));
   const prices = [];
   for (const base of itinerary.basePrices || []) {
-    const cabinId = String(base.cabinType);
+    const cabinId = String(base.cabinType?._id || base.cabinType);
     const override = overrides.get(cabinId);
     const rackAmount = override?.amount ?? base.amount;
     const currency = override?.currency || base.currency;
@@ -54,6 +81,16 @@ const calculateEffectivePrices = (itinerary, departure, at = new Date()) => {
     prices.push({ cabinType: base.cabinType, rackAmount, rackAmountUsd, effectiveAmount: Number(effective.amount.toFixed(2)), effectiveAmountUsd: Number.isFinite(effective.amountUsd) ? Number(effective.amountUsd.toFixed(2)) : undefined, currency: effective.currency, offerName: effective.offerName, ...(effective.offerId && { offerId: effective.offerId }) });
   }
   return prices;
+};
+
+const departureStartingUsd = (itinerary, departure, at) => {
+  if (!itinerary?.basePrices?.length) {
+    return usdPrice({ amount: departure.effectiveMinPrice, amountUsd: departure.effectiveMinPriceUsd, currency: departure.effectiveCurrency });
+  }
+  const prices = calculateEffectivePrices(itinerary, departure, at)
+    .map(price => usdPrice({ amount: price.effectiveAmount, amountUsd: price.effectiveAmountUsd, currency: price.currency }))
+    .filter(Number.isFinite);
+  return prices.length ? Math.min(...prices) : null;
 };
 
 const materializeDeparturePricing = async (departure, at = new Date()) => {
@@ -85,4 +122,4 @@ const repriceDeparturesForItinerary = async (itineraryId, at = new Date()) => {
   return departures.length;
 };
 
-module.exports = { isOfferActive, applyOffer, calculateEffectivePrices, materializeDeparturePricing, repriceDeparturesForItinerary };
+module.exports = { isOfferActive, applyOffer, usdPrice, resortRatePrice, discountedRate, calculateEffectivePrices, departureStartingUsd, materializeDeparturePricing, repriceDeparturesForItinerary };

@@ -1,0 +1,25 @@
+{
+  "seed": "render-season-2026-27",
+  "organisation": "sample-dive-season-2026-27",
+  "backendRevision": "cc17c678b296edae94614cebd5a6b9f7abb71bc2",
+  "season": {
+    "from": "2026-12-01",
+    "to": "2027-04-30"
+  },
+  "liveaboards": {
+    "publicTotal": 222,
+    "seeded": 102,
+    "example": "season-2026-27-liveaboard-galapagos-03"
+  },
+  "resorts": {
+    "publicTotal": 222,
+    "seeded": 102,
+    "example": "season-2026-27-resort-galapagos-03"
+  },
+  "departures": 510,
+  "resortPackages": 102,
+  "resortSeasonalRates": 102,
+  "liveaboardOfferDepartures": 90,
+  "resortOffers": 18,
+  "synthetic": true
+}

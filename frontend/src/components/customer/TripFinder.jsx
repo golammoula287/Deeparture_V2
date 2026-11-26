@@ -60,11 +60,12 @@ export default function TripFinder({ resort = false, state, data, definitions = 
   const changeAttribute = (definition, value) => setFilters(previous => ({ ...previous, attributes: withAttribute(previous.attributes, definition, value) }));
   const apply = event => {
     event.preventDefault();
-    const message = priceRangeError(filters);
+    const message = priceRangeError(filters) ||
+      (resort && (draft.checkIn || draft.checkOut) && stayDateError(draft.checkIn, draft.checkOut));
     if (message) { setFilterError(message); return; }
     const { attributes, ...criteria } = filters;
     setOpen(false);
-    navigate({ ...state, ...criteria, attributes: attributes.length ? JSON.stringify(attributes) : '', page: '1' });
+    navigate({ ...state, ...draft, ...criteria, attributes: attributes.length ? JSON.stringify(attributes) : '', page: '1' });
   };
   const clearFilters = () => { setFilters(emptyFilters); setFilterError(''); };
   const filterGroups = <>
@@ -167,7 +168,7 @@ export default function TripFinder({ resort = false, state, data, definitions = 
               </div>
               : products.length
                 ? <div className={styles.resultList}>
-                  {products.map(item => <CatalogueCard key={item._id} item={item} returnTo={finderUrl(path, state)} type={resort ? 'resort' : 'vessel'} departure={item.departure} startingRate={item.startingRate} horizontal />)}
+                  {products.map(item => <CatalogueCard key={item._id} item={item} returnTo={finderUrl(path, state)} type={resort ? 'resort' : 'vessel'} departure={item.departure} startingRate={item.startingRate} stay={state} horizontal />)}
                 </div>
                 : <div className={styles.empty}>
                   <h2>No matching journeys yet.</h2><p>Try changing your destination, dates or budget. Your requirements stay selected until you change them.</p>

@@ -7,7 +7,7 @@ export function mediaUrl(value) {
 export function priceLabel(amount, currency) {
   if (amount === null || amount === undefined || amount === '' || !Number.isFinite(Number(amount))) return 'Price on request';
   if (!currency) return 'Price on request';
-  try { return new Intl.NumberFormat('en', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Number(amount)); } catch { return 'Price on request'; }
+  try { return new Intl.NumberFormat('en', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(amount)); } catch { return 'Price on request'; }
 }
 export function dateLabel(date) {
   if (!date || !Number.isFinite(new Date(date).getTime())) return 'Dates on request';

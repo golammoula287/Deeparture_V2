@@ -1,0 +1,45 @@
+{
+  "created": [
+    "photography",
+    "freediving",
+    "vegetarian_meals"
+  ],
+  "updatedSampleListings": 150,
+  "verified": [
+    {
+      "type": "liveaboards",
+      "key": "photography",
+      "total": 54
+    },
+    {
+      "type": "resorts",
+      "key": "photography",
+      "total": 54
+    },
+    {
+      "type": "liveaboards",
+      "key": "freediving",
+      "total": 30
+    },
+    {
+      "type": "resorts",
+      "key": "freediving",
+      "total": 30
+    },
+    {
+      "type": "liveaboards",
+      "key": "vegetarian_meals",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "vegetarian_meals",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "rebreather_support",
+      "total": 24
+    }
+  ]
+}
