@@ -1,12 +1,11 @@
 const Departure = require('../models/departure.model');
 const ResortPackage = require('../models/resortPackage.model');
 const { resortPromotions, vesselPromotions } = require('./catalogueOffers.service');
+const { usdPrice, departureStartingUsd } = require('./pricing.service');
 const { pagedResult } = require('./pagination.service');
 
-function usdPrice(price) {
-  if (Number.isFinite(price?.amountUsd)) return price.amountUsd;
-  return price?.currency === 'USD' && Number.isFinite(price.amount) ? price.amount : null;
-}
+const matchesPrice = (price, { minPrice, maxPrice, hasPriceBounds }) => !hasPriceBounds ||
+  (Number.isFinite(price) && price >= (minPrice ?? 0) && price <= (maxPrice ?? Infinity));
 
 function numericOrder(left, right, direction = 1) {
   if (!Number.isFinite(left)) return Number.isFinite(right) ? 1 : 0;
@@ -19,22 +18,25 @@ function retainBest(summaries, key, data, compare) {
   if (!previous || compare(data, previous) < 0) summaries.set(key, data);
 }
 
-async function departureSummaries(ids, filter, priceSort) {
+async function departureSummaries(ids, finder, priceSort) {
   const summaries = new Map();
   const now = new Date();
+  const filter = finder.departureFilter;
   const earliest = filter.startDate?.$gte;
   const departures = await Departure.find({
     ...filter,
     vessel: { $in: ids },
     status: { $nin: ['cancelled', 'sold_out'] },
     startDate: { ...filter.startDate, $gte: earliest > now ? earliest : now },
-  }).select('vessel itinerary startDate endDate effectiveMinPrice effectiveMinPriceUsd effectiveCurrency')
-    .populate({ path: 'itinerary', match: { status: 'active' }, select: 'name numberOfNights' })
+  }).select('vessel itinerary startDate endDate effectiveMinPrice effectiveMinPriceUsd effectiveCurrency offers priceOverrides')
+    .populate({ path: 'itinerary', match: { status: 'active' }, select: 'name numberOfNights basePrices' })
     .sort({ startDate: 1, _id: 1 }).lean();
-  for (const { vessel, ...departure } of departures) {
-    if (!departure.itinerary) continue;
-    const price = usdPrice({ amount: departure.effectiveMinPrice, amountUsd: departure.effectiveMinPriceUsd, currency: departure.effectiveCurrency });
-    retainBest(summaries, String(vessel), { departure, price },
+  for (const { vessel, itinerary, offers, priceOverrides, ...departure } of departures) {
+    if (!itinerary) continue;
+    const { basePrices, ...itinerarySummary } = itinerary;
+    const price = departureStartingUsd(itinerary, { ...departure, offers, priceOverrides }, now);
+    if (!matchesPrice(price, finder)) continue;
+    retainBest(summaries, String(vessel), { departure: { ...departure, itinerary: itinerarySummary, startingPriceUsd: price, effectiveMinPriceUsd: price }, price },
       (left, right) => priceSort ? numericOrder(left.price, right.price) : 0);
   }
   return summaries;
@@ -44,9 +46,13 @@ async function resortSummaries(ids, finder) {
   const packages = finder.packages || await ResortPackage.find({ ...finder.packageFilter, resort: { $in: ids } })
     .select('_id resort basePrice').sort({ _id: 1 }).lean();
   const summaries = new Map();
-  for (const { _id, resort, basePrice } of packages) {
-    if (!Number.isFinite(basePrice?.amount) || !basePrice.currency) continue;
-    retainBest(summaries, String(resort), { startingRate: { ...basePrice, packageId: _id }, price: usdPrice(basePrice) },
+  for (const item of packages) {
+    const { _id, resort, basePrice } = item;
+    const rate = finder.checkIn ? item.startingRate : basePrice;
+    if (!Number.isFinite(rate?.amount) || !rate.currency) continue;
+    const price = usdPrice(rate);
+    if (!matchesPrice(price, finder)) continue;
+    retainBest(summaries, String(resort), { startingRate: { ...rate, packageId: _id }, price },
       (left, right) => numericOrder(left.price, right.price));
   }
   return summaries;
@@ -60,9 +66,7 @@ async function promotionSummaries(ids, finder, resort) {
   const summaries = new Map();
   for (const { vessel, resort: resortId, ...summary } of entries) {
     const price = usdPrice(summary.promotion);
-    if ((finder.minPrice || finder.maxPrice) && (!Number.isFinite(price) ||
-      (finder.minPrice && price < Number(finder.minPrice)) ||
-      (finder.maxPrice && price > Number(finder.maxPrice)))) continue;
+    if (!matchesPrice(price, finder)) continue;
     retainBest(summaries, String(vessel || resortId), { ...summary, price },
       (left, right) => numericOrder(left.price, right.price));
   }
@@ -77,9 +81,9 @@ async function finderResults({ Model, filter, finder, productType, requestedSort
   const priceSort = requestedSort === 'price' || requestedSort === '-price';
   const summaries = finder.activeOffer
     ? await promotionSummaries(ids, finder, resort)
-    : resort ? await resortSummaries(ids, finder) : await departureSummaries(ids, finder.departureFilter, priceSort);
+    : resort ? await resortSummaries(ids, finder) : await departureSummaries(ids, finder, priceSort);
   const summaryFor = item => summaries.get(String(item._id));
-  if (finder.requiresDeparture || finder.activeOffer) products = products.filter(item => summaryFor(item));
+  if (finder.requiresDeparture || finder.activeOffer || finder.hasPriceBounds) products = products.filter(item => summaryFor(item));
   products.sort((left, right) => {
     const a = summaryFor(left), b = summaryFor(right);
     let order;

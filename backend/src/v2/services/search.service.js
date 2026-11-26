@@ -14,6 +14,7 @@ const ProductAttribute = require('../models/productAttribute.model');
 const slugify = require('../utilities/slugify');
 const AppError = require('../../error/appError');
 const { finderResults } = require('./finderResults.service');
+const { departureStartingUsd } = require('./pricing.service');
 const { parsePagination, pagedResult } = require('./pagination.service');
 
 const normalizeFacet = (value) => String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
@@ -131,8 +132,8 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false, find
     departureFilter.startDate = { ...departureFilter.startDate, ...end };
     useDepartures = true;
   }
-  if (!finder?.activeOffer && query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
-  if (!finder?.activeOffer && query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
+  if (!finder && query.maxPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $lte: Number(query.maxPrice) }; useDepartures = true; }
+  if (!finder && query.minPrice) { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $gte: Number(query.minPrice) }; useDepartures = true; }
   if (query.hasPricing === 'true') { departureFilter.effectiveMinPriceUsd = { ...(departureFilter.effectiveMinPriceUsd || {}), $exists: true, $ne: null }; useDepartures = true; }
   if (query.hasAvailability === 'true') { departureFilter['availability.0'] = { $exists: true }; useDepartures = true; }
   if (query.availableOnly === 'true' || query.availability) { departureFilter['availability.status'] = query.availability ? query.availability : { $in: ['available','limited','on_request'] }; useDepartures = true; }
@@ -141,7 +142,7 @@ const vesselIdsFromOperationalFilters = async (query, { publicOnly = false, find
   if (query.conflict === 'true') { departureFilter['availability.conflictState'] = true; useDepartures = true; }
   if (query.override === 'true') { departureFilter['availability.manualOverride'] = true; useDepartures = true; }
   if (eligibleItineraryIds !== null) departureFilter.itinerary = { $in: eligibleItineraryIds };
-  if (finder) Object.assign(finder, { departureFilter, requiresDeparture: useDepartures });
+  if (finder) Object.assign(finder, { departureFilter, requiresDeparture: useDepartures || finder.hasPriceBounds });
   if (useDepartures) {
     ids = intersect(ids, (await Departure.distinct('vessel', departureFilter)).map(String));
   }
@@ -152,14 +153,14 @@ const resortIdsFromOperationalFilters = async (query, { publicOnly, finder }) =>
   let ids = null;
   const hasStay = publicOnly && (query.checkIn !== undefined || query.checkOut !== undefined);
   const price = { active: true };
-  if (hasStay || (!finder?.activeOffer && (query.maxPrice || query.minPrice)) || query.hasPricing === 'true') {
-    if (!finder?.activeOffer && (query.maxPrice || query.minPrice)) {
+  if (hasStay || (!finder && (query.maxPrice || query.minPrice)) || query.hasPricing === 'true') {
+    if (!finder && (query.maxPrice || query.minPrice)) {
       price['basePrice.amountUsd'] = {};
       if (query.maxPrice) price['basePrice.amountUsd'].$lte = Number(query.maxPrice);
       if (query.minPrice) price['basePrice.amountUsd'].$gte = Number(query.minPrice);
     }
     if (hasStay && finder) {
-      finder.packages = await eligibleStayPackages(query, price);
+      finder.packages = await eligibleStayPackages(query, price, { resolvePrices: !finder.activeOffer });
       ids = [...new Set(finder.packages.map(item => String(item.resort)))];
     } else ids = hasStay ? await resortIdsForStay(query, price) : (await ResortPackage.distinct('resort', price)).map(String);
   }
@@ -214,7 +215,18 @@ const searchProducts = async ({ productType, query = {}, publicOnly = false, pop
   const Model = productType === 'resort' ? Resort : Vessel;
   const filter = await baseProductFilter({ productType, query, publicOnly });
   const finder = publicOnly && query.view === 'finder' ? {} : null;
-  if (finder) Object.assign(finder, { activeOffer: query.activeOffer === 'true', checkIn: query.checkIn, checkOut: query.checkOut, minPrice: query.minPrice, maxPrice: query.maxPrice });
+  if (finder) {
+    const budget = key => {
+      if (query[key] === undefined || query[key] === '') return undefined;
+      const amount = Number(query[key]);
+      if (typeof query[key] !== 'string' || !query[key].trim() || !Number.isFinite(amount) || amount < 0) throw new AppError(400, 'Enter a non-negative price in USD.');
+      return amount;
+    };
+    const minPrice = budget('minPrice');
+    const maxPrice = budget('maxPrice');
+    if (minPrice > maxPrice) throw new AppError(400, 'Maximum price must be at least the minimum price.');
+    Object.assign(finder, { activeOffer: query.activeOffer === 'true', checkIn: query.checkIn, checkOut: query.checkOut, minPrice, maxPrice, hasPriceBounds: minPrice !== undefined || maxPrice !== undefined });
+  }
   let ids = productType === 'resort' ? await resortIdsFromOperationalFilters(query, { publicOnly, finder }) : await vesselIdsFromOperationalFilters(query, { publicOnly, finder });
   const attrIds = await productIdsForAttributes({ productType, filters: parseAttributeFilters(query) });
   ids = intersect(ids, attrIds);
@@ -245,7 +257,12 @@ const getVesselBySlug = async (slug) => {
     .populate('effectivePrices.cabinType', 'name')
     .populate('availability.cabinType', 'name')
     .lean();
-  return { ...vessel, itineraries, departures };
+  const byId = new Map(itineraries.map(itinerary => [String(itinerary._id), itinerary]));
+  const now = new Date();
+  return { ...vessel, itineraries, departures: departures.map(departure => ({
+    ...departure,
+    startingPriceUsd: departureStartingUsd(byId.get(String(departure.itinerary?._id)), departure, now),
+  })) };
 };
 
 const listEmbarkationPorts = () => Itinerary.aggregate([

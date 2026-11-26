@@ -1,0 +1,53 @@
+{
+  "byMonth": [
+    {
+      "month": "2026-12",
+      "liveaboards": 102,
+      "resorts": 102
+    },
+    {
+      "month": "2027-01",
+      "liveaboards": 102,
+      "resorts": 102
+    },
+    {
+      "month": "2027-02",
+      "liveaboards": 102,
+      "resorts": 102
+    },
+    {
+      "month": "2027-03",
+      "liveaboards": 102,
+      "resorts": 102
+    },
+    {
+      "month": "2027-04",
+      "liveaboards": 102,
+      "resorts": 102
+    }
+  ],
+  "liveOffers": 18,
+  "resortOffers": 18,
+  "browserChecks": [
+    {
+      "width": 390,
+      "type": "liveaboards",
+      "route": "/liveaboards/season-2026-27-liveaboard-raja-ampat-12"
+    },
+    {
+      "width": 390,
+      "type": "resorts",
+      "route": "/resorts/season-2026-27-resort-raja-ampat-01"
+    },
+    {
+      "width": 1440,
+      "type": "liveaboards",
+      "route": "/liveaboards/season-2026-27-liveaboard-raja-ampat-12"
+    },
+    {
+      "width": 1440,
+      "type": "resorts",
+      "route": "/resorts/season-2026-27-resort-raja-ampat-01"
+    }
+  ]
+}

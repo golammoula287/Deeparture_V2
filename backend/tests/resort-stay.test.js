@@ -4,7 +4,7 @@ const ResortPackage = require('../src/v2/models/resortPackage.model');
 const ResortRatePeriod = require('../src/v2/models/resortRatePeriod.model');
 const RoomType = require('../src/v2/models/roomType.model');
 const ResortAvailability = require('../src/v2/models/resortAvailability.model');
-const { resortIdsForStay } = require('../src/v2/services/resortStay.service');
+const { resortIdsForStay, eligibleStayPackages } = require('../src/v2/services/resortStay.service');
 
 const query = data => ({ select() { return this; }, sort() { return this; }, async lean() { return data; } });
 const stay = { checkIn: '2027-02-26', checkOut: '2027-03-02' };
@@ -43,4 +43,27 @@ test('partial, invalid and non-positive stays fail before querying inventory', a
     await assert.rejects(resortIdsForStay(input, { active: true }), { statusCode: 400 });
   }
   assert.equal(find.mock.callCount(), 0);
+});
+
+test('dated prices use the first night rate and only apply current offers covering the full stay', async t => {
+  const basePrice = { amount: 800, currency: 'USD', pricingBasis: 'per_person' };
+  const offer = { type: 'percent', percent: 10, validUntil: '2027-01-20' };
+  const now = new Date('2027-01-10');
+  const ids = ['discounted', 'expired', 'adjacent', 'base-only'];
+  t.mock.method(ResortPackage, 'find', () => query(ids.map(id => ({ _id: id, basePrice }))));
+  t.mock.method(ResortRatePeriod, 'find', () => query([
+    { ...period('discounted', '2027-02-01', '2027-03-05', 4), priceOverride: { amount: 1100 }, offer },
+    { ...period('expired', '2027-02-01', '2027-03-05', 4), priceOverride: { amount: 1050 }, offer: { ...offer, validUntil: '2027-01-09' } },
+    { ...period('adjacent', '2027-02-01', '2027-02-28', 4), priceOverride: { amount: 1200 }, offer },
+    { ...period('adjacent', '2027-03-01', '2027-03-05', 4), priceOverride: { amount: 1500 } },
+  ]));
+  t.mock.method(RoomType, 'find', () => query([]));
+  t.mock.method(ResortAvailability, 'distinct', async () => []);
+  const result = await eligibleStayPackages(stay, { active: true }, { resolvePrices: true, now });
+  assert.deepEqual(result.map(x => [x._id, x.startingRate.amount, x.startingRate.currency, x.startingRate.pricingBasis]), [
+    ['discounted', 990, 'USD', 'per_person'],
+    ['expired', 1050, 'USD', 'per_person'],
+    ['adjacent', 1200, 'USD', 'per_person'],
+    ['base-only', 800, 'USD', 'per_person'],
+  ]);
 });

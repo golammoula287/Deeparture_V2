@@ -108,7 +108,7 @@ export default function DiscoveryPage({ offers, state, invalid, results, definit
           <section key={kind} className={styles.discoverySection} aria-label={discoveryTypes[kind]}>
             <h2>{discoveryTypes[kind]}</h2>
             <div className={styles.discoveryCards}>
-              {data.items.map(item => <CatalogueCard key={item._id} item={item} type={kind} departure={item.departure} startingRate={item.startingRate} promotion={item.promotion} returnTo={discoveryUrl(path, state)} />)}
+              {data.items.map(item => <CatalogueCard key={item._id} item={item} type={kind} departure={item.departure} startingRate={item.startingRate} promotion={item.promotion} stay={state} returnTo={discoveryUrl(path, state)} />)}
             </div>
           </section>
         )}

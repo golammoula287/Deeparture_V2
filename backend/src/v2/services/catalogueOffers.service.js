@@ -1,6 +1,6 @@
 const Departure = require('../models/departure.model');
 const ResortRatePeriod = require('../models/resortRatePeriod.model');
-const { applyOffer, calculateEffectivePrices } = require('./pricing.service');
+const { discountedRate, resortRatePrice, calculateEffectivePrices } = require('./pricing.service');
 
 const offerWindow = (now, prefix = '') => ({
   [`${prefix}type`]: { $in: ['percent', 'fixed_amount', 'fixed_price'] },
@@ -63,20 +63,14 @@ const resortPromotions = async (now, { resortIds, packageFilter = {}, packages, 
   return rates.flatMap(rate => {
     if (!rate.package || String(rate.package.resort) !== String(rate.resort)) return [];
     if (checkIn && (new Date(checkOut) - new Date(checkIn)) / 86_400_000 < (rate.minimumStayNights || 0)) return [];
-    const base = rate.package.basePrice || {};
-    const override = rate.priceOverride;
-    const price = Number.isFinite(override?.amount) ? { ...override, currency: override.currency || base.currency } : base;
-    if (!Number.isFinite(price.amount) || !price.currency) return [];
-    const discounted = applyOffer(price, rate.offer, now);
-    const lower = discounted.currency === price.currency
-      ? discounted.amount < price.amount
-      : Number.isFinite(discounted.amountUsd) && Number.isFinite(price.amountUsd) && discounted.amountUsd < price.amountUsd;
-    return lower ? [{
+    const price = resortRatePrice(rate.package.basePrice, rate);
+    const discounted = discountedRate(price, rate.offer, now);
+    return discounted ? [{
       resort: rate.resort,
       promotion: {
         offerId: rate._id, amount: discounted.amount, amountUsd: discounted.amountUsd, currency: discounted.currency,
         name: rate.offer.name, originalPrice: price.amount, originalCurrency: price.currency, validUntil: rate.offer.validUntil,
-        pricingBasis: base.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights,
+        pricingBasis: price.pricingBasis, packageId: rate.package._id, minimumStayNights: rate.minimumStayNights,
         stayFrom: rate.startDate, stayTo: rate.endDate,
       },
     }] : [];

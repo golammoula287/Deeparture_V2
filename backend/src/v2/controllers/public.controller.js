@@ -11,6 +11,7 @@ const ResortPackage = require("../models/resortPackage.model");
 const ResortRatePeriod = require("../models/resortRatePeriod.model");
 const { listVessels, getVesselBySlug, listResorts, listEmbarkationPorts } = require("../services/search.service");
 const { vesselPromotions, resortPromotions } = require("../services/catalogueOffers.service");
+const { eligibleStayPackages } = require("../services/resortStay.service");
 
 async function publishedListing(Model, id, organisation) {
   return Model.findOne({ _id: id, organisation, listingStatus: "published" }).select("slug").lean();
@@ -86,7 +87,13 @@ const resort = catchAsync(async (req, res) => {
   const packages = await ResortPackage.find({ resort: item._id, active: true }).populate("roomType").lean();
   const packageIds = packages.map((p) => p._id);
   const ratePeriods = await ResortRatePeriod.find({ package: { $in: packageIds }, active: true }).lean();
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Resort retrieved", data: { ...item, roomTypes, packages, ratePeriods } });
+  const { checkIn, checkOut } = req.query;
+  const stay = checkIn || checkOut ? {
+    checkIn, checkOut,
+    rates: (await eligibleStayPackages({ checkIn, checkOut }, { resort: item._id, active: true }, { resolvePrices: true }))
+      .flatMap(({ _id, startingRate }) => startingRate ? [{ ...startingRate, packageId: _id }] : []),
+  } : undefined;
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: "Resort retrieved", data: { ...item, roomTypes, packages, ratePeriods, stay } });
 });
 
 const embarkationPorts = catchAsync(async (req, res) => {
