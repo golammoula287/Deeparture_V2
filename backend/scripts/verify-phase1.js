@@ -173,11 +173,11 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
    await destination.click();
    await search.getByRole('textbox',{name:'Search destinations'}).fill('no-match-'+run);
    await search.getByRole('button',{name:/Search for/}).click();
-   await search.getByRole('button',{name:'Search',exact:true}).click();
+   await page.waitForURL(url=>url.searchParams.get('destination')==='no-match-'+run);
    await page.getByRole('heading',{name:'No matching journeys yet.'}).waitFor();
    await destination.click();
    await search.getByRole('button',{name:'Raja Ampat',exact:true}).click();
-   await search.getByRole('button',{name:'Search',exact:true}).click();
+   await page.waitForURL(url=>url.searchParams.get('destination')==='raja-ampat');
    await page.getByRole('link',{name,exact:true}).click();
    await page.waitForURL(url=>url.pathname==='/'+kind+'/'+slug);
   }pass('search controls filter results and listing links navigate');

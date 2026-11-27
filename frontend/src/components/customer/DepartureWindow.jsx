@@ -19,7 +19,7 @@ function monthChoices(first) {
   });
 }
 
-export default function DepartureWindow({ label, startDate = '', endDate = '', onChange, className }) {
+export default function DepartureWindow({ label, startDate = '', endDate = '', onChange, className, autoApply = false }) {
   const titleId = useId();
   const helpId = useId();
   const dialog = useRef(null);
@@ -35,18 +35,22 @@ export default function DepartureWindow({ label, startDate = '', endDate = '', o
     dialog.current.showModal();
   }
 
+  const validRange = ({ startDate, endDate }) =>
+    Boolean(startDate) === Boolean(endDate) && (!startDate || startDate <= endDate);
+
   function apply() {
-    if (Boolean(draft.startDate) !== Boolean(draft.endDate) || (draft.startDate && draft.endDate < draft.startDate)) {
+    if (!validRange(draft)) {
       setError('Choose a start and end date in order.');
       return;
     }
-    onChange(draft);
+    if (!autoApply) onChange(draft);
     dialog.current.close();
   }
 
   function choose(next) {
     setDraft(next);
     setError('');
+    if (autoApply && validRange(next)) onChange(next);
   }
 
   return <div className={className}>
@@ -71,7 +75,7 @@ export default function DepartureWindow({ label, startDate = '', endDate = '', o
         {error && <p role="alert">{error}</p>}
         <div className={styles.actions}>
           <button type="button" onClick={() => choose({ startDate: '', endDate: '' })}>Clear</button>
-          <button type="button" onClick={apply}>Apply</button>
+          <button type="button" onClick={apply}>{autoApply ? 'Done' : 'Apply'}</button>
         </div>
       </div>
     </dialog>

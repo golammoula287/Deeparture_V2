@@ -203,6 +203,14 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 
 ## Work log
 
+### 2026-11-27 — Automatic result filters
+
+Liveaboards, Resorts, Featured Trips and Special Offers apply filter changes after a short debounce. Home keeps its explicit Search action. The existing price, date and filter controls are reused. Mobile Done closes the panel. The Phase 1 browser verifier was updated for automatic searches and syntax-checked. The production build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Local Chromium covered both finders at 390, 768 and 1440 px, plus discovery and Home on desktop. A delayed request check confirmed that edits made while results load survive and apply. Next: publish when authorized.
+
+### 2026-11-27 — Highlighted filter removal
+
+Replaced visible Remove text on individual finder chips with a highlighted cross, retaining accessible names. Frontend build passed. Chromium verified pointer and keyboard removal on both product types at 390, 768 and 1440 px. Local preview refreshed. Diff check passed.
+
 ### 2026-11-27 — Destination handoff from Home to the finders
 
 Reused the searchable destination picker in Liveaboards and Resorts. It displays the applied destination, preserves existing custom search URLs, and carries the destination across product tabs while leaving product-specific dates behind. Verified Home-to-finder handoff, Modify Search on mobile, search edits preserving dates, budget and Vegan Rating, reload, keyboard selection, custom no-match searches, and switching product types in Chromium at 390, 768 and 1440 px. Updated Phase 1 verifier selectors. Frontend build, 12 frontend tests, backend syntax (114 files), 50 backend tests and diff check passed. Local preview refreshed. Next: publish this change with the pending false-warning fix when authorised.
