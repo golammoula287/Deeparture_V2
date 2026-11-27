@@ -70,14 +70,13 @@ export default function HomeSearch({ definitions = [], definitionsError = false,
       {['minPrice', 'maxPrice', 'veganRatingMin', 'minNights', 'maxNights', 'embarkation'].map(key => <input key={key} type="hidden" name={key} value={criteria[key]} />)}
       {criteria.attributes.length > 0 && <input type="hidden" name="attributes" value={JSON.stringify(criteria.attributes)} />}
       <div className={styles.searchBottom}>
-        <button type="button" className={`${styles.allFilters} ${styles.desktopFilters}`} onClick={openFilters} aria-haspopup="dialog"><HomeIcon name="filters" size={18} />All Filters{filterCount ? ` (${filterCount})` : ''}</button>
+        <button type="button" className={styles.allFilters} onClick={openFilters} aria-haspopup="dialog"><HomeIcon name="filters" size={18} />All Filters{filterCount ? ` (${filterCount})` : ''}</button>
         <div className={styles.preferenceLinks}>
           {shortcuts.map(([key, label, icon]) => {
             const definition = shortcutDefinition(label);
-            return <button key={key} type="button" className={key === 'photography' || key === 'rebreather' ? styles.desktopShortcut : undefined} onClick={() => quickFilter(definition)} aria-pressed={Boolean(definition && criteria.attributes.some(item => item.key === definition.key && item.value === true))}><HomeIcon name={icon} size={19} />{label}</button>;
+            return <button key={key} type="button" onClick={() => quickFilter(definition)} aria-pressed={Boolean(definition && criteria.attributes.some(item => item.key === definition.key && item.value === true))}><HomeIcon name={icon} size={19} />{label}</button>;
           })}
         </div>
-        <button type="button" className={`${styles.allFilters} ${styles.mobileFilters}`} onClick={openFilters} aria-haspopup="dialog"><HomeIcon name="filters" size={18} />All Filters{filterCount ? ` (${filterCount})` : ''}</button>
       </div>
       {(criteria.minPrice || criteria.maxPrice) && <p className={styles.budgetSummary}>Budget: {criteria.minPrice ? `USD ${criteria.minPrice}` : 'Any minimum'} – {criteria.maxPrice ? `USD ${criteria.maxPrice}` : 'Any maximum'}</p>}
       <p className={styles.dateNote}>{resort ? 'Prices shown are starting rates. Final pricing and availability are confirmed on enquiry.' : 'Search by departure date. Final pricing and availability are confirmed on enquiry.'}</p>

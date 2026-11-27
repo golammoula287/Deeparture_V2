@@ -203,6 +203,10 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 
 ## Work log
 
+### 2026-11-27 — Mobile homepage quick filters
+
+Hid the homepage shortcut row at the existing 700 px mobile breakpoint and reused one All Filters button at every width. The production build, 12 frontend tests and Chromium checks for both modes at 320, 390, 700, 701, 768 and 1440 px passed. Chromium also verified Wi-Fi and Nitrox are available inside the liveaboard filter panel. Publication is pending authorization.
+
 ### 2026-11-27 — Footer legal pages
 
 Added both footer links and local draft pages using the customer shell. The existing site displays the legal labels without linked copy. The production build, 12 frontend tests and Chromium at 390, 768 and 1440 px passed. The browser confirmed link navigation, active link labels, draft indexing metadata, contact email and no horizontal overflow. Next: obtain approved copy before publication.

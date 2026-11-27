@@ -55,6 +55,8 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 
 ### Work log — 2026-11-27 (Asia/Dhaka)
 
+- Home no longer shows quick filters on mobile (700 px and below) per the latest request. All Filters remains available at every width. Build, 12 frontend tests and Chromium checks across six widths passed. Preview runs on port 3003. Publication is pending authorization.
+
 - Added local Terms and Conditions and Privacy Policy pages and shared footer links. Copy is marked as draft and excluded from indexing pending approval. Frontend build, 12 unit tests and Chromium at 390, 768 and 1440 px passed. Preview runs on port 3002.
 
 - Liveaboards, Resorts, Featured Trips and Special Offers now apply filter edits automatically. Home still starts search explicitly. Local Chromium verified the finders at 390, 768 and 1440 px, discovery and Home on desktop, and a rapid-edit check with a delayed response. Frontend build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Local preview runs on port 3001. Render publication is pending authorization.
