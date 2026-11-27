@@ -55,6 +55,10 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 
 ### Work log — 2026-11-27 (Asia/Dhaka)
 
+- Liveaboards, Resorts, Featured Trips and Special Offers now apply filter edits automatically. Home still starts search explicitly. Local Chromium verified the finders at 390, 768 and 1440 px, discovery and Home on desktop, and a rapid-edit check with a delayed response. Frontend build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Local preview runs on port 3001. Render publication is pending authorization.
+
+- Individual applied filter chips now show a highlighted cross. Verified visibility and independent pointer and keyboard removal on both finders at three widths. Build and diff check passed. Local preview refreshed.
+
 - Reused the Home destination dropdown on Liveaboards and Resorts. Local Chromium at 390/768/1440 px verified that a Home selection stays visible and can be edited while retaining search dates, price and Vegan Rating, including through mobile Modify Search. Product switches keep the destination. Frontend build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Pending publication with the warning fix.
 
 - Filled the Render catalogue's 22 missing standard preferences and applied illustrative attributes to 204 seasonal sample listings. Verified all 31 definitions and 55 applicable public API filter cases. Chromium confirmed filter access and matching results on phone and desktop. The hosted data change is live.
