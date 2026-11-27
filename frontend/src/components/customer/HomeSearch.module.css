@@ -24,7 +24,6 @@
 .searchButton:hover { background:var(--home-accent-hover); }
 .searchBottom { display:flex; align-items:flex-start; gap:12px; margin-top:16px; }
 .allFilters { display:inline-flex; align-items:center; justify-content:center; gap:7px; flex-shrink:0; min-height:38px; padding:8px 12px; border:1px solid var(--line); border-radius:7px; background:var(--pale); color:var(--sea); font-size:12px; font-weight:700; }
-.mobileFilters { display:none; }
 .preferenceLinks { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
 .preferenceLinks button { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:38px; padding:8px 10px; border:1px solid transparent; border-radius:7px; background:transparent; color:var(--muted); font-size:11px; line-height:1.3; }
 .preferenceLinks button>svg { flex-shrink:0; width:17px; height:17px; color:var(--sea); }
@@ -47,10 +46,8 @@
  .searchFields>.field > input[type=date] { font-size:12px; }
  .searchFields>.searchButton { min-height:46px; }
  .searchBottom { flex-wrap:wrap; align-items:center; gap:6px; margin-top:12px; }
- .search .desktopFilters, .search .desktopShortcut { display:none; }
- .search .mobileFilters { display:inline-flex; }
+ .search .preferenceLinks { display:none; }
  .allFilters { min-height:44px; }
- .preferenceLinks { gap:4px; }.preferenceLinks button { min-height:40px; padding:7px; font-size:10px; }
  .dateNote { margin-top:8px!important; font-size:10px; }
 }
 @media(prefers-reduced-motion:reduce) { .searchFields>.field { transition:none; } }
