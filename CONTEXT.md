@@ -1,6 +1,6 @@
 # Project context and work tracker
 
-Last updated: 2026-11-27 (Asia/Dhaka)
+Last updated: 2026-11-28 (Asia/Dhaka)
 
 ## Current task
 
@@ -202,6 +202,12 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 - Preserve historical hosted reports; they do not establish current corrected deployment acceptance.
 
 ## Work log
+
+### 2026-11-28 — Render catalogue startup recovery
+
+Live recheck: the public Render API returned 37 matches, including 17 seeded listings, for each dated Raja Ampat search in about 20 seconds. Both hosted finder pages displayed seeded links on the first request (about 35 seconds) and on retry (under one second). Frontend revision `1d90d58` and backend revision `4e8ce5a` remain live. The local recovery change is still pending publication.
+
+Public Render API took 18 seconds to respond after inactivity and returned 37 Raja Ampat matches. The hosted finder still failed after the API was reachable, including with an uncached request. The upstream status seen from the Render frontend was not independently verified. Added bounded startup retries and a fallback from the configured internal API address to the public API address for recoverable failures. The production build and 15 frontend tests passed. A built finder also recovered from simulated internal 403 and public startup 503 responses, including filter and port data. No data changes. Next: publish when authorized and verify Render after inactivity.
 
 ### 2026-11-27 — Mobile homepage quick filters
 
