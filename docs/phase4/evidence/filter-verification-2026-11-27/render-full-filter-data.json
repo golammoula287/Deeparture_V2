@@ -1,0 +1,305 @@
+{
+  "added": [
+    "starlink",
+    "air_conditioning",
+    "ensuite",
+    "charging_station",
+    "sun_deck",
+    "spa",
+    "laundry",
+    "free_nitrox",
+    "sidemount_support",
+    "house_reef",
+    "gluten_free",
+    "allergy_support",
+    "mobility_support",
+    "accessible_cabin",
+    "accessible_room",
+    "accessible_bathroom",
+    "step_free_access",
+    "step_free_dive_deck",
+    "water_entry_assistance",
+    "water_exit_assistance",
+    "accessible_tender",
+    "accessible_transfers"
+  ],
+  "standardDefinitionCount": 31,
+  "updatedSampleListings": 204,
+  "verified": [
+    {
+      "type": "liveaboards",
+      "key": "wifi",
+      "total": 102
+    },
+    {
+      "type": "liveaboards",
+      "key": "starlink",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "air_conditioning",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "ensuite",
+      "total": 30
+    },
+    {
+      "type": "liveaboards",
+      "key": "camera_room",
+      "total": 54
+    },
+    {
+      "type": "liveaboards",
+      "key": "charging_station",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "sun_deck",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "spa",
+      "total": 30
+    },
+    {
+      "type": "liveaboards",
+      "key": "laundry",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "freediving",
+      "total": 30
+    },
+    {
+      "type": "liveaboards",
+      "key": "photography",
+      "total": 54
+    },
+    {
+      "type": "liveaboards",
+      "key": "nitrox",
+      "total": 54
+    },
+    {
+      "type": "liveaboards",
+      "key": "free_nitrox",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "rebreather_support",
+      "total": 24
+    },
+    {
+      "type": "liveaboards",
+      "key": "sidemount_support",
+      "total": 30
+    },
+    {
+      "type": "liveaboards",
+      "key": "vegan_meals",
+      "total": 102
+    },
+    {
+      "type": "liveaboards",
+      "key": "vegetarian_meals",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "gluten_free",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "allergy_support",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "mobility_support",
+      "total": 18
+    },
+    {
+      "type": "liveaboards",
+      "key": "wheelchair_access",
+      "total": 36
+    },
+    {
+      "type": "liveaboards",
+      "key": "accessible_cabin",
+      "total": 24
+    },
+    {
+      "type": "liveaboards",
+      "key": "accessible_bathroom",
+      "total": 18
+    },
+    {
+      "type": "liveaboards",
+      "key": "step_free_access",
+      "total": 18
+    },
+    {
+      "type": "liveaboards",
+      "key": "step_free_dive_deck",
+      "total": 24
+    },
+    {
+      "type": "liveaboards",
+      "key": "water_entry_assistance",
+      "total": 18
+    },
+    {
+      "type": "liveaboards",
+      "key": "water_exit_assistance",
+      "total": 24
+    },
+    {
+      "type": "liveaboards",
+      "key": "accessible_tender",
+      "total": 18
+    },
+    {
+      "type": "liveaboards",
+      "key": "accessible_transfers",
+      "total": 18
+    },
+    {
+      "type": "resorts",
+      "key": "wifi",
+      "total": 102
+    },
+    {
+      "type": "resorts",
+      "key": "starlink",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "air_conditioning",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "ensuite",
+      "total": 30
+    },
+    {
+      "type": "resorts",
+      "key": "camera_room",
+      "total": 54
+    },
+    {
+      "type": "resorts",
+      "key": "charging_station",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "spa",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "laundry",
+      "total": 30
+    },
+    {
+      "type": "resorts",
+      "key": "freediving",
+      "total": 30
+    },
+    {
+      "type": "resorts",
+      "key": "photography",
+      "total": 54
+    },
+    {
+      "type": "resorts",
+      "key": "nitrox",
+      "total": 54
+    },
+    {
+      "type": "resorts",
+      "key": "free_nitrox",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "sidemount_support",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "house_reef",
+      "total": 30
+    },
+    {
+      "type": "resorts",
+      "key": "vegan_meals",
+      "total": 102
+    },
+    {
+      "type": "resorts",
+      "key": "vegetarian_meals",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "gluten_free",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "allergy_support",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "mobility_support",
+      "total": 18
+    },
+    {
+      "type": "resorts",
+      "key": "wheelchair_access",
+      "total": 36
+    },
+    {
+      "type": "resorts",
+      "key": "accessible_room",
+      "total": 24
+    },
+    {
+      "type": "resorts",
+      "key": "accessible_bathroom",
+      "total": 18
+    },
+    {
+      "type": "resorts",
+      "key": "step_free_access",
+      "total": 18
+    },
+    {
+      "type": "resorts",
+      "key": "water_entry_assistance",
+      "total": 24
+    },
+    {
+      "type": "resorts",
+      "key": "water_exit_assistance",
+      "total": 18
+    },
+    {
+      "type": "resorts",
+      "key": "accessible_transfers",
+      "total": 24
+    }
+  ]
+}

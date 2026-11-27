@@ -1,0 +1,32 @@
+[
+  {
+    "width": 390,
+    "page": "home",
+    "filter": "Gluten-Free Options"
+  },
+  {
+    "width": 390,
+    "page": "liveaboards",
+    "filter": "Accessible Cabin"
+  },
+  {
+    "width": 390,
+    "page": "resorts",
+    "filter": "House Reef"
+  },
+  {
+    "width": 1440,
+    "page": "home",
+    "filter": "Gluten-Free Options"
+  },
+  {
+    "width": 1440,
+    "page": "liveaboards",
+    "filter": "Accessible Cabin"
+  },
+  {
+    "width": 1440,
+    "page": "resorts",
+    "filter": "House Reef"
+  }
+]

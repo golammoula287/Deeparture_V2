@@ -203,6 +203,18 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 
 ## Work log
 
+### 2026-11-27 — Destination handoff from Home to the finders
+
+Reused the searchable destination picker in Liveaboards and Resorts. It displays the applied destination, preserves existing custom search URLs, and carries the destination across product tabs while leaving product-specific dates behind. Verified Home-to-finder handoff, Modify Search on mobile, search edits preserving dates, budget and Vegan Rating, reload, keyboard selection, custom no-match searches, and switching product types in Chromium at 390, 768 and 1440 px. Updated Phase 1 verifier selectors. Frontend build, 12 frontend tests, backend syntax (114 files), 50 backend tests and diff check passed. Local preview refreshed. Next: publish this change with the pending false-warning fix when authorised.
+
+### 2026-11-27 — Render filter catalogue parity
+
+Render was missing 22 of the 31 standard preference definitions. Added the missing definitions through the deployed Admin API and populated illustrative values on the 204 seasonal sample listings only. Preserved existing definitions and other inventory. All 55 applicable product-type/filter API cases returned sample matches. Phone and desktop Chromium verified the homepage filter panel and liveaboard and resort filters, including Gluten-Free Options, Accessible Cabin and House Reef. Evidence is in `docs/phase4/evidence/filter-verification-2026-11-27/`. The data update is live. The separate warning fix remains local.
+
+### 2026-11-27 — False search filter warning
+
+The homepage submitted a blank preferences parameter that the finder tried to parse as JSON. Omitting it from new searches and accepting it on older links prevents the warning on valid date searches. Genuine invalid dates still show the warning. Frontend production build, 12 tests, and local Chromium at 390, 768 and 1440 px passed. Render's separate December catalogue load error recovered on retry. The frontend fix is local and uncommitted.
+
 ### 2026-11-27 — Price and catalogue filter verification
 
 Reproduced the dated resort mismatch on Render: a listing displayed its USD 850 base price despite a USD 925 seasonal rate and a valid discount. The public finder now resolves resort starting prices for selected dates with eligible discounts, recalculates liveaboard prices with current offers, compares inclusive USD bounds, and displays matching amounts and date context. Sidebar Apply uses the current primary inputs. Backend syntax (114 files), 50 backend tests, 11 frontend tests, production build and diff check passed. Local API and Chromium at 390, 768 and 1440 px verified both product types, date, destination, duration, embarkation, Vegan Rating, grouped attributes, price, sorting, pagination, selected rate details, and homepage/discovery filter entry points. Added missing Photography, Freediving and Vegetarian Meals definitions on Render and sample preference values on 150 listings, including Rebreather on eligible liveaboards. Hosted queries and mobile/desktop browser preference checks passed. See `docs/phase4/evidence/filter-verification-2026-11-27/`. Temporary local test rate was removed. No code commit or deployment. Next: publish the pricing fix when authorised and rerun Render price checks.

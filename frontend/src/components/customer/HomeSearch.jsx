@@ -68,7 +68,7 @@ export default function HomeSearch({ definitions = [], definitionsError = false,
         <button className={styles.searchButton} type="submit"><HomeIcon name="search" size={20} />Search</button>
       </div>
       {['minPrice', 'maxPrice', 'veganRatingMin', 'minNights', 'maxNights', 'embarkation'].map(key => <input key={key} type="hidden" name={key} value={criteria[key]} />)}
-      <input type="hidden" name="attributes" value={criteria.attributes.length ? JSON.stringify(criteria.attributes) : ''} />
+      {criteria.attributes.length > 0 && <input type="hidden" name="attributes" value={JSON.stringify(criteria.attributes)} />}
       <div className={styles.searchBottom}>
         <button type="button" className={`${styles.allFilters} ${styles.desktopFilters}`} onClick={openFilters} aria-haspopup="dialog"><HomeIcon name="filters" size={18} />All Filters{filterCount ? ` (${filterCount})` : ''}</button>
         <div className={styles.preferenceLinks}>

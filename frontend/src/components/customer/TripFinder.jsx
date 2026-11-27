@@ -8,10 +8,11 @@ import VeganRatingSelect from './VeganRatingSelect';
 import FilterPanel from './FilterPanel';
 import DepartureWindow from './DepartureWindow';
 import StayDateFields from './StayDateFields';
+import DestinationPicker, { destinationLabel } from './DestinationPicker';
 import CustomerShell from './CustomerShell';
 import EmbarkationSelect from './EmbarkationSelect';
 import CatalogueCard from './CatalogueCard';
-import { dateLabel, words } from '@/src/lib/customer/format';
+import { dateLabel } from '@/src/lib/customer/format';
 import HomeIcon from './HomeIcon';
 import { finderUrl, finderSorts } from '@/src/lib/customer/searchState';
 import styles from './Marketplace.module.css';
@@ -84,12 +85,12 @@ export default function TripFinder({ resort = false, state, data, definitions = 
   const productLabel = resort ? 'Resorts' : 'Liveaboards';
   const tabs = [
     { label: productLabel, href: path },
-    resort ? { label: 'Liveaboards', href: '/explore/liveaboards' } : { label: 'Resorts', href: '/explore/resorts' },
+    { label: resort ? 'Liveaboards' : 'Resorts', href: finderUrl(resort ? '/explore/liveaboards' : '/explore/resorts', { destination: state.destination }) },
   ];
   const dateSummary = (resort ? [state.checkIn, state.checkOut] : [state.startDate, state.endDate])
     .filter(Boolean).map(dateLabel).join(' – ');
   const summary = [
-    state.destination ? words(state.destination) : 'Any destination',
+    state.destination ? destinationLabel(state.destination) : 'Any destination',
     dateSummary || (resort ? 'Choose stay dates' : 'Any departure dates'),
     !resort && (state.minNights || state.maxNights) && (state.minNights && state.maxNights ? `${state.minNights}–${state.maxNights} nights` : state.minNights ? `${state.minNights}+ nights` : `Up to ${state.maxNights} nights`),
     state.veganRatingMin && `Vegan Rating ${state.veganRatingMin}+`,
@@ -113,7 +114,7 @@ export default function TripFinder({ resort = false, state, data, definitions = 
         </div>
         <form id="finder-search" className={styles.searchForm} data-expanded={modifySearch} onSubmit={submit}>
           <div className={styles.mainFields}>
-            <label className={styles.field}>Destination<input name="destination" placeholder="Next destination" value={draft.destination || ''} onChange={e => setDraft({ ...draft, destination: e.target.value })} /></label>
+            <DestinationPicker finder className={styles.field} value={draft.destination} onChange={destination => setDraft(previous => ({ ...previous, destination }))} />
             {resort
               ? <StayDateFields className={styles.field} checkIn={draft.checkIn} checkOut={draft.checkOut} onChange={(key, value) => setDraft(previous => ({ ...previous, [key]: value }))} />
               : <DepartureWindow className={styles.field} label="Departure dates" startDate={draft.startDate} endDate={draft.endDate} onChange={range => setDraft(previous => ({ ...previous, ...range }))} />}
