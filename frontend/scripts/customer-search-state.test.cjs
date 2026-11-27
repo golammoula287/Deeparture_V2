@@ -35,3 +35,18 @@ test('Resort stay dates survive URL changes only as a valid pair', async () => {
     assert.equal(result.state.checkOut, undefined);
   }
 });
+
+test('blank optional preferences do not flag valid December dates or an unfiltered resort visit', async () => {
+  const { searchState } = await loaded;
+  const departure = { startDate: '2026-12-10', endDate: '2026-12-31' };
+  for (const attributes of ['', ' ', '[]']) {
+    const { state, invalid } = searchState({ ...departure, attributes });
+    assert.equal(invalid, false);
+    assert.equal(state.startDate, departure.startDate);
+    assert.equal(state.endDate, departure.endDate);
+    assert.equal(state.attributes, undefined);
+  }
+  assert.equal(searchState({ checkIn: '', checkOut: '', attributes: '' }, true).invalid, false);
+  assert.equal(searchState({ ...departure, attributes: '{broken' }).invalid, true);
+  assert.equal(searchState({ ...departure, startDate: '2026-12-40', attributes: '' }).invalid, true);
+});

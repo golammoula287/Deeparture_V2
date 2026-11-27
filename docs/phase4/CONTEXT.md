@@ -55,6 +55,14 @@ Gate 1 covers shared foundations, catalogue and preferences, homepage search, da
 
 ### Work log — 2026-11-27 (Asia/Dhaka)
 
+- Reused the Home destination dropdown on Liveaboards and Resorts. Local Chromium at 390/768/1440 px verified that a Home selection stays visible and can be edited while retaining search dates, price and Vegan Rating, including through mobile Modify Search. Product switches keep the destination. Frontend build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Pending publication with the warning fix.
+
+- Filled the Render catalogue's 22 missing standard preferences and applied illustrative attributes to 204 seasonal sample listings. Verified all 31 definitions and 55 applicable public API filter cases. Chromium confirmed filter access and matching results on phone and desktop. The hosted data change is live.
+
+- Fixed the false finder warning on valid searches with blank optional preferences. Verified 12 frontend tests, build and three browser widths. Render's separate catalogue error recovered on retry. Publication of the warning fix is pending.
+
+- Published the pricing fix through GitHub main merge `5d8a872`. Both Render services reported that exact revision, and the hosted API and browser verified the selected-date rate and exact price bounds on phone and desktop. See [release evidence](evidence/filter-verification-2026-11-27/render-release.json).
+
 - Reproduced Render resort price filtering against a base package rate despite dated seasonal terms. Local fix resolves resort starting rates by dates and re-evaluates liveaboard offers, applies inclusive USD bounds, and keeps card and detail prices consistent. Backend syntax, 50 backend tests, 11 frontend tests, build and three-width browser checks passed. Added missing Photography, Freediving and Vegetarian Meals definitions on Render and populated applicable preferences on 150 seasonal sample listings. Public filter queries and phone/desktop browser checks passed. See [filter evidence](evidence/filter-verification-2026-11-27/). Pricing code deployment is pending.
 
 - Published 102 sample liveaboards and 102 sample resorts on the deployed Render application for December 2026 through April 2027. The dedicated sample organisation holds 510 departures, 102 resort packages and 102 seasonal rates. Public month-by-month search verification passed for both product types and the resulting catalogue totals were 222 each. Chromium verified date-filtered results, detail links, and loaded listing images at 390 and 1440 px. Evidence is in [the hosted seed evidence directory](evidence/render-season-2026-11-27/). Email remained in test mode. No application changes.

@@ -1,0 +1,11 @@
+{
+  "revision": "5d8a872b9853e842e7776a0072b354f1ea72e90e",
+  "emailDeliveryMode": "test",
+  "exactResortPriceUsd": 832.5,
+  "resortExcludedBelow": 832.49,
+  "liveaboardsReturned": 9,
+  "browserWidths": [
+    390,
+    1440
+  ]
+}

@@ -169,10 +169,14 @@ function form(text, productType) { const f=new FormData();f.set('file',new Blob(
     await search.getByLabel('Check-in').fill(dateAfter(7));
     await search.getByLabel('Check-out').fill(dateAfter(14));
    }
-   await search.getByLabel('Destination',{exact:true}).fill('no-match-'+run);
+   const destination=search.getByRole('button',{name:'Destination',exact:true});
+   await destination.click();
+   await search.getByRole('textbox',{name:'Search destinations'}).fill('no-match-'+run);
+   await search.getByRole('button',{name:/Search for/}).click();
    await search.getByRole('button',{name:'Search',exact:true}).click();
    await page.getByRole('heading',{name:'No matching journeys yet.'}).waitFor();
-   await search.getByLabel('Destination',{exact:true}).fill('raja-ampat');
+   await destination.click();
+   await search.getByRole('button',{name:'Raja Ampat',exact:true}).click();
    await search.getByRole('button',{name:'Search',exact:true}).click();
    await page.getByRole('link',{name,exact:true}).click();
    await page.waitForURL(url=>url.pathname==='/'+kind+'/'+slug);

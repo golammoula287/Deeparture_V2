@@ -10,4 +10,20 @@
 .picker .options button:hover,.picker .options button:focus-visible { background:var(--pale); color:var(--sea); outline:none; box-shadow:none; }
 .options button[aria-pressed=true] { color:var(--sea); font-weight:600; }
 .empty { padding:14px 10px; color:var(--muted); font-size:12px; }
+.picker[data-finder] {
+  --ink: var(--customer-ink);
+  --line: var(--customer-line);
+  --muted: var(--customer-muted);
+  --pale: var(--customer-surface-soft);
+  --sea: var(--home-sea);
+}
+.picker[data-finder] .trigger {
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--customer-control-border);
+  border-radius: 6px;
+  background: var(--customer-surface);
+  font-size: 14px;
+}
+.picker[data-finder] .trigger:focus-visible { outline: 2px solid var(--customer-focus); outline-offset: 2px; }
 @media(max-width:700px) { .picker .trigger { font-size:16px; }.dropdown { width:100%; max-width:100%; }.picker .dropdown .search input { font-size:16px; } }
