@@ -52,11 +52,18 @@
 .socialLinks img { filter: brightness(0) invert(1); }
 .socialLinks a:is(:hover, :focus-visible) { background: var(--home-accent); }
 .footerBottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 24px;
   margin-top: 32px;
   padding: 16px 64px 0 0;
   border-top: 1px solid #ffffff25;
   color: var(--home-footer-muted);
 }
+.footerLegal { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.footerLegal a { text-decoration: underline; text-underline-offset: 3px; }
 .whatsapp {
   position: fixed;
   z-index: 25;

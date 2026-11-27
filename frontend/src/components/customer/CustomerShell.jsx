@@ -114,7 +114,13 @@ export default function CustomerShell({ children, title = 'Dive beyond the every
           </nav>
         </div>
       </div>
-      <div className={styles.footerBottom}>© Deeparture. All rights reserved.</div>
+      <div className={styles.footerBottom}>
+        <span>© Deeparture. All rights reserved.</span>
+        <nav className={styles.footerLegal} aria-label="Legal">
+          <Link href="/terms-and-conditions" aria-current={pathname === '/terms-and-conditions' ? 'page' : undefined}>Terms and Conditions</Link>
+          <Link href="/privacy-policy" aria-current={pathname === '/privacy-policy' ? 'page' : undefined}>Privacy Policy</Link>
+        </nav>
+      </div>
     </footer>
     <a className={styles.whatsapp} href={contactLinks.whatsapp.href} aria-label="Chat with Deeparture on WhatsApp">
       <HomeIcon name="whatsapp" size={32} />

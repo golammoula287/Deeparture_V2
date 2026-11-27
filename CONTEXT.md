@@ -203,6 +203,10 @@ Completed Phase 3 Render checklist verification on 2 November 2026: all 82 requi
 
 ## Work log
 
+### 2026-11-27 — Footer legal pages
+
+Added both footer links and local draft pages using the customer shell. The existing site displays the legal labels without linked copy. The production build, 12 frontend tests and Chromium at 390, 768 and 1440 px passed. The browser confirmed link navigation, active link labels, draft indexing metadata, contact email and no horizontal overflow. Next: obtain approved copy before publication.
+
 ### 2026-11-27 — Automatic result filters
 
 Liveaboards, Resorts, Featured Trips and Special Offers apply filter changes after a short debounce. Home keeps its explicit Search action. The existing price, date and filter controls are reused. Mobile Done closes the panel. The Phase 1 browser verifier was updated for automatic searches and syntax-checked. The production build, 12 frontend tests, backend syntax, 50 backend tests and diff check passed. Local Chromium covered both finders at 390, 768 and 1440 px, plus discovery and Home on desktop. A delayed request check confirmed that edits made while results load survive and apply. Next: publish when authorized.
